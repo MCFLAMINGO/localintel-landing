@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claim Your Listing — LocalIntel</title>
+  <meta name="description" content="Claim your Florida business listing on LocalIntel. Two minutes to get verified, start receiving job referrals, and earn royalties.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --bg: #FFFFFF;
+      --bg-card: #F9FAFB;
+      --bg-dark: #111827;
+      --text: #111827;
+      --text-2: #6B7280;
+      --text-3: #9CA3AF;
+      --accent: #16A34A;
+      --accent-hover: #15803D;
+      --accent-light: #DCFCE7;
+      --accent-text: #166534;
+      --border: #E5E7EB;
+      --error: #DC2626;
+      --error-light: #FEF2F2;
+      --radius-sm: 6px;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 16px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04);
+      --shadow-lg: 0 16px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --nav-h: 64px;
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── BASE ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--text);
+      background: #F3F4F6;
+      min-height: 100dvh;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+    h1,h2,h3,h4 { line-height: 1.2; text-wrap: balance; }
+    p { text-wrap: pretty; }
+    input, select, textarea { font: inherit; color: inherit; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: var(--nav-h);
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      color: var(--text);
+    }
+    .logo-dot {
+      width: 22px; height: 22px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: relative; flex-shrink: 0;
+    }
+    .logo-dot::after {
+      content: '';
+      position: absolute;
+      width: 8px; height: 8px;
+      background: white;
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .nav-back {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.15s;
+    }
+    .nav-back:hover { color: var(--text); }
+
+    /* ── PAGE LAYOUT ── */
+    .page-wrap {
+      min-height: 100dvh;
+      padding-top: var(--nav-h);
+      display: flex;
+      flex-direction: column;
+    }
+    .claim-layout {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── STEP INDICATOR ── */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      margin-bottom: 40px;
+      width: 100%;
+      max-width: 520px;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      position: relative;
+    }
+    .step-circle {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-3);
+      transition: all var(--transition);
+      position: relative;
+      z-index: 1;
+    }
+    .step-circle.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: white;
+    }
+    .step-circle.done {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      color: var(--accent-text);
+    }
+    .step-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-3);
+      text-align: center;
+      letter-spacing: 0.02em;
+      display: none;
+    }
+    .step-connector {
+      position: absolute;
+      top: 17px;
+      left: calc(50% + 18px);
+      right: calc(-50% + 18px);
+      height: 2px;
+      background: var(--border);
+      transition: background var(--transition);
+    }
+    .step-connector.done { background: var(--accent-light); }
+    .step-item:last-child .step-connector { display: none; }
+
+    /* ── CLAIM CARD ── */
+    .claim-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 560px;
+      overflow: hidden;
+    }
+
+    /* ── STEP PANELS ── */
+    .step-panel {
+      display: none;
+      padding: 40px;
+      animation: fadeSlideUp 0.3s ease both;
+    }
+    .step-panel.active { display: block; }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-heading {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .step-sub {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.55;
+      margin-bottom: 28px;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      color: var(--text);
+      background: white;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+    .form-input::placeholder { color: var(--text-3); }
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
+    }
+    .form-input.error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
+    }
+    .form-input.valid {
+      border-color: var(--accent);
+      background: #F0FDF4;
+    }
+    .form-error {
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 5px;
+      display: none;
+    }
+    .form-error.show { display: block; }
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 5px;
+      line-height: 1.5;
+    }
+
+    /* Input with icon */
+    .input-wrap {
+      position: relative;
+    }
+    .input-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .input-wrap .form-input { padding-right: 38px; }
+
+    /* Two-col grid */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-separator {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      color: var(--text-3);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .form-separator::before, .form-separator::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── RESULT CARD ── */
+    .result-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      display: none;
+      animation: fadeSlideUp 0.25s ease both;
+    }
+    .result-card.show { display: block; }
+    .result-card.loading {
+      display: block;
+      border-color: var(--border);
+    }
+    .result-biz-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .result-biz-addr {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 12px;
+    }
+    .result-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .result-tag {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+    }
+    .result-tag.status-active {
+      background: var(--accent-light);
+      border-color: #BBF7D0;
+      color: var(--accent-text);
+    }
+    .btn-confirm {
+      width: 100%;
+      padding: 12px 20px;
+      background: var(--accent);
+      color: white;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      transition: background 0.18s, transform 0.18s;
+    }
+    .btn-confirm:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Loading skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 4px;
+      height: 16px;
+      margin-bottom: 8px;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* ── PAYMENT CARDS ── */
+    .payment-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .payment-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .payment-card:hover { border-color: #A7F3D0; background: #F0FDF4; }
+    .payment-card.selected {
+      border-color: var(--accent);
+      background: #F0FDF4;
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+    }
+    .payment-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .payment-icon {
+      width: 38px; height: 38px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .payment-card.selected .payment-icon {
+      background: var(--accent-light);
+      border-color: #BBF7D0;
+    }
+    .payment-card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .payment-card-desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .payment-check {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: white;
+      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .payment-card.selected .payment-check {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+    .payment-check-inner {
+      width: 8px; height: 8px;
+      border-bottom: 2px solid white;
+      border-right: 2px solid white;
+      transform: rotate(45deg) translate(-1px,-1px);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .payment-card.selected .payment-check-inner { opacity: 1; }
+    .payment-fields {
+      margin-top: 14px;
+      display: none;
+    }
+    .payment-card.selected .payment-fields { display: block; }
+    .coming-soon {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      background: #FEF9C3;
+      color: #92400E;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-left: 8px;
+    }
+    .bank-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .bank-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      background: white;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+    .bank-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(22,163,74,0.12); }
+
+    /* ── NOTIFICATION TOGGLES ── */
+    .notif-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .notif-item {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      transition: border-color 0.2s;
+    }
+    .notif-item.active { border-color: var(--accent); background: #F0FDF4; }
+    .notif-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0;
+    }
+    .notif-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .notif-emoji { font-size: 20px; }
+    .notif-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .notif-sub {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-top: 10px;
+      display: none;
+    }
+    .notif-item.active .notif-sub { display: block; }
+
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      width: 42px; height: 24px;
+      flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle-thumb {
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: white;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s;
+      pointer-events: none;
+    }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(18px); }
+
+    /* Push checkbox */
+    .push-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    .push-checkbox {
+      width: 18px; height: 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    /* ── PRIMARY BUTTON ── */
+    .btn-next {
+      width: 100%;
+      padding: 14px 20px;
+      background: var(--accent);
+      color: white;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-weight: 700;
+      transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-next:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(22,163,74,0.25);
+    }
+    .btn-next:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-next.loading {
+      pointer-events: none;
+    }
+    .btn-spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-link {
+      font-size: 14px;
+      color: var(--text-2);
+      text-align: center;
+      margin-top: 14px;
+      display: block;
+    }
+    .btn-link a { color: var(--accent); font-weight: 600; }
+    .btn-link a:hover { text-decoration: underline; }
+
+    /* ── SUCCESS STEP ── */
+    .success-wrap { text-align: center; padding: 48px 40px; }
+    .success-check {
+      width: 72px; height: 72px;
+      background: var(--accent-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      animation: checkPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    @keyframes checkPop {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .success-check svg { animation: drawCheck 0.4s ease 0.3s both; }
+    @keyframes drawCheck {
+      from { stroke-dashoffset: 50; }
+      to { stroke-dashoffset: 0; }
+    }
+    .success-check svg path {
+      stroke-dasharray: 50;
+      stroke-dashoffset: 50;
+    }
+    .success-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .success-sub {
+      font-size: 16px;
+      color: var(--text-2);
+      margin-bottom: 32px;
+      max-width: 360px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .success-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 36px;
+      text-align: left;
+    }
+    .success-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .success-item-icon {
+      width: 32px; height: 32px;
+      background: var(--accent-light);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .success-item p {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+    .success-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-listing {
+      padding: 13px 20px;
+      background: var(--accent);
+      color: white;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      transition: background 0.18s, transform 0.18s;
+    }
+    .btn-listing:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-home {
+      padding: 13px 20px;
+      background: var(--bg-card);
+      color: var(--text-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .btn-home:hover { background: var(--border); }
+
+    /* ── CONFETTI ── */
+    .confetti-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 999;
+      overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute;
+      top: -12px;
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ── SUNBIZ VERIFY HELPER ── */
+    .verify-helper {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+    .verify-helper a {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .verify-helper a:hover { text-decoration: underline; }
+
+    /* ── PRIVACY NOTE ── */
+    .privacy-note {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 12px;
+      text-align: center;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .privacy-note svg { flex-shrink: 0; margin-top: 1px; }
+
+    /* ── STEP PROGRESS HEADER ── */
+    .progress-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    /* ── DIVIDER ── */
+    .card-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 40px;
+    }
+    .card-footer {
+      padding: 16px 40px;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .step-panel { padding: 28px 20px; }
+      .card-footer { padding: 14px 20px; }
+      .card-divider { margin: 0 20px; }
+      .form-row { grid-template-columns: 1fr; }
+      .bank-row { grid-template-columns: 1fr; }
+      .success-wrap { padding: 36px 24px; }
+    }
+    @media (max-width: 400px) {
+      .step-label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CONFETTI CONTAINER -->
+  <div class="confetti-container" id="confettiContainer" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="LocalIntel home">
+        <div class="logo-dot" aria-hidden="true"></div>
+        LocalIntel
+      </a>
+      <a href="index.html" class="nav-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Back to home
+      </a>
+    </div>
+  </nav>
+
+  <!-- PAGE -->
+  <div class="page-wrap">
+    <div class="claim-layout">
+
+      <!-- STEP INDICATOR -->
+      <nav class="step-indicator" aria-label="Claim progress">
+        <div class="step-item">
+          <div class="step-circle active" id="sc1" aria-current="step">1</div>
+          <div class="step-connector" id="conn1"></div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle" id="sc2">2</div>
+          <div class="step-connector" id="conn2"></div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle" id="sc3">3</div>
+          <div class="step-connector" id="conn3"></div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle" id="sc4">4</div>
+          <div class="step-connector" id="conn4"></div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle" id="sc5">5</div>
+          <div class="step-connector" id="conn5"></div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle" id="sc6">6</div>
+          <div class="step-connector"></div>
+        </div>
+      </nav>
+
+      <!-- CLAIM CARD -->
+      <div class="claim-card" role="main">
+
+        <!-- STEP 1 — Find Business -->
+        <div class="step-panel active" id="step1" aria-labelledby="s1-heading">
+          <div class="progress-label">Step 1 of 5</div>
+          <h1 class="step-heading" id="s1-heading">Find your business listing</h1>
+          <p class="step-sub">Enter your business name or Florida Sunbiz document number. We'll find your listing in the state database.</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="bizName">Business name</label>
+              <input class="form-input" type="text" id="bizName" placeholder="e.g. McFlamingo" autocomplete="organization">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="bizZip">ZIP code</label>
+              <input class="form-input" type="text" id="bizZip" placeholder="e.g. 32082" inputmode="numeric" maxlength="5">
+            </div>
+          </div>
+
+          <div class="form-separator">or</div>
+
+          <div class="form-group">
+            <label class="form-label" for="sunbizId">Sunbiz document number</label>
+            <input class="form-input" type="text" id="sunbizId" placeholder="e.g. L21000012345" autocapitalize="characters">
+            <span class="form-hint">Found on your Florida state business registration.</span>
+          </div>
+
+          <!-- Loading skeleton (hidden by default) -->
+          <div id="searchSkeleton" class="result-card loading" style="display:none;">
+            <div class="skeleton" style="width:60%;height:18px;margin-bottom:10px;"></div>
+            <div class="skeleton" style="width:80%;height:14px;margin-bottom:8px;"></div>
+            <div class="skeleton" style="width:45%;height:14px;margin-bottom:16px;"></div>
+            <div class="skeleton" style="height:40px;border-radius:6px;"></div>
+          </div>
+
+          <!-- Result card (hidden by default) -->
+          <div class="result-card" id="searchResult">
+            <div class="result-biz-name" id="r-name">McFlamingo LLC</div>
+            <div class="result-biz-addr" id="r-addr">205 Odoms Mill Blvd · Ponte Vedra Beach · 32082</div>
+            <div class="result-tags">
+              <span class="result-tag" id="r-cat">Restaurant / Food</span>
+              <span class="result-tag" id="r-sunbiz">Sunbiz: L21000012345</span>
+              <span class="result-tag status-active">Active</span>
+            </div>
+            <button class="btn-confirm" onclick="confirmBusiness()">This is my business →</button>
+          </div>
+
+          <button class="btn-next" id="btn-search" onclick="searchBusiness()">
+            Find My Business →
+          </button>
+
+          <span class="btn-link">Not listed? <a href="mailto:erik@mcflamingo.com">Contact us →</a></span>
+        </div>
+
+        <!-- STEP 2 — Verify Ownership -->
+        <div class="step-panel" id="step2" aria-labelledby="s2-heading">
+          <div class="progress-label">Step 2 of 5</div>
+          <h2 class="step-heading" id="s2-heading">Confirm you own this business</h2>
+          <p class="step-sub">Enter your Florida Sunbiz document number to verify ownership. This is the unique number on your state registration.</p>
+
+          <div class="verify-helper">
+            Find your number at <a href="https://search.sunbiz.org" target="_blank" rel="noopener">search.sunbiz.org</a> under your business registration — it starts with a letter followed by numbers (e.g. L21000012345). <a href="https://search.sunbiz.org" target="_blank" rel="noopener">Look up my Sunbiz number →</a>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="verifyDoc">Sunbiz document number</label>
+            <div class="input-wrap">
+              <input class="form-input" type="text" id="verifyDoc" placeholder="e.g. L21000012345" autocapitalize="characters" oninput="validateSunbiz(this)">
+              <span class="input-icon" id="sunbizIcon"></span>
+            </div>
+            <div class="form-error" id="sunbizError">Enter a valid Sunbiz number (e.g. L21000012345)</div>
+            <span class="form-hint">Format: one letter + 11 digits (e.g. L21000012345)</span>
+          </div>
+
+          <div class="privacy-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            We only use this to confirm you're the registered agent or owner. We never share it.
+          </div>
+
+          <button class="btn-next" id="btn-verify" onclick="verifyOwnership()" style="margin-top: 24px;">
+            Verify Ownership →
+          </button>
+        </div>
+
+        <!-- STEP 3 — Payment Method -->
+        <div class="step-panel" id="step3" aria-labelledby="s3-heading">
+          <div class="progress-label">Step 3 of 5</div>
+          <h2 class="step-heading" id="s3-heading">How do you want to get paid?</h2>
+          <p class="step-sub">Choose one or more. You can add others later from your account settings.</p>
+
+          <div class="payment-options">
+
+            <!-- Card A: Crypto -->
+            <div class="payment-card" id="payCardCrypto" onclick="togglePayment('crypto')">
+              <div class="payment-check"><div class="payment-check-inner"></div></div>
+              <div class="payment-card-header">
+                <div class="payment-icon">🔐</div>
+                <div>
+                  <div class="payment-card-title">Crypto Wallet <span class="coming-soon">Coming Soon</span></div>
+                  <div class="payment-card-desc">Receive payments in USDC or pathUSD instantly.</div>
+                </div>
+              </div>
+              <div class="payment-fields">
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label class="form-label" for="cryptoAddr">Wallet address</label>
+                  <input class="form-input" type="text" id="cryptoAddr" placeholder="0x..." style="font-family: monospace; font-size: 13px;">
+                </div>
+                <button style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:6px;font-size:14px;font-weight:600;color:var(--text-2);background:var(--bg-card);cursor:not-allowed;opacity:0.6;" disabled>
+                  Connect MetaMask / Coinbase Wallet — coming soon
+                </button>
+              </div>
+            </div>
+
+            <!-- Card B: Bank ACH -->
+            <div class="payment-card" id="payCardBank" onclick="togglePayment('bank')">
+              <div class="payment-check"><div class="payment-check-inner"></div></div>
+              <div class="payment-card-header">
+                <div class="payment-icon">🏦</div>
+                <div>
+                  <div class="payment-card-title">Bank Account (ACH)</div>
+                  <div class="payment-card-desc">Direct deposit to your checking account. 1–2 business days.</div>
+                </div>
+              </div>
+              <div class="payment-fields">
+                <div class="bank-row">
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="routingNum">Routing number</label>
+                    <input class="form-input" type="text" id="routingNum" placeholder="9 digits" inputmode="numeric" maxlength="9" style="font-size:14px;">
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="accountNum">Account number</label>
+                    <input class="form-input" type="text" id="accountNum" placeholder="Account #" inputmode="numeric" style="font-size:14px;">
+                  </div>
+                </div>
+                <div class="form-group" style="margin-top:10px;margin-bottom:0;">
+                  <label class="form-label" for="accountType">Account type</label>
+                  <select class="bank-select" id="accountType">
+                    <option value="">Select type</option>
+                    <option value="checking">Checking</option>
+                    <option value="savings">Savings</option>
+                  </select>
+                </div>
+                <div class="privacy-note" style="margin-top:10px;text-align:left;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  Powered by secure ACH transfer. Bank details encrypted and never stored in plain text.
+                </div>
+              </div>
+            </div>
+
+            <!-- Card C: Both -->
+            <div class="payment-card" id="payCardBoth" onclick="togglePayment('both')">
+              <div class="payment-check"><div class="payment-check-inner"></div></div>
+              <div class="payment-card-header">
+                <div class="payment-icon">⚡</div>
+                <div>
+                  <div class="payment-card-title">Use Both</div>
+                  <div class="payment-card-desc">Crypto for instant payouts, bank for amounts over $100. Best of both.</div>
+                </div>
+              </div>
+              <div class="payment-fields">
+                <p style="font-size:14px;color:var(--text-2);line-height:1.55;">You'll be prompted to set up both methods in your account dashboard after claiming. We'll use crypto for fast micro-payments and ACH for larger job payouts.</p>
+              </div>
+            </div>
+
+          </div>
+
+          <button class="btn-next" id="btn-payment" onclick="nextFromPayment()" disabled>
+            Continue →
+          </button>
+        </div>
+
+        <!-- STEP 4 — Notifications -->
+        <div class="step-panel" id="step4" aria-labelledby="s4-heading">
+          <div class="progress-label">Step 4 of 5</div>
+          <h2 class="step-heading" id="s4-heading">How should we reach you when a job comes in?</h2>
+          <p class="step-sub">Jobs post fast. The faster we reach you, the better your chances of claiming it.</p>
+
+          <div class="notif-options">
+            <!-- SMS -->
+            <div class="notif-item" id="notifSms">
+              <div class="notif-header">
+                <div class="notif-header-left">
+                  <span class="notif-emoji">📱</span>
+                  <span class="notif-title">SMS</span>
+                </div>
+                <label class="toggle" aria-label="Enable SMS notifications">
+                  <input type="checkbox" id="smsToggle" onchange="toggleNotif('sms', this.checked)">
+                  <span class="toggle-track"></span>
+                  <span class="toggle-thumb"></span>
+                </label>
+              </div>
+              <div class="notif-sub">
+                <div class="form-group" style="margin-bottom:0;margin-top:4px;">
+                  <label class="form-label" for="smsPhone">Phone number</label>
+                  <input class="form-input" type="tel" id="smsPhone" placeholder="+1 (904) 555-0100" autocomplete="tel" style="font-size:14px;">
+                </div>
+                <span class="form-hint" style="margin-top:6px;display:block;">Fastest. We text you when a matching job posts.</span>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="notif-item" id="notifEmail">
+              <div class="notif-header">
+                <div class="notif-header-left">
+                  <span class="notif-emoji">📧</span>
+                  <span class="notif-title">Email</span>
+                </div>
+                <label class="toggle" aria-label="Enable email notifications">
+                  <input type="checkbox" id="emailToggle" onchange="toggleNotif('email', this.checked)">
+                  <span class="toggle-track"></span>
+                  <span class="toggle-thumb"></span>
+                </label>
+              </div>
+              <div class="notif-sub">
+                <div class="form-group" style="margin-bottom:0;margin-top:4px;">
+                  <label class="form-label" for="emailAddr">Email address</label>
+                  <input class="form-input" type="email" id="emailAddr" placeholder="you@example.com" autocomplete="email" style="font-size:14px;">
+                </div>
+                <span class="form-hint" style="margin-top:6px;display:block;">Good for daily job digests and weekly summaries.</span>
+              </div>
+            </div>
+
+            <!-- Push -->
+            <div class="notif-item" id="notifPush">
+              <div class="notif-header">
+                <div class="notif-header-left">
+                  <span class="notif-emoji">🔔</span>
+                  <span class="notif-title">Push Notifications</span>
+                </div>
+                <label class="toggle" aria-label="Enable push notifications">
+                  <input type="checkbox" id="pushToggle" onchange="toggleNotif('push', this.checked)">
+                  <span class="toggle-track"></span>
+                  <span class="toggle-thumb"></span>
+                </label>
+              </div>
+              <div class="notif-sub">
+                <span>Browser and app notifications when you're online. Instant, no number needed.</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-next" onclick="nextFromNotif()">
+            Almost done →
+          </button>
+        </div>
+
+        <!-- STEP 5 — Verify Code -->
+        <div class="step-panel" id="step5" aria-labelledby="s5-heading">
+          <h2 class="step-title" id="s5-heading">Enter your verification code</h2>
+          <p class="step-sub" id="verifyCodeHint">We sent a 6-digit code to your contact. Enter it below.</p>
+
+          <div class="field-group" style="max-width:240px;margin:32px auto 0">
+            <label class="form-label" for="verifyCodeInput">6-digit code</label>
+            <input class="form-input" type="text" id="verifyCodeInput"
+              placeholder="123456" maxlength="6" inputmode="numeric"
+              autocomplete="one-time-code"
+              style="font-size:28px;letter-spacing:0.3em;text-align:center;"
+              oninput="this.value=this.value.replace(/\D/g,'');document.getElementById('verifyCodeError').classList.remove('show');">
+            <p class="form-error" id="verifyCodeError"></p>
+          </div>
+
+          <div style="text-align:center;margin-top:32px">
+            <button class="btn-next" id="btn-verify-code" onclick="submitVerifyCode()">
+              Verify &amp; Claim →
+            </button>
+          </div>
+          <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-3)">
+            Didn't get it? <button onclick="nextFromNotif()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;padding:0;text-decoration:underline">Resend code</button>
+          </p>
+        </div>
+
+        <!-- STEP 6 — Success -->
+        <div class="step-panel" id="step6" aria-labelledby="s6-heading">
+          <div class="success-wrap">
+            <div class="success-check" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#16A34A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 18l7 7 13-14"/>
+              </svg>
+            </div>
+            <h2 class="success-title" id="s6-heading">You're in the network.</h2>
+            <p class="success-sub">Your listing is claimed and live in LocalIntel. Here's what happens next:</p>
+
+            <div class="success-items">
+              <div class="success-item">
+                <div class="success-item-icon">📲</div>
+                <p>When an agent queries your ZIP and category, you'll get notified — via whatever channels you selected.</p>
+              </div>
+              <div class="success-item">
+                <div class="success-item-icon">💡</div>
+                <p>Market intelligence lands in your inbox automatically. No dashboard to check. It comes to you.</p>
+              </div>
+              <div class="success-item">
+                <div class="success-item-icon">✅</div>
+                <p>Your business is now a verified node in the LocalIntel network. Confidence badge applied to every record tied to your Sunbiz ID.</p>
+              </div>
+            </div>
+
+            <div class="success-actions">
+              <a href="index.html" class="btn-home">Back to home</a>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end .claim-card -->
+
+    </div><!-- end .claim-layout -->
+  </div><!-- end .page-wrap -->
+
+  <script>
+    // ── STATE ──
+    const API = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+
+    const state = {
+      currentStep: 1,
+      business: null,        // full row from Postgres
+      sunbizVerified: false,
+      paymentMethod: null,
+      notifications: { sms: false, email: false, push: false },
+      claimChannel: null,    // 'email' or 'sms'
+    };
+
+    // ── STEP NAVIGATION ──
+    function goToStep(n) {
+      // Hide current
+      const prev = document.getElementById('step' + state.currentStep);
+      prev.classList.remove('active');
+
+      // Update circles
+      updateStepIndicator(n);
+
+      // Show next with animation
+      state.currentStep = n;
+      const next = document.getElementById('step' + n);
+      next.classList.add('active');
+
+      // Scroll to top of card
+      document.querySelector('.claim-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function updateStepIndicator(activeStep) {
+      for (let i = 1; i <= 6; i++) {
+        const circle = document.getElementById('sc' + i);
+        circle.classList.remove('active', 'done');
+        if (i < activeStep) {
+          circle.classList.add('done');
+          circle.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        } else if (i === activeStep) {
+          circle.classList.add('active');
+          circle.textContent = i;
+        } else {
+          circle.textContent = i;
+        }
+
+        // Update connector
+        const conn = document.getElementById('conn' + i);
+        if (conn) conn.classList.toggle('done', i < activeStep);
+      }
+    }
+
+    // ── STEP 1: SEARCH ──
+    function searchBusiness() {
+      const name = document.getElementById('bizName').value.trim();
+      const zip  = document.getElementById('bizZip').value.trim();
+      const doc  = document.getElementById('sunbizId').value.trim();
+
+      if (!name && !doc) {
+        document.getElementById('bizName').focus();
+        document.getElementById('bizName').classList.add('error');
+        return;
+      }
+
+      const btn = document.getElementById('btn-search');
+      btn.innerHTML = '<span class="btn-spinner"></span> Searching...';
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      document.getElementById('searchResult').classList.remove('show');
+      document.getElementById('searchSkeleton').style.display = 'block';
+
+      // Live lookup from Postgres
+      const params = new URLSearchParams();
+      if (name) params.set('name', name);
+      if (doc)  params.set('zip', '');   // doc number isn't a zip — just use name
+      if (!name && doc) params.set('name', doc); // fallback: search doc as name
+
+      fetch(`${API}/claim/lookup?${params}`)
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('searchSkeleton').style.display = 'none';
+
+          const results = data.results || [];
+          if (!results.length) {
+            // Show no-results state
+            document.getElementById('r-name').textContent = 'No businesses found';
+            document.getElementById('r-addr').textContent = 'Try a different name or ZIP code.';
+            document.getElementById('r-cat').textContent = '';
+            document.getElementById('r-sunbiz').textContent = '';
+            // Disable confirm button
+            const confirmBtn = document.querySelector('#searchResult .btn-next');
+            if (confirmBtn) confirmBtn.disabled = true;
+            document.getElementById('searchResult').classList.add('show');
+          } else {
+            const biz = results[0];  // best match
+            state.business = biz;    // full Postgres row
+
+            document.getElementById('r-name').textContent = biz.name || '—';
+            document.getElementById('r-addr').textContent =
+              [biz.address, biz.city, biz.zip].filter(Boolean).join(' · ');
+            document.getElementById('r-cat').textContent =
+              [biz.category, biz.category_group].filter(Boolean).join(' / ');
+            document.getElementById('r-sunbiz').textContent =
+              biz.sunbiz_doc_number ? 'Sunbiz: ' + biz.sunbiz_doc_number : '';
+
+            if (biz.is_claimed) {
+              const confirmBtn = document.querySelector('#searchResult .btn-next');
+              if (confirmBtn) {
+                confirmBtn.textContent = 'Already Claimed';
+                confirmBtn.disabled = true;
+              }
+            }
+
+            document.getElementById('searchResult').classList.add('show');
+          }
+
+          btn.innerHTML = 'Find My Business →';
+          btn.classList.remove('loading');
+          btn.disabled = false;
+        })
+        .catch(err => {
+          document.getElementById('searchSkeleton').style.display = 'none';
+          document.getElementById('r-name').textContent = 'Connection error';
+          document.getElementById('r-addr').textContent = err.message;
+          document.getElementById('r-cat').textContent = '';
+          document.getElementById('r-sunbiz').textContent = '';
+          document.getElementById('searchResult').classList.add('show');
+          btn.innerHTML = 'Find My Business →';
+          btn.classList.remove('loading');
+          btn.disabled = false;
+        });
+    }
+
+    function confirmBusiness() {
+      // Pre-fill sunbiz doc in step 2
+      if (state.business && state.business.sunbiz) {
+        const v = document.getElementById('verifyDoc');
+        v.value = state.business.sunbiz;
+        validateSunbiz(v);
+      }
+      goToStep(2);
+    }
+
+    // Clear error on input
+    document.getElementById('bizName').addEventListener('input', function() {
+      this.classList.remove('error');
+    });
+
+    // ── STEP 2: VERIFY ──
+    function validateSunbiz(input) {
+      const val = input.value.trim().toUpperCase();
+      input.value = val;
+      const icon = document.getElementById('sunbizIcon');
+      const err = document.getElementById('sunbizError');
+      // Valid pattern: 1 letter + 8-12 digits
+      const valid = /^[A-Z]\d{8,12}$/.test(val);
+
+      if (val.length === 0) {
+        input.classList.remove('valid', 'error');
+        icon.innerHTML = '';
+        err.classList.remove('show');
+      } else if (valid) {
+        input.classList.add('valid');
+        input.classList.remove('error');
+        err.classList.remove('show');
+        icon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+      } else if (val.length >= 3) {
+        input.classList.add('error');
+        input.classList.remove('valid');
+        err.classList.add('show');
+        icon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+      }
+    }
+
+    function verifyOwnership() {
+      const input = document.getElementById('verifyDoc');
+      const val = input.value.trim().toUpperCase();
+      const valid = /^[A-Z]\d{8,12}$/.test(val);
+
+      if (!valid) {
+        input.classList.add('error');
+        document.getElementById('sunbizError').classList.add('show');
+        input.focus();
+        return;
+      }
+
+      const btn = document.getElementById('btn-verify');
+      btn.innerHTML = '<span class="btn-spinner"></span> Verifying...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        state.sunbizVerified = true;
+        btn.innerHTML = 'Verify Ownership →';
+        btn.disabled = false;
+        goToStep(3);
+      }, 1200);
+    }
+
+    // ── STEP 3: PAYMENT ──
+    let selectedPayments = new Set();
+
+    function togglePayment(type) {
+      const cardMap = { crypto: 'payCardCrypto', bank: 'payCardBank', both: 'payCardBoth' };
+      const card = document.getElementById(cardMap[type]);
+      const isSelected = card.classList.contains('selected');
+
+      if (isSelected) {
+        card.classList.remove('selected');
+        selectedPayments.delete(type);
+      } else {
+        card.classList.add('selected');
+        selectedPayments.add(type);
+      }
+
+      // Enable continue if at least one selected
+      document.getElementById('btn-payment').disabled = selectedPayments.size === 0;
+    }
+
+    function nextFromPayment() {
+      state.paymentMethod = [...selectedPayments];
+      goToStep(4);
+    }
+
+    // ── STEP 4: NOTIFICATIONS ──
+    function toggleNotif(type, checked) {
+      state.notifications[type] = checked;
+      const itemMap = { sms: 'notifSms', email: 'notifEmail', push: 'notifPush' };
+      const item = document.getElementById(itemMap[type]);
+      item.classList.toggle('active', checked);
+    }
+
+    function nextFromNotif() {
+      const btn = document.querySelector('#step4 .btn-next');
+
+      if (!state.business?.business_id) {
+        alert('No business selected. Please go back to step 1.');
+        return;
+      }
+
+      const contactEmail = document.getElementById('emailAddr')?.value.trim() || '';
+      const contactPhone = document.getElementById('smsPhone')?.value.trim() || '';
+
+      if (!contactEmail && !contactPhone) {
+        alert('Please enter an email address or phone number so we can send your verification code.');
+        return;
+      }
+
+      btn.innerHTML = '<span class="btn-spinner"></span> Sending code...';
+      btn.disabled = true;
+
+      // Detect carrier from phone number (default verizon — user can change post-claim)
+      const carrier = 'verizon';
+
+      fetch(`${API}/claim/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          business_id:   state.business.business_id,
+          contact_email: contactEmail || null,
+          contact_phone: contactPhone || null,
+          carrier,
+          notify_sms:   state.notifications.sms,
+          notify_email: state.notifications.email,
+          notify_push:  state.notifications.push,
+          notify_web:   true,  // always on
+        }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          btn.innerHTML = 'Almost done →';
+          btn.disabled = false;
+
+          if (data.error) {
+            if (data.claimed) {
+              // Already claimed — jump straight to success
+              goToStep(6);
+              launchConfetti();
+              return;
+            }
+            alert('Error: ' + data.error);
+            return;
+          }
+
+          state.claimChannel = data.channel; // 'email' or 'sms'
+
+          // Update step 5 messaging
+          const codeHint = document.getElementById('verifyCodeHint');
+          if (codeHint) {
+            codeHint.textContent = data.channel === 'email'
+              ? `We sent a 6-digit code to ${contactEmail}. Enter it below.`
+              : `We sent a 6-digit code via SMS to ${contactPhone}. Enter it below.`;
+          }
+
+          goToStep(5);
+        })
+        .catch(err => {
+          btn.innerHTML = 'Almost done →';
+          btn.disabled = false;
+          alert('Network error: ' + err.message);
+        });
+    }
+
+    // ── STEP 5: VERIFY CODE ──
+    function submitVerifyCode() {
+      const codeInput = document.getElementById('verifyCodeInput');
+      const code = (codeInput?.value || '').replace(/\D/g, '');
+      if (code.length !== 6) {
+        codeInput?.classList.add('error');
+        return;
+      }
+      codeInput?.classList.remove('error');
+
+      const btn = document.getElementById('btn-verify-code');
+      if (btn) { btn.innerHTML = '<span class="btn-spinner"></span> Verifying...'; btn.disabled = true; }
+
+      fetch(`${API}/claim/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          business_id: state.business.business_id,
+          token: code,
+        }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (btn) { btn.innerHTML = 'Verify →'; btn.disabled = false; }
+          if (data.error) {
+            const errEl = document.getElementById('verifyCodeError');
+            if (errEl) { errEl.textContent = data.error; errEl.classList.add('show'); }
+            return;
+          }
+          // Success!
+          goToStep(6);
+          launchConfetti();
+        })
+        .catch(err => {
+          if (btn) { btn.innerHTML = 'Verify →'; btn.disabled = false; }
+          alert('Network error: ' + err.message);
+        });
+    }
+
+    // ── CONFETTI ──
+    function launchConfetti() {
+      const container = document.getElementById('confettiContainer');
+      const colors = ['#16A34A','#4ADE80','#DCFCE7','#FCD34D','#A78BFA','#F87171','#60A5FA','#34D399'];
+
+      for (let i = 0; i < 22; i++) {
+        setTimeout(() => {
+          const piece = document.createElement('div');
+          piece.className = 'confetti-piece';
+          piece.style.left = Math.random() * 100 + 'vw';
+          piece.style.width = (6 + Math.random() * 6) + 'px';
+          piece.style.height = (6 + Math.random() * 6) + 'px';
+          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+          piece.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+          piece.style.animationDelay = '0s';
+          container.appendChild(piece);
+          setTimeout(() => piece.remove(), 5000);
+        }, i * 60);
+      }
+    }
+
+    // ── ALLOW ENTER KEY TO SUBMIT ──
+    document.getElementById('step1').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') searchBusiness();
+    });
+    document.getElementById('step2').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') verifyOwnership();
+    });
+
+    // ── INITIAL STATE ──
+    updateStepIndicator(1);
+  </script>
+
+</body>
+</html>

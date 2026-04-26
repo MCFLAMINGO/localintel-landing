@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LocalIntel — Local Business Intelligence for Northeast Florida</title>
+  <meta name="description" content="Real data on businesses, permits, market gaps, and growth trends across Northeast Florida. Used by realtors, contractors, and AI agents.">
+  <meta property="og:title" content="LocalIntel — The local intelligence layer your market is missing.">
+  <meta property="og:description" content="Real data on businesses, permits, market gaps, and growth trends across Northeast Florida.">
+  <meta property="og:url" content="https://thelocalintel.com">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --bg: #FFFFFF;
+      --bg-card: #F9FAFB;
+      --bg-dark: #111827;
+      --text: #111827;
+      --text-2: #6B7280;
+      --text-3: #9CA3AF;
+      --accent: #16A34A;
+      --accent-hover: #15803D;
+      --accent-light: #DCFCE7;
+      --accent-text: #166534;
+      --border: #E5E7EB;
+      --border-dark: #374151;
+      --radius-sm: 6px;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --max: 1160px;
+      --nav-h: 64px;
+    }
+
+    /* ── BASE ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: var(--nav-h);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body {
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+    h1,h2,h3,h4 { line-height: 1.2; text-wrap: balance; }
+    p { text-wrap: pretty; }
+
+    /* ── UTILITIES ── */
+    .container {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1;
+      transition: all 0.18s ease;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(22,163,74,0.25);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-secondary:hover {
+      border-color: var(--text-2);
+      background: var(--bg-card);
+    }
+    .btn-ghost {
+      color: var(--accent);
+      font-weight: 600;
+      padding: 12px 0;
+    }
+    .btn-ghost:hover { text-decoration: underline; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: var(--nav-h);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      color: var(--text);
+    }
+    .logo-dot {
+      width: 22px;
+      height: 22px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .logo-dot::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-2);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      padding: 9px 18px;
+      font-size: 14px;
+    }
+    .nav-mobile-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px;
+      cursor: pointer;
+    }
+    .nav-mobile-toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: var(--nav-h);
+      left: 0; right: 0;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px;
+      z-index: 99;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      padding: 12px 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-2);
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu .btn-primary {
+      margin-top: 8px;
+      text-align: center;
+      justify-content: center;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding-top: calc(var(--nav-h) + 72px);
+      padding-bottom: 80px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-light);
+      color: var(--accent-text);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 28px;
+      letter-spacing: 0.01em;
+    }
+    .hero-badge-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.85); }
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      max-width: 760px;
+      margin: 0 auto 20px;
+      line-height: 1.1;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      color: var(--text-2);
+      max-width: 600px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero-ctas .btn { font-size: 16px; padding: 14px 26px; }
+    .hero-stats {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-top: 60px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      overflow: hidden;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-stat {
+      flex: 1;
+      padding: 18px 20px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .hero-stat:last-child { border-right: none; }
+    .hero-stat-num {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      display: block;
+      letter-spacing: -0.02em;
+    }
+    .hero-stat-label {
+      font-size: 12px;
+      color: var(--text-2);
+      font-weight: 500;
+      margin-top: 2px;
+      display: block;
+    }
+
+    /* ── SECTION SHARED ── */
+    .section {
+      padding: 96px 0;
+    }
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-heading {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: clamp(1rem, 1.3vw, 1.1rem);
+      color: var(--text-2);
+      max-width: 520px;
+      line-height: 1.6;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+    .how-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .how-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+    .how-num {
+      width: 36px;
+      height: 36px;
+      background: var(--accent-light);
+      color: var(--accent-text);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+    .how-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    .how-card p {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    /* ── FOR BUSINESS ── */
+    .for-biz {
+      background: var(--bg-dark);
+      color: white;
+    }
+    .for-biz .section-label { color: #4ADE80; }
+    .for-biz .section-heading { color: white; }
+    .for-biz .section-sub { color: #9CA3AF; }
+    .for-biz-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+    .for-biz-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .for-biz-card:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.14);
+    }
+    .for-biz-icon {
+      font-size: 26px;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+    .for-biz-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 8px;
+    }
+    .for-biz-card p {
+      font-size: 14px;
+      color: #9CA3AF;
+      line-height: 1.6;
+    }
+    .sunbiz-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      margin-bottom: 0;
+    }
+    .sunbiz-cta-text { max-width: 560px; }
+    .sunbiz-cta-actions { flex-shrink: 0; }
+    .btn-claim-dark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: white;
+      padding: 14px 26px;
+      border-radius: var(--radius-sm);
+      font-size: 16px;
+      font-weight: 600;
+      transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+    }
+    .btn-claim-dark:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(22,163,74,0.3);
+    }
+
+    /* ── QUERY EXAMPLES ── */
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 48px;
+    }
+    .example-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .example-card:hover {
+      box-shadow: var(--shadow);
+      border-color: #D1FAE5;
+    }
+    .example-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+    .tag-realtor { background: #EFF6FF; color: #1D4ED8; }
+    .tag-health  { background: #FEF3C7; color: #92400E; }
+    .tag-retail  { background: #F3E8FF; color: #7C3AED; }
+    .tag-construction { background: #FFF7ED; color: #C2410C; }
+    .tag-restaurant { background: #ECFDF5; color: #166534; }
+    .example-query {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .example-answer {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.55;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+      margin-top: 12px;
+    }
+    .example-answer-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+    .price-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+    }
+    .price-card.featured {
+      background: #F0FDF4;
+      border-color: #BBF7D0;
+    }
+    .price-card-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-2);
+      margin-bottom: 8px;
+    }
+    .price-card.featured .price-card-label { color: var(--accent); }
+    .price-amount {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+    .price-desc {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .price-detail {
+      font-size: 13px;
+      color: var(--text-2);
+      padding: 10px 0;
+      border-top: 1px solid var(--border);
+      line-height: 1.5;
+    }
+    .price-card.featured .price-detail { border-color: #BBF7D0; }
+    .pricing-note {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 14px;
+      color: var(--text-2);
+      font-weight: 500;
+    }
+    .pricing-note strong { color: var(--text); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg-dark);
+      color: #9CA3AF;
+      padding: 48px 0 32px;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 48px;
+      margin-bottom: 40px;
+    }
+    .footer-brand .nav-logo {
+      color: white;
+      margin-bottom: 12px;
+    }
+    .footer-brand p {
+      font-size: 14px;
+      color: #6B7280;
+      line-height: 1.6;
+      max-width: 280px;
+    }
+    .footer-links {
+      display: flex;
+      gap: 48px;
+    }
+    .footer-col h4 {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: white;
+      margin-bottom: 14px;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-col ul a {
+      font-size: 14px;
+      color: #6B7280;
+      transition: color 0.15s;
+    }
+    .footer-col ul a:hover { color: #D1FAE5; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-bottom p {
+      font-size: 13px;
+      color: #4B5563;
+    }
+    .footer-bottom a {
+      color: #6B7280;
+      transition: color 0.15s;
+    }
+    .footer-bottom a:hover { color: #9CA3AF; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .how-grid { grid-template-columns: 1fr; }
+      .for-biz-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .sunbiz-cta { flex-direction: column; gap: 24px; }
+      .footer-inner { flex-direction: column; gap: 36px; }
+      .footer-links { gap: 32px; }
+    }
+    @media (max-width: 720px) {
+      .hero { padding-top: calc(var(--nav-h) + 48px); padding-bottom: 56px; }
+      .section { padding: 72px 0; }
+      .hero-stats { flex-direction: column; border: none; gap: 0; }
+      .hero-stat { border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; border-right: 1px solid var(--border) !important; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-mobile-toggle { display: flex; }
+      .examples-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .footer-links { flex-direction: column; gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="LocalIntel home">
+        <div class="logo-dot" aria-hidden="true"></div>
+        LocalIntel
+      </a>
+      <ul class="nav-links">
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#for-business">For Business</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+      <a href="claim.html" class="btn btn-primary nav-cta">Claim Your Listing</a>
+      <button class="nav-mobile-toggle" aria-label="Open menu" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#how-it-works" onclick="toggleMenu()">How it works</a>
+    <a href="#for-business" onclick="toggleMenu()">For Business</a>
+    <a href="#pricing" onclick="toggleMenu()">Pricing</a>
+    <a href="claim.html" class="btn btn-primary">Claim Your Listing</a>
+  </div>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-badge">
+          <span class="hero-badge-dot" aria-hidden="true"></span>
+          Live · Northeast Florida · 113,000+ Businesses
+        </div>
+        <h1>The local intelligence layer your market is missing.</h1>
+        <p class="hero-sub">Real data on businesses, permits, market gaps, and growth trends across Northeast Florida. Used by realtors, contractors, and AI agents — all asking the same question: what's actually happening here?</p>
+        <div class="hero-ctas">
+          <a href="claim.html" class="btn btn-primary">Claim Your Business Listing</a>
+          <a href="#how-it-works" class="btn btn-secondary">Explore the Data →</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-num">113k+</span>
+            <span class="hero-stat-label">Businesses</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">360</span>
+            <span class="hero-stat-label">ZIP Codes</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">Live</span>
+            <span class="hero-stat-label">Permit Data</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">Daily</span>
+            <span class="hero-stat-label">Updates</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section" id="how-it-works" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <div class="container">
+        <div class="section-label">How it works</div>
+        <h2 class="section-heading">Simple. Fast. Local.</h2>
+        <p class="section-sub">Three steps from listing to job referrals.</p>
+        <div class="how-grid">
+          <div class="how-card">
+            <div class="how-num">01</div>
+            <h3>We map every business</h3>
+            <p>113,000 verified businesses from Florida state records, permits, and field data. Your competitors are already in here.</p>
+          </div>
+          <div class="how-card">
+            <div class="how-num">02</div>
+            <h3>You ask, we answer</h3>
+            <p>Any question about your market: who's operating, where the gaps are, what's growing. Plain English in, real answers out.</p>
+          </div>
+          <div class="how-card">
+            <div class="how-num">03</div>
+            <h3>Connect and get paid</h3>
+            <p>Claim your listing, link your payment method, and start receiving job referrals from agents and professionals who need local expertise.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOR BUSINESS -->
+    <section class="section for-biz" id="for-business">
+      <div class="container">
+        <div class="sunbiz-cta">
+          <div class="sunbiz-cta-text">
+            <div class="section-label">For Business</div>
+            <h2 class="section-heading">Your Sunbiz number is already your identity here.</h2>
+            <p class="section-sub">Every Florida business has a state-issued doc number. We've built the network on top of it. Claim yours in 2 minutes.</p>
+          </div>
+          <div class="sunbiz-cta-actions">
+            <a href="claim.html" class="btn-claim-dark">
+              Claim Your Listing →
+            </a>
+          </div>
+        </div>
+
+        <div class="for-biz-grid" style="margin-top: 56px;">
+          <div class="for-biz-card">
+            <div class="for-biz-icon">📋</div>
+            <h3>Verified by the state</h3>
+            <p>Your Sunbiz registration is the proof of identity. No extra verification needed — if you're on file in Tallahassee, you're good here.</p>
+          </div>
+          <div class="for-biz-card">
+            <div class="for-biz-icon">💰</div>
+            <h3>Get paid for what you know</h3>
+            <p>Answer questions about your market, earn royalties every time that answer is reused. Your local expertise has dollar value.</p>
+          </div>
+          <div class="for-biz-card">
+            <div class="for-biz-icon">🔔</div>
+            <h3>Jobs come to you</h3>
+            <p>When a job matches your ZIP code and category, you get notified instantly. One tap to claim it — no bidding wars, no platforms.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUERY EXAMPLES -->
+    <section class="section" id="examples">
+      <div class="container">
+        <div class="section-label">Real queries, real answers</div>
+        <h2 class="section-heading">What professionals are asking</h2>
+        <p class="section-sub">From realtors to contractors, here's what local intelligence actually looks like in the field.</p>
+        <div class="examples-grid">
+          <div class="example-card">
+            <span class="example-tag tag-realtor">Realtor</span>
+            <p class="example-query">"Which ZIP codes in St. Johns County have the most new business permits filed in the last 6 months?"</p>
+            <div class="example-answer">
+              <div class="example-answer-label">Answer preview</div>
+              ZIP 32092 (World Golf Village) leads with 47 new commercial permits. ZIP 32082 follows with 31. Both show strong Q1 momentum in services and professional trades.
+            </div>
+          </div>
+          <div class="example-card">
+            <span class="example-tag tag-health">Healthcare</span>
+            <p class="example-query">"Are there any urgent care gaps in the Nocatee area? I'm evaluating a clinic expansion."</p>
+            <div class="example-answer">
+              <div class="example-answer-label">Answer preview</div>
+              Nocatee (32081) has 2 active urgent care facilities for a population of ~28,000. Florida average is 1 per 10,000. Gap identified.
+            </div>
+          </div>
+          <div class="example-card">
+            <span class="example-tag tag-retail">Retail</span>
+            <p class="example-query">"What retail categories are underserved on the Southside of Jacksonville?"</p>
+            <div class="example-answer">
+              <div class="example-answer-label">Answer preview</div>
+              Home goods, specialty food, and fitness studios show fewer than half the density of comparable Northside corridors. Pet services also below avg.
+            </div>
+          </div>
+          <div class="example-card">
+            <span class="example-tag tag-construction">Construction</span>
+            <p class="example-query">"How many active licensed roofing contractors are operating in Duval County right now?"</p>
+            <div class="example-answer">
+              <div class="example-answer-label">Answer preview</div>
+              284 active roofing licenses in Duval as of today. 61 were added in the last 12 months — up 27% year-over-year, likely post-Ian response.
+            </div>
+          </div>
+          <div class="example-card">
+            <span class="example-tag tag-restaurant">Restaurant</span>
+            <p class="example-query">"What restaurant categories have the highest closure rate in Ponte Vedra Beach?"</p>
+            <div class="example-answer">
+              <div class="example-answer-label">Answer preview</div>
+              Fine dining shows a 34% 3-year closure rate in 32082. Fast-casual and café concepts are outperforming — avg tenure 4.1 years vs 1.8 for full-service.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="section" id="pricing" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <div class="container">
+        <div class="section-label">Pricing</div>
+        <h2 class="section-heading">Simple. No subscriptions.</h2>
+        <p class="section-sub">Pay for what you use. Earn from what you know. No minimums.</p>
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="price-card-label">Data Queries</div>
+            <div class="price-amount">$0.01–$0.15</div>
+            <div class="price-desc">Per query. For AI agents and professionals looking up local market data.</div>
+            <div class="price-detail">Pricing scales with query complexity. Simple lookups are $0.01. Full market analysis queries up to $0.15.</div>
+          </div>
+          <div class="price-card featured">
+            <div class="price-card-label">Job Routing</div>
+            <div class="price-amount">10%</div>
+            <div class="price-desc">Of job value. Only when payment clears — we only win when you win.</div>
+            <div class="price-detail">We match the job to your ZIP and category, you confirm, payment routes through the platform. No fee until the job is paid.</div>
+          </div>
+          <div class="price-card">
+            <div class="price-card-label">Knowledge Royalties</div>
+            <div class="price-amount">30%</div>
+            <div class="price-desc">Of every future query that reuses your answer. Earn while you sleep.</div>
+            <div class="price-detail">Contribute a verified answer about your market. Every time the system serves it to a paying query, 30% comes back to you.</div>
+          </div>
+        </div>
+        <p class="pricing-note"><strong>No subscriptions. No minimums.</strong> Claim your listing free. You pay nothing until you earn something.</p>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="section" style="text-align: center;">
+      <div class="container">
+        <h2 class="section-heading" style="max-width: 600px; margin: 0 auto 16px;">Your neighborhood knows more than Google.</h2>
+        <p class="section-sub" style="max-width: 480px; margin: 0 auto 36px;">We help you tap it — and get paid for it. Two minutes to claim your listing.</p>
+        <a href="claim.html" class="btn btn-primary" style="font-size: 17px; padding: 16px 32px;">Claim Your Business Listing →</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="/" class="nav-logo" aria-label="LocalIntel home">
+            <div class="logo-dot" aria-hidden="true"></div>
+            LocalIntel
+          </a>
+          <p>Local business intelligence for Northeast Florida. Powered by state records, permits, and people who know the market.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>Platform</h4>
+            <ul>
+              <li><a href="claim.html">Claim Your Listing</a></li>
+              <li><a href="#how-it-works">How it Works</a></li>
+              <li><a href="#examples">Live Examples</a></li>
+              <li><a href="#pricing">Pricing</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Company</h4>
+            <ul>
+              <li><a href="mailto:erik@mcflamingo.com">Contact Us</a></li>
+              <li><a href="https://search.sunbiz.org" target="_blank" rel="noopener">Sunbiz Lookup</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 LocalIntel · MCFL Restaurant Holdings LLC · Ponte Vedra Beach, FL</p>
+        <p><a href="mailto:erik@mcflamingo.com">erik@mcflamingo.com</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('open');
+    }
+
+    // Close mobile menu on outside click
+    document.addEventListener('click', function(e) {
+      const menu = document.getElementById('mobileMenu');
+      const toggle = document.querySelector('.nav-mobile-toggle');
+      if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+        menu.classList.remove('open');
+      }
+    });
+
+    // Smooth reveal on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.how-card, .for-biz-card, .example-card, .price-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(16px)';
+      el.style.transition = 'opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s, border-color 0.2s';
+      observer.observe(el);
+    });
+  </script>
+
+</body>
+</html>

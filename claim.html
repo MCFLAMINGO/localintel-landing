@@ -976,7 +976,7 @@
               <div class="payment-card-header">
                 <div class="payment-icon">🔐</div>
                 <div>
-                  <div class="payment-card-title">Crypto Wallet <span class="coming-soon">Coming Soon</span></div>
+                  <div class="payment-card-title">Crypto Wallet</div>
                   <div class="payment-card-desc">Receive payments in USDC or pathUSD instantly.</div>
                 </div>
               </div>
@@ -985,9 +985,7 @@
                   <label class="form-label" for="cryptoAddr">Wallet address</label>
                   <input class="form-input" type="text" id="cryptoAddr" placeholder="0x..." style="font-family: monospace; font-size: 13px;">
                 </div>
-                <button style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:6px;font-size:14px;font-weight:600;color:var(--text-2);background:var(--bg-card);cursor:not-allowed;opacity:0.6;" disabled>
-                  Connect MetaMask / Coinbase Wallet — coming soon
-                </button>
+                <p style="font-size:12px;color:var(--text-3);margin-top:4px;">Accepts any EVM wallet — MetaMask, Coinbase, or any 0x address.</p>
               </div>
             </div>
 
@@ -1038,7 +1036,28 @@
                 </div>
               </div>
               <div class="payment-fields">
-                <p style="font-size:14px;color:var(--text-2);line-height:1.55;">You'll be prompted to set up both methods in your account dashboard after claiming. We'll use crypto for fast micro-payments and ACH for larger job payouts.</p>
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label class="form-label" for="bothCryptoAddr">Wallet address</label>
+                  <input class="form-input" type="text" id="bothCryptoAddr" placeholder="0x..." style="font-family: monospace; font-size: 13px;">
+                </div>
+                <div class="bank-row" style="margin-bottom:10px;">
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="bothRoutingNum">Routing number</label>
+                    <input class="form-input" type="text" id="bothRoutingNum" placeholder="9 digits" inputmode="numeric" maxlength="9" style="font-size:14px;">
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="bothAccountNum">Account number</label>
+                    <input class="form-input" type="text" id="bothAccountNum" placeholder="Account #" inputmode="numeric" style="font-size:14px;">
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                  <label class="form-label" for="bothAccountType">Account type</label>
+                  <select class="bank-select" id="bothAccountType">
+                    <option value="">Select type</option>
+                    <option value="checking">Checking</option>
+                    <option value="savings">Savings</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -1192,12 +1211,33 @@
 
     const state = {
       currentStep: 1,
-      business: null,        // full row from Postgres
+      business: null,
       sunbizVerified: false,
       paymentMethod: null,
+      walletAddress: null,
+      bankRouting: null,
+      bankAccount: null,
+      bankAccountType: null,
       notifications: { sms: false, email: false, push: false },
-      claimChannel: null,    // 'email' or 'sms'
+      claimChannel: null,
     };
+
+    function saveState() {
+      try { sessionStorage.setItem('li_claim_state', JSON.stringify(state)); } catch(e) {}
+    }
+
+    function restoreState() {
+      try {
+        const saved = sessionStorage.getItem('li_claim_state');
+        if (!saved) return;
+        const s = JSON.parse(saved);
+        Object.assign(state, s);
+        if (state.currentStep > 1) goToStep(state.currentStep);
+      } catch(e) {}
+    }
+
+    // Restore on load
+    window.addEventListener('DOMContentLoaded', restoreState);
 
     // ── STEP NAVIGATION ──
     function goToStep(n) {
@@ -1281,7 +1321,8 @@
             document.getElementById('searchResult').classList.add('show');
           } else {
             const biz = results[0];  // best match
-            state.business = biz;    // full Postgres row
+            state.business = biz;
+            saveState();
 
             document.getElementById('r-name').textContent = biz.name || '—';
             document.getElementById('r-addr').textContent =
@@ -1326,6 +1367,7 @@
         v.value = state.business.sunbiz;
         validateSunbiz(v);
       }
+      saveState();
       goToStep(2);
     }
 
@@ -1405,7 +1447,88 @@
     }
 
     function nextFromPayment() {
-      state.paymentMethod = [...selectedPayments];
+      const methods = [...selectedPayments];
+
+      // Validate crypto wallet address
+      if (methods.includes('crypto')) {
+        const addr = document.getElementById('cryptoAddr')?.value.trim();
+        if (!addr) {
+          document.getElementById('cryptoAddr').focus();
+          document.getElementById('cryptoAddr').classList.add('error');
+          alert('Please enter your crypto wallet address.');
+          return;
+        }
+        document.getElementById('cryptoAddr').classList.remove('error');
+        state.walletAddress = addr;
+      }
+
+      // Validate bank details
+      if (methods.includes('bank')) {
+        const routing = document.getElementById('routingNum')?.value.trim();
+        const account = document.getElementById('accountNum')?.value.trim();
+        const acctType = document.getElementById('accountType')?.value;
+        if (!routing || routing.length !== 9) {
+          document.getElementById('routingNum').focus();
+          document.getElementById('routingNum').classList.add('error');
+          alert('Please enter a valid 9-digit routing number.');
+          return;
+        }
+        if (!account) {
+          document.getElementById('accountNum').focus();
+          document.getElementById('accountNum').classList.add('error');
+          alert('Please enter your account number.');
+          return;
+        }
+        if (!acctType) {
+          alert('Please select your account type (checking or savings).');
+          return;
+        }
+        document.getElementById('routingNum').classList.remove('error');
+        document.getElementById('accountNum').classList.remove('error');
+        state.bankRouting = routing;
+        state.bankAccount = account;
+        state.bankAccountType = acctType;
+      }
+
+      // Validate both
+      if (methods.includes('both')) {
+        const addr = document.getElementById('bothCryptoAddr')?.value.trim();
+        const routing = document.getElementById('bothRoutingNum')?.value.trim();
+        const account = document.getElementById('bothAccountNum')?.value.trim();
+        const acctType = document.getElementById('bothAccountType')?.value;
+        if (!addr) {
+          document.getElementById('bothCryptoAddr').focus();
+          document.getElementById('bothCryptoAddr').classList.add('error');
+          alert('Please enter your crypto wallet address.');
+          return;
+        }
+        if (!routing || routing.length !== 9) {
+          document.getElementById('bothRoutingNum').focus();
+          document.getElementById('bothRoutingNum').classList.add('error');
+          alert('Please enter a valid 9-digit routing number.');
+          return;
+        }
+        if (!account) {
+          document.getElementById('bothAccountNum').focus();
+          document.getElementById('bothAccountNum').classList.add('error');
+          alert('Please enter your account number.');
+          return;
+        }
+        if (!acctType) {
+          alert('Please select your account type (checking or savings).');
+          return;
+        }
+        document.getElementById('bothCryptoAddr').classList.remove('error');
+        document.getElementById('bothRoutingNum').classList.remove('error');
+        document.getElementById('bothAccountNum').classList.remove('error');
+        state.walletAddress = addr;
+        state.bankRouting = routing;
+        state.bankAccount = account;
+        state.bankAccountType = acctType;
+      }
+
+      state.paymentMethod = methods;
+      saveState();
       goToStep(4);
     }
 
@@ -1479,6 +1602,7 @@
               : `We sent a 6-digit code via SMS to ${contactPhone}. Enter it below.`;
           }
 
+          saveState();
           goToStep(5);
         })
         .catch(err => {
@@ -1517,7 +1641,8 @@
             if (errEl) { errEl.textContent = data.error; errEl.classList.add('show'); }
             return;
           }
-          // Success!
+          // Success — clear saved state
+          try { sessionStorage.removeItem('li_claim_state'); } catch(e) {}
           goToStep(6);
           launchConfetti();
         })

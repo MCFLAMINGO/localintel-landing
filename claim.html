@@ -932,6 +932,7 @@
               </a>
             </div>
             <button class="btn-confirm" onclick="confirmBusiness()">This is my business →</button>
+            <button onclick="resetSearch()" style="background:none;border:none;color:var(--text-2);font-size:13px;cursor:pointer;margin-top:6px;text-decoration:underline;width:100%;text-align:center;">Not my business — search again</button>
           </div>
 
           <button class="btn-next" id="btn-search" onclick="searchBusiness()">
@@ -1329,6 +1330,7 @@
             const confirmBtn = document.querySelector('#searchResult .btn-next');
             if (confirmBtn) confirmBtn.disabled = true;
             document.getElementById('searchResult').classList.add('show');
+            document.getElementById('btn-search').style.display = 'none';
           } else {
             const biz = results[0];  // best match
             state.business = biz;
@@ -1371,6 +1373,7 @@
             }
 
             document.getElementById('searchResult').classList.add('show');
+            document.getElementById('btn-search').style.display = 'none'; // hide search btn when result shows
           }
 
           btn.innerHTML = 'Find My Business →';
@@ -1399,6 +1402,17 @@
       }
       saveState();
       goToStep(2);
+    }
+
+    function resetSearch() {
+      document.getElementById('searchResult').classList.remove('show');
+      document.getElementById('btn-search').style.display = '';
+      document.getElementById('bizName').value = '';
+      document.getElementById('bizZip').value = '';
+      document.getElementById('sunbizId').value = '';
+      document.getElementById('bizName').focus();
+      state.business = null;
+      saveState();
     }
 
     // Clear error on input

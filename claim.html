@@ -919,8 +919,17 @@
             <div class="result-biz-addr" id="r-addr">205 Odoms Mill Blvd · Ponte Vedra Beach · 32082</div>
             <div class="result-tags">
               <span class="result-tag" id="r-cat">Restaurant / Food</span>
-              <span class="result-tag" id="r-sunbiz">Sunbiz: L21000012345</span>
               <span class="result-tag status-active">Active</span>
+            </div>
+            <div class="result-links" style="display:flex;gap:12px;margin:10px 0 14px;flex-wrap:wrap;">
+              <a id="r-sunbiz-link" href="https://search.sunbiz.org" target="_blank" rel="noopener"
+                style="font-size:13px;color:var(--accent);font-weight:600;text-decoration:none;display:flex;align-items:center;gap:4px;">
+                🏛️ View on Sunbiz →
+              </a>
+              <a id="r-osm-link" href="https://www.openstreetmap.org" target="_blank" rel="noopener"
+                style="font-size:13px;color:var(--accent);font-weight:600;text-decoration:none;display:flex;align-items:center;gap:4px;">
+                📍 Verify pin on OpenStreetMap →
+              </a>
             </div>
             <button class="btn-confirm" onclick="confirmBusiness()">This is my business →</button>
           </div>
@@ -1329,8 +1338,28 @@
               [biz.address, biz.city, biz.zip].filter(Boolean).join(' · ');
             document.getElementById('r-cat').textContent =
               [biz.category, biz.category_group].filter(Boolean).join(' / ');
-            document.getElementById('r-sunbiz').textContent =
-              biz.sunbiz_doc_number ? 'Sunbiz: ' + biz.sunbiz_doc_number : '';
+
+            // Sunbiz deep link — link directly to their business record if we have the doc number
+            const sunbizLink = document.getElementById('r-sunbiz-link');
+            if (sunbizLink) {
+              if (biz.sunbiz_doc_number) {
+                sunbizLink.href = `https://search.sunbiz.org/Inquiry/CorporationSearch/SearchResultDetail?inquirytype=EntityName&inquisitionType=null&searchTerm=${encodeURIComponent(biz.name)}&listNameIndex=0&direction=forwardIndex&corrDocNumber=${biz.sunbiz_doc_number}`;
+              } else {
+                sunbizLink.href = `https://search.sunbiz.org/Inquiry/CorporationSearch/ByName?SearchTerm=${encodeURIComponent(biz.name)}`;
+              }
+            }
+
+            // OSM link — zoom to their pin if we have coords, otherwise open edit mode
+            const osmLink = document.getElementById('r-osm-link');
+            if (osmLink) {
+              if (biz.lat && biz.lon) {
+                osmLink.href = `https://www.openstreetmap.org/?mlat=${biz.lat}&mlon=${biz.lon}&zoom=19`;
+                osmLink.title = 'View and verify your exact pin on OpenStreetMap';
+              } else {
+                osmLink.href = `https://www.openstreetmap.org/edit#map=17/30.19/-81.38`;
+                osmLink.title = 'Add your business pin on OpenStreetMap';
+              }
+            }
 
             if (biz.is_claimed) {
               const confirmBtn = document.querySelector('#searchResult .btn-next');
@@ -1544,7 +1573,9 @@
       const btn = document.querySelector('#step4 .btn-next');
 
       if (!state.business?.business_id) {
-        alert('No business selected. Please go back to step 1.');
+        // State lost (domain change, stale tab, etc.) — restart cleanly
+        try { sessionStorage.removeItem('li_claim_state'); } catch(e) {}
+        goToStep(1);
         return;
       }
 

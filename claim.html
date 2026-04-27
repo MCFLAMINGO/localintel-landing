@@ -1262,7 +1262,8 @@
       const next = document.getElementById('step' + n);
       next.classList.add('active');
 
-      // Scroll to top of card
+      // Scroll to top of page so step change is obvious
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       document.querySelector('.claim-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 

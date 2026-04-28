@@ -659,6 +659,7 @@
       <ul class="nav-links">
         <li><a href="#how-it-works">How it works</a></li>
         <li><a href="#for-business">For Business</a></li>
+        <li><a href="#for-agents">For Agents</a></li>
         <li><a href="#pricing">Pricing</a></li>
       </ul>
       <a href="claim.html" class="btn btn-primary nav-cta">Claim Your Listing</a>
@@ -672,6 +673,7 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="#how-it-works" onclick="toggleMenu()">How it works</a>
     <a href="#for-business" onclick="toggleMenu()">For Business</a>
+    <a href="#for-agents" onclick="toggleMenu()">For Agents</a>
     <a href="#pricing" onclick="toggleMenu()">Pricing</a>
     <a href="claim.html" class="btn btn-primary">Claim Your Listing</a>
   </div>
@@ -853,6 +855,55 @@
           </div>
         </div>
         <p class="pricing-note"><strong>No subscriptions. No minimums.</strong> Claim your listing free. You pay nothing until you earn something.</p>
+      </div>
+    </section>
+
+    <!-- FOR AGENTS / MCP CONNECT -->
+    <section class="section" id="for-agents" style="background: #0a0a0a; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <div class="container">
+        <div style="max-width: 760px; margin: 0 auto;">
+          <div class="section-label" style="color: #818CF8;">For AI Agents</div>
+          <h2 class="section-heading">Connect LocalIntel to any agent in 10 seconds.</h2>
+          <p class="section-sub" style="margin-bottom: 40px;">LocalIntel is a live MCP server. Any agent that supports MCP — Perplexity, Grok, Claude, or your own pipeline — can query Northeast Florida business intelligence, post jobs, and receive ranked quotes. No API key required to start.</p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px;">
+            <div style="background: #111; border: 1px solid #222; border-radius: 12px; padding: 24px;">
+              <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: #818CF8; text-transform: uppercase; margin-bottom: 12px;">CLI Install</div>
+              <code style="display: block; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px; color: #E2E8F0; background: #0a0a0a; border-radius: 8px; padding: 16px; white-space: pre-wrap; line-height: 1.6;">npx -y @smithery/cli@latest install erik-7clt/local-intel</code>
+              <p style="font-size: 13px; color: #6B7280; margin: 12px 0 0;">Adds LocalIntel to Claude Desktop, Cursor, or any MCP-compatible client.</p>
+            </div>
+            <div style="background: #111; border: 1px solid #222; border-radius: 12px; padding: 24px;">
+              <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: #818CF8; text-transform: uppercase; margin-bottom: 12px;">Direct Endpoint</div>
+              <code style="display: block; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px; color: #E2E8F0; background: #0a0a0a; border-radius: 8px; padding: 16px; white-space: pre-wrap; line-height: 1.6;">https://gsb-swarm-production.up.railway.app/api/local-intel/mcp</code>
+              <p style="font-size: 13px; color: #6B7280; margin: 12px 0 0;">Paste into Perplexity, Grok, or any agent that accepts a custom MCP URL.</p>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px;">
+            <div style="background: #111; border: 1px solid #1a1a1a; border-radius: 10px; padding: 20px;">
+              <div style="font-size: 22px; font-weight: 700; color: #F8FAFC; margin-bottom: 6px;">22</div>
+              <div style="font-size: 13px; color: #6B7280;">MCP tools — market intel, RFQ dispatch, sector gaps, vertical agents</div>
+            </div>
+            <div style="background: #111; border: 1px solid #1a1a1a; border-radius: 10px; padding: 20px;">
+              <div style="font-size: 22px; font-weight: 700; color: #F8FAFC; margin-bottom: 6px;">113k+</div>
+              <div style="font-size: 13px; color: #6B7280;">Verified FL businesses — Sunbiz-confirmed public records</div>
+            </div>
+            <div style="background: #111; border: 1px solid #1a1a1a; border-radius: 10px; padding: 20px;">
+              <div style="font-size: 22px; font-weight: 700; color: #F8FAFC; margin-bottom: 6px;">$0.01</div>
+              <div style="font-size: 13px; color: #6B7280;">Per query — pathUSD on Tempo mainnet. No subscription.</div>
+            </div>
+          </div>
+
+          <div style="background: #111; border: 1px solid #1a1a1a; border-radius: 10px; padding: 20px; margin-bottom: 24px;">
+            <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: #6B7280; text-transform: uppercase; margin-bottom: 14px;">Coverage</div>
+            <p style="font-size: 14px; color: #9CA3AF; margin: 0;">Northeast Florida only — St. Johns, Duval, Clay, and Flagler counties. If you’re building for a Florida use case, this is your ground truth. We’re not pretending to cover Ohio.</p>
+          </div>
+
+          <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <a href="https://smithery.ai/servers/erik-7clt/local-intel" target="_blank" rel="noopener" class="btn btn-primary" style="font-size: 15px; padding: 13px 24px;">View on Smithery →</a>
+            <a href="https://gsb-swarm-production.up.railway.app/api/sector-gap/feed" target="_blank" rel="noopener" class="btn" style="font-size: 15px; padding: 13px 24px; background: transparent; border: 1px solid #333; color: #E2E8F0;">Free Sector Gap Feed →</a>
+          </div>
+        </div>
       </div>
     </section>
 

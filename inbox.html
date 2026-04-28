@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Inbox — LocalIntel</title>
+  <meta name="description" content="Receive and respond to job requests from LocalIntel agents. Your dispatch inbox.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --bg:           #0F1117;
+      --bg-card:      #171B26;
+      --bg-card-2:    #1E2333;
+      --bg-input:     #252A3A;
+      --text:         #F0F2F8;
+      --text-2:       #8B90A0;
+      --text-3:       #555B6E;
+      --accent:       #16A34A;
+      --accent-hover: #15803D;
+      --accent-light: #14532D;
+      --accent-text:  #4ADE80;
+      --border:       #2A3045;
+      --border-focus: #16A34A;
+      --error:        #EF4444;
+      --error-bg:     #1F1010;
+      --warn:         #F59E0B;
+      --warn-bg:      #1C1700;
+      --success:      #22C55E;
+      --success-bg:   #0B1F12;
+      --delivery-clr: #3B82F6;
+      --delivery-bg:  #0D1526;
+      --proposal-clr: #A78BFA;
+      --proposal-bg:  #150F26;
+      --radius-sm:    6px;
+      --radius:       10px;
+      --radius-lg:    16px;
+      --shadow:       0 4px 20px rgba(0,0,0,0.4);
+      --shadow-lg:    0 12px 48px rgba(0,0,0,0.5);
+      --font:         'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --nav-h:        64px;
+      --transition:   0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100dvh;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+    input, textarea, select { font: inherit; color: inherit; background: var(--bg-input); }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: var(--nav-h);
+      background: rgba(15,17,23,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: var(--text);
+    }
+    .logo-dot {
+      width: 22px; height: 22px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: relative; flex-shrink: 0;
+    }
+    .logo-dot::after {
+      content: '';
+      position: absolute;
+      width: 8px; height: 8px;
+      background: white;
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+    }
+    .nav-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+    .nav-biz-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--accent-text);
+      display: none;
+    }
+    .nav-biz-name.visible { display: block; }
+
+    /* ── PAGE ── */
+    .page-wrap {
+      min-height: 100dvh;
+      padding-top: var(--nav-h);
+    }
+    .content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 36px 20px 80px;
+    }
+
+    /* ── LOGIN SECTION ── */
+    #login-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 0 0;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      box-shadow: var(--shadow-lg);
+    }
+    .login-icon {
+      width: 52px; height: 52px;
+      background: var(--accent-light);
+      border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+    }
+    .login-icon svg { color: var(--accent-text); }
+    .login-card h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .login-card p {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 28px;
+    }
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 7px;
+      letter-spacing: 0.01em;
+    }
+    .field-input {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 14px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+    .field-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.15);
+    }
+    .field-input::placeholder { color: var(--text-3); }
+    .btn-primary {
+      width: 100%;
+      padding: 13px 20px;
+      background: var(--accent);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      transition: background var(--transition), transform 0.1s;
+      margin-top: 20px;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:active { transform: scale(0.985); }
+    .btn-primary:disabled {
+      background: var(--bg-input);
+      color: var(--text-3);
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-secondary {
+      padding: 9px 16px;
+      background: var(--bg-card-2);
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      transition: background var(--transition), color var(--transition);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-input);
+      color: var(--text);
+    }
+    .btn-danger {
+      padding: 9px 16px;
+      background: rgba(239,68,68,0.1);
+      color: var(--error);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      border: 1px solid rgba(239,68,68,0.2);
+      transition: background var(--transition);
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+    .btn-confirm {
+      padding: 9px 16px;
+      background: var(--accent);
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      transition: background var(--transition);
+    }
+    .btn-confirm:hover { background: var(--accent-hover); }
+
+    .error-msg {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: var(--error-bg);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius);
+      color: var(--error);
+      font-size: 13px;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+
+    /* ── INBOX SECTION ── */
+    #inbox-section { display: none; }
+    #inbox-section.visible { display: block; }
+
+    .inbox-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .inbox-header-left h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .inbox-header-left p {
+      font-size: 13px;
+      color: var(--text-2);
+    }
+    .inbox-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .meta-pill {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      background: var(--bg-card);
+    }
+
+    /* ── APPROVE BANNER ── */
+    #approve-banner {
+      background: var(--warn-bg);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: none;
+    }
+    #approve-banner.visible { display: block; }
+    #approve-banner h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--warn);
+      margin-bottom: 6px;
+    }
+    #approve-banner p {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 16px;
+    }
+    .approve-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ── RFQ CARDS ── */
+    .rfq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .rfq-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: border-color var(--transition);
+    }
+    .rfq-card:hover { border-color: #3a4060; }
+    .rfq-card.highlighted {
+      border-color: rgba(22,163,74,0.4);
+      box-shadow: 0 0 0 1px rgba(22,163,74,0.15);
+    }
+    .rfq-card.booked-to-me {
+      border-color: rgba(34,197,94,0.5);
+      background: linear-gradient(135deg, var(--bg-card) 0%, rgba(20,83,45,0.2) 100%);
+    }
+
+    .rfq-header {
+      padding: 18px 20px 14px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .rfq-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+    .rfq-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .badge-delivery {
+      color: var(--delivery-clr);
+      background: var(--delivery-bg);
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+    .badge-proposal {
+      color: var(--proposal-clr);
+      background: var(--proposal-bg);
+      border: 1px solid rgba(167,139,250,0.3);
+    }
+    .badge-category {
+      color: var(--text-2);
+      background: var(--bg-card-2);
+      border: 1px solid var(--border);
+    }
+    .badge-booked {
+      color: var(--success);
+      background: var(--success-bg);
+      border: 1px solid rgba(34,197,94,0.3);
+    }
+    .rfq-description {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .rfq-meta-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .rfq-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--text-2);
+    }
+    .rfq-meta-item svg { color: var(--text-3); flex-shrink: 0; }
+    .rfq-meta-item strong { color: var(--text); font-weight: 600; }
+
+    .rfq-countdown {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--warn);
+      background: var(--warn-bg);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(245,158,11,0.2);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .rfq-countdown.urgent { color: var(--error); background: var(--error-bg); border-color: rgba(239,68,68,0.2); }
+    .rfq-countdown.expired { color: var(--text-3); background: var(--bg-card-2); border-color: var(--border); }
+
+    /* ── YOU GOT THE JOB ── */
+    .job-won-banner {
+      margin: 0 20px 18px;
+      padding: 16px 18px;
+      background: var(--success-bg);
+      border: 1px solid rgba(34,197,94,0.3);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .job-won-icon {
+      width: 38px; height: 38px;
+      background: rgba(34,197,94,0.15);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .job-won-text strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--success);
+      margin-bottom: 2px;
+    }
+    .job-won-text span {
+      font-size: 12px;
+      color: var(--text-2);
+    }
+
+    /* ── RESPONSE FORM ── */
+    .rfq-response-form {
+      padding: 18px 20px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-card-2);
+    }
+    .form-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+    }
+    .form-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .form-group {
+      flex: 1;
+      min-width: 120px;
+    }
+    .form-group.full { flex-basis: 100%; }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 6px;
+      letter-spacing: 0.01em;
+    }
+    .form-input {
+      width: 100%;
+      padding: 9px 12px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .form-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
+    }
+    .form-input::placeholder { color: var(--text-3); }
+    textarea.form-input {
+      resize: vertical;
+      min-height: 72px;
+    }
+    .submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .submit-hint {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+    .btn-submit {
+      padding: 10px 20px;
+      background: var(--accent);
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      transition: background var(--transition), transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn-submit:hover { background: var(--accent-hover); }
+    .btn-submit:active { transform: scale(0.97); }
+    .btn-submit:disabled {
+      background: var(--bg-input);
+      color: var(--text-3);
+      cursor: not-allowed;
+      transform: none;
+    }
+    .form-success {
+      padding: 12px 14px;
+      background: var(--success-bg);
+      border: 1px solid rgba(34,197,94,0.25);
+      border-radius: var(--radius-sm);
+      color: var(--success);
+      font-size: 13px;
+      font-weight: 500;
+      display: none;
+      margin-top: 8px;
+    }
+    .form-success.visible { display: block; }
+    .form-error {
+      padding: 12px 14px;
+      background: var(--error-bg);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: var(--radius-sm);
+      color: var(--error);
+      font-size: 13px;
+      display: none;
+      margin-top: 8px;
+    }
+    .form-error.visible { display: block; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-3);
+    }
+    .empty-state svg { margin: 0 auto 16px; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── LOADING ── */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-2);
+      font-size: 13px;
+      padding: 12px 0;
+    }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 20px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 520px) {
+      .login-card { padding: 28px 20px; }
+      .rfq-header { padding: 14px 16px 12px; }
+      .rfq-response-form { padding: 14px 16px 16px; }
+      .section-divider { margin: 0 16px; }
+      .job-won-banner { margin: 0 16px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <div class="logo-dot"></div>
+      LocalIntel
+    </a>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="nav-biz-name" id="nav-biz-name"></span>
+      <span class="nav-tag">Dispatch Inbox</span>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="content">
+
+    <!-- LOGIN SECTION -->
+    <section id="login-section">
+      <div class="login-card">
+        <div class="login-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="m22 7-10 7L2 7"/>
+          </svg>
+        </div>
+        <h1>Business Inbox</h1>
+        <p>Enter your dispatch token to view and respond to job requests in your area.</p>
+
+        <label class="field-label" for="token-input">Your dispatch token</label>
+        <input
+          id="token-input"
+          class="field-input"
+          type="text"
+          placeholder="e.g. disp_a1b2c3d4…"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+        >
+
+        <button class="btn-primary" id="login-btn" onclick="handleLogin()">
+          Open Inbox
+        </button>
+
+        <div class="error-msg" id="login-error"></div>
+
+        <p style="margin-top:20px;font-size:12px;color:var(--text-3);text-align:center;">
+          Don't have a token? <a href="/claim.html" style="color:var(--accent-text);">Claim your listing</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- INBOX SECTION -->
+    <section id="inbox-section">
+
+      <div class="inbox-header">
+        <div class="inbox-header-left">
+          <h2 id="inbox-title">Open Jobs</h2>
+          <p id="inbox-subtitle">Jobs matching your category and ZIP</p>
+        </div>
+        <div class="inbox-meta">
+          <span class="meta-pill" id="meta-category"></span>
+          <span class="meta-pill" id="meta-zip"></span>
+          <button class="btn-secondary" onclick="handleLogout()">Sign out</button>
+        </div>
+      </div>
+
+      <!-- Approve banner: shown when ?action=approve&response=<id> is in URL -->
+      <div id="approve-banner">
+        <h3>Confirm this booking?</h3>
+        <p id="approve-banner-text">An agent has selected a response for this job. Review the details below and confirm or decline.</p>
+        <div class="approve-actions">
+          <button class="btn-confirm" id="approve-confirm-btn">Confirm Booking</button>
+          <button class="btn-danger" id="approve-decline-btn">Decline</button>
+        </div>
+      </div>
+
+      <!-- RFQ list -->
+      <div id="rfq-list" class="rfq-list">
+        <div class="loading-row">
+          <div class="spinner"></div>
+          Loading jobs…
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let _token     = null;
+let _bizId     = null;
+let _rfqData   = [];   // array of rfq objects from API
+let _countdownTimers = [];
+
+// ── URL params ────────────────────────────────────────────────────────────────
+function getParams() {
+  const p = new URLSearchParams(window.location.search);
+  return {
+    rfq:      p.get('rfq'),
+    action:   p.get('action'),
+    response: p.get('response'),
+  };
+}
+
+// ── API ───────────────────────────────────────────────────────────────────────
+const API = '/api/local-intel';
+
+async function apiFetch(path, opts = {}) {
+  const res = await fetch(API + path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...opts,
+  });
+  const json = await res.json().catch(() => ({ error: 'Invalid server response' }));
+  if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`);
+  return json;
+}
+
+// ── Login ─────────────────────────────────────────────────────────────────────
+async function handleLogin() {
+  const token = document.getElementById('token-input').value.trim();
+  if (!token) {
+    showLoginError('Please enter your dispatch token.');
+    return;
+  }
+
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+
+  try {
+    const data = await apiFetch(`/inbox?token=${encodeURIComponent(token)}`);
+    _token = token;
+    _bizId = data.business_id;
+
+    // Save token to sessionStorage for refresh persistence
+    sessionStorage.setItem('dispatch_token', token);
+
+    showInbox(data);
+  } catch (err) {
+    showLoginError(err.message === 'invalid token'
+      ? 'Token not recognised. Check your dispatch token and try again.'
+      : `Error: ${err.message}`);
+    btn.disabled = false;
+    btn.textContent = 'Open Inbox';
+  }
+}
+
+function handleLogout() {
+  sessionStorage.removeItem('dispatch_token');
+  _token = null;
+  _bizId = null;
+  _rfqData = [];
+  document.getElementById('inbox-section').classList.remove('visible');
+  document.getElementById('login-section').style.display = 'flex';
+  document.getElementById('token-input').value = '';
+  document.getElementById('nav-biz-name').classList.remove('visible');
+  document.getElementById('approve-banner').classList.remove('visible');
+  clearCountdowns();
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+// ── Show inbox ────────────────────────────────────────────────────────────────
+function showInbox(data) {
+  document.getElementById('login-section').style.display = 'none';
+  document.getElementById('inbox-section').classList.add('visible');
+
+  const bizName = data.business_name || 'Your Business';
+  document.getElementById('inbox-title').textContent = `Open Jobs`;
+  document.getElementById('inbox-subtitle').textContent = `${data.open_rfqs.length} job${data.open_rfqs.length !== 1 ? 's' : ''} available for ${bizName}`;
+  document.getElementById('meta-category').textContent = data.category || 'All categories';
+  document.getElementById('meta-zip').textContent = data.zip ? `ZIP ${data.zip}` : 'All areas';
+
+  const navBiz = document.getElementById('nav-biz-name');
+  navBiz.textContent = bizName;
+  navBiz.classList.add('visible');
+
+  _rfqData = data.open_rfqs || [];
+  renderRfqList(_rfqData);
+
+  // Handle URL params
+  const params = getParams();
+  if (params.action === 'approve' && params.response && params.rfq) {
+    showApproveBanner(params.rfq, params.response);
+  } else if (params.rfq) {
+    // Scroll to / highlight this RFQ
+    setTimeout(() => {
+      const card = document.getElementById(`rfq-${params.rfq}`);
+      if (card) {
+        card.classList.add('highlighted');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+  }
+}
+
+// ── Render RFQ list ───────────────────────────────────────────────────────────
+function renderRfqList(rfqs) {
+  clearCountdowns();
+  const container = document.getElementById('rfq-list');
+
+  if (!rfqs.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="m22 7-10 7L2 7"/>
+        </svg>
+        <p>No open jobs right now.<br>Check back soon — new requests come in as agents post them.</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = rfqs.map(rfq => buildRfqCard(rfq)).join('');
+
+  // Kick off countdown timers
+  rfqs.forEach(rfq => {
+    if (rfq.deadline_at) {
+      startCountdown(rfq.id, rfq.deadline_at);
+    }
+  });
+}
+
+function buildRfqCard(rfq) {
+  const isDelivery = rfq.job_type === 'delivery';
+  const badgeClass = isDelivery ? 'badge-delivery' : 'badge-proposal';
+  const badgeLabel = isDelivery ? 'Delivery' : 'Proposal';
+
+  const budgetHtml = rfq.budget_usd
+    ? `<div class="rfq-meta-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Budget: <strong>$${parseFloat(rfq.budget_usd).toFixed(2)}</strong>
+       </div>`
+    : `<div class="rfq-meta-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Budget: <strong>Open</strong>
+       </div>`;
+
+  const zipHtml = rfq.zip
+    ? `<div class="rfq-meta-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        ZIP <strong>${escHtml(rfq.zip)}</strong>
+       </div>`
+    : '';
+
+  const countdownHtml = rfq.deadline_at
+    ? `<span class="rfq-countdown" id="countdown-${rfq.id}" data-deadline="${rfq.deadline_at}">calculating…</span>`
+    : '';
+
+  const pickupHtml = rfq.pickup_address
+    ? `<div class="rfq-meta-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Pickup: <strong>${escHtml(rfq.pickup_address)}</strong>
+       </div>`
+    : '';
+
+  const dropoffHtml = rfq.dropoff_address
+    ? `<div class="rfq-meta-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Drop-off: <strong>${escHtml(rfq.dropoff_address)}</strong>
+       </div>`
+    : '';
+
+  const etaField = isDelivery
+    ? `<div class="form-group" style="min-width:110px;max-width:140px;">
+        <label for="eta-${rfq.id}">ETA (minutes)</label>
+        <input class="form-input" id="eta-${rfq.id}" type="number" min="1" placeholder="e.g. 25">
+       </div>`
+    : '';
+
+  const submitHintText = isDelivery
+    ? 'First to respond wins'
+    : 'Quote collected — owner picks winner';
+
+  return `
+    <div class="rfq-card" id="rfq-${rfq.id}">
+      <div class="rfq-header">
+        <div class="rfq-header-left">
+          <div class="rfq-badges">
+            <span class="badge ${badgeClass}">${badgeLabel}</span>
+            ${rfq.category ? `<span class="badge badge-category">${escHtml(rfq.category)}</span>` : ''}
+          </div>
+          <div class="rfq-description">${escHtml(rfq.description)}</div>
+          <div class="rfq-meta-row">
+            ${budgetHtml}
+            ${zipHtml}
+            ${pickupHtml}
+            ${dropoffHtml}
+          </div>
+        </div>
+        ${countdownHtml}
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="rfq-response-form" id="form-area-${rfq.id}">
+        <div class="form-title">Submit your quote</div>
+        <div class="form-row">
+          <div class="form-group" style="min-width:120px;max-width:160px;">
+            <label for="quote-${rfq.id}">Your quote (USD)</label>
+            <input class="form-input" id="quote-${rfq.id}" type="number" min="0" step="0.01" placeholder="e.g. 75.00">
+          </div>
+          ${etaField}
+          <div class="form-group full">
+            <label for="message-${rfq.id}">Message <span style="color:var(--text-3);font-weight:400;">(optional)</span></label>
+            <textarea class="form-input" id="message-${rfq.id}" placeholder="Introduce yourself, confirm availability, or add details…" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="submit-row">
+          <span class="submit-hint">${submitHintText}</span>
+          <button class="btn-submit" id="submit-btn-${rfq.id}" onclick="handleSubmitResponse('${rfq.id}')">
+            Send Quote
+          </button>
+        </div>
+        <div class="form-success" id="form-success-${rfq.id}"></div>
+        <div class="form-error"   id="form-error-${rfq.id}"></div>
+      </div>
+    </div>`;
+}
+
+// ── Submit response ───────────────────────────────────────────────────────────
+async function handleSubmitResponse(rfq_id) {
+  const quoteVal   = document.getElementById(`quote-${rfq_id}`)?.value?.trim();
+  const messageVal = document.getElementById(`message-${rfq_id}`)?.value?.trim();
+  const etaVal     = document.getElementById(`eta-${rfq_id}`)?.value?.trim();
+
+  const btn = document.getElementById(`submit-btn-${rfq_id}`);
+  const successEl = document.getElementById(`form-success-${rfq_id}`);
+  const errorEl   = document.getElementById(`form-error-${rfq_id}`);
+
+  // Reset
+  successEl.classList.remove('visible');
+  errorEl.classList.remove('visible');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    const body = {
+      token:       _token,
+      rfq_id,
+      quote_usd:   quoteVal    ? parseFloat(quoteVal)   : null,
+      eta_minutes: etaVal      ? parseInt(etaVal, 10)   : null,
+      message:     messageVal  || null,
+    };
+
+    await apiFetch('/inbox/respond', {
+      method: 'POST',
+      body:   JSON.stringify(body),
+    });
+
+    successEl.textContent = 'Quote sent! The business owner will be in touch if selected.';
+    successEl.classList.add('visible');
+    btn.textContent = 'Sent ✓';
+
+    // Replace form with success state after a moment
+    setTimeout(() => {
+      const formArea = document.getElementById(`form-area-${rfq_id}`);
+      if (formArea) {
+        formArea.innerHTML = `
+          <div class="job-won-banner" style="margin:0;">
+            <div class="job-won-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <div class="job-won-text">
+              <strong>Quote submitted</strong>
+              <span>You'll be notified if selected.</span>
+            </div>
+          </div>`;
+      }
+    }, 2000);
+
+  } catch (err) {
+    errorEl.textContent = `Failed to submit: ${err.message}`;
+    errorEl.classList.add('visible');
+    btn.disabled = false;
+    btn.textContent = 'Send Quote';
+  }
+}
+
+// ── Approve banner ────────────────────────────────────────────────────────────
+function showApproveBanner(rfq_id, response_id) {
+  const banner = document.getElementById('approve-banner');
+  banner.classList.add('visible');
+
+  // Scroll to the specific RFQ card
+  setTimeout(() => {
+    const card = document.getElementById(`rfq-${rfq_id}`);
+    if (card) {
+      card.classList.add('highlighted');
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 100);
+
+  const confirmBtn = document.getElementById('approve-confirm-btn');
+  const declineBtn = document.getElementById('approve-decline-btn');
+
+  confirmBtn.onclick = async () => {
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<span class="spinner"></span> Confirming…';
+    try {
+      await apiFetch('/inbox/book', {
+        method: 'POST',
+        body: JSON.stringify({ token: _token, rfq_id, response_id }),
+      });
+      banner.innerHTML = `
+        <h3 style="color:var(--success);">Booking confirmed!</h3>
+        <p>The business has been notified. Check your inbox for details.</p>`;
+      banner.style.background = 'var(--success-bg)';
+      banner.style.borderColor = 'rgba(34,197,94,0.3)';
+
+      // Mark card as booked
+      const card = document.getElementById(`rfq-${rfq_id}`);
+      if (card) card.classList.add('booked-to-me');
+    } catch (err) {
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = 'Confirm Booking';
+      document.getElementById('approve-banner-text').textContent = `Error: ${err.message}`;
+    }
+  };
+
+  declineBtn.onclick = () => {
+    banner.classList.remove('visible');
+  };
+}
+
+// ── Countdown timers ──────────────────────────────────────────────────────────
+function startCountdown(rfq_id, deadline_at) {
+  const el = document.getElementById(`countdown-${rfq_id}`);
+  if (!el) return;
+
+  const deadline = new Date(deadline_at).getTime();
+
+  function tick() {
+    const now  = Date.now();
+    const diff = deadline - now;
+
+    if (diff <= 0) {
+      el.textContent = 'Expired';
+      el.className = 'rfq-countdown expired';
+      return;
+    }
+
+    const totalMins = Math.floor(diff / 60000);
+    const hours     = Math.floor(totalMins / 60);
+    const mins      = totalMins % 60;
+    const secs      = Math.floor((diff % 60000) / 1000);
+
+    let text;
+    if (hours > 0) {
+      text = `${hours}h ${mins}m`;
+    } else if (mins > 0) {
+      text = `${mins}m ${secs}s`;
+    } else {
+      text = `${secs}s`;
+    }
+
+    el.textContent = `Deadline: ${text}`;
+    el.className = diff < 300000
+      ? 'rfq-countdown urgent'
+      : 'rfq-countdown';
+  }
+
+  tick();
+  const timer = setInterval(tick, 1000);
+  _countdownTimers.push(timer);
+}
+
+function clearCountdowns() {
+  _countdownTimers.forEach(t => clearInterval(t));
+  _countdownTimers = [];
+}
+
+// ── Escape HTML ───────────────────────────────────────────────────────────────
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── Enter key on login ────────────────────────────────────────────────────────
+document.getElementById('token-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') handleLogin();
+});
+
+// ── Auto-login from session or URL token param ────────────────────────────────
+(async function init() {
+  // Support ?token= in URL for deep links
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlToken  = urlParams.get('token');
+  const savedToken = sessionStorage.getItem('dispatch_token');
+  const token = urlToken || savedToken;
+
+  if (token) {
+    document.getElementById('token-input').value = token;
+    // Attempt auto-login
+    try {
+      const data = await apiFetch(`/inbox?token=${encodeURIComponent(token)}`);
+      _token = token;
+      _bizId = data.business_id;
+      sessionStorage.setItem('dispatch_token', token);
+      showInbox(data);
+    } catch {
+      // Token invalid — show login form normally
+      sessionStorage.removeItem('dispatch_token');
+    }
+  }
+})();
+</script>
+
+</body>
+</html>

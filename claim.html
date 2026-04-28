@@ -1206,6 +1206,7 @@
 
             <div class="success-actions">
               <a href="index.html" class="btn-home">Back to home</a>
+              <a href="#" id="inbox-link" class="btn-home" style="background:#16A34A;color:#fff;display:none;margin-top:12px;">Open your job inbox &rarr;</a>
             </div>
           </div>
         </div>
@@ -1689,6 +1690,11 @@
           }
           // Success — clear saved state
           try { sessionStorage.removeItem('li_claim_state'); } catch(e) {}
+          // Wire up inbox link if server returned dispatch_token
+          if (data.inbox_url) {
+            const inboxLink = document.getElementById('inbox-link');
+            if (inboxLink) { inboxLink.href = data.inbox_url; inboxLink.style.display = 'inline-block'; }
+          }
           goToStep(6);
           launchConfetti();
         })

@@ -1178,6 +1178,48 @@
           </p>
         </div>
 
+        <!-- STEP WALLET — Fund Wallet (between verify and success) -->
+        <div class="step-panel" id="step-wallet" aria-labelledby="sw-heading">
+          <div class="progress-label">Almost there</div>
+          <h2 class="step-heading" id="sw-heading">Activate your dispatch wallet</h2>
+          <p class="step-sub">Fund your wallet to start receiving jobs through LocalIntel. Businesses with funded wallets are prioritized in dispatch matching.</p>
+
+          <div style="margin-bottom:8px;">
+            <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:8px;">Deposit address</div>
+            <div style="display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;">
+              <div class="wallet-address-box" id="wallet-deposit-addr">Loading...</div>
+              <button class="wallet-copy-btn" id="wallet-copy-btn" onclick="copyWalletAddress()">Copy</button>
+            </div>
+          </div>
+
+          <div class="wallet-accepted-tokens">
+            <span class="wallet-token-badge">USDC</span>
+            <span class="wallet-token-badge">USDC.e</span>
+            <span class="wallet-token-badge">pathUSD</span>
+          </div>
+
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:20px;">
+            Minimum: <strong style="color:var(--text-2);">$50 to activate</strong>
+          </div>
+
+          <!-- QR code placeholder -->
+          <div style="display:flex;justify-content:center;margin-bottom:20px;">
+            <div id="wallet-qr-placeholder" style="width:120px;height:120px;background:#F3F4F6;border:1.5px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM17 17h3v3h-3zM14 20h3"/></svg>
+              <span style="font-size:11px;color:var(--text-3);">QR code</span>
+            </div>
+          </div>
+
+          <!-- Polling status -->
+          <div class="wallet-poll-status" id="wallet-poll-status">
+            <div class="btn-spinner" id="wallet-poll-spinner" style="width:16px;height:16px;border:2px solid #D1D5DB;border-top-color:#6B7280;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0;"></div>
+            <span id="wallet-poll-label">Checking for deposit…</span>
+          </div>
+
+          <!-- Skip link -->
+          <a class="wallet-skip-link" id="wallet-skip-link" onclick="skipWallet()">Skip for now &rarr;</a>
+        </div>
+
         <!-- STEP 6 — Success -->
         <div class="step-panel" id="step6" aria-labelledby="s6-heading">
           <div class="success-wrap">
@@ -1252,19 +1294,21 @@
 
     // ── STEP NAVIGATION ──
     function goToStep(n) {
-      // Hide current
-      const prev = document.getElementById('step' + state.currentStep);
-      prev.classList.remove('active');
+      // Hide current panel — handles both numeric (step1..6) and 'wallet'
+      const prevId = state.currentStep === 'wallet' ? 'step-wallet' : 'step' + state.currentStep;
+      const prev = document.getElementById(prevId);
+      if (prev) prev.classList.remove('active');
 
-      // Update circles
-      updateStepIndicator(n);
+      // Update step indicator circles (only for numeric steps)
+      if (typeof n === 'number') updateStepIndicator(n);
 
-      // Show next with animation
+      // Show next panel
       state.currentStep = n;
-      const next = document.getElementById('step' + n);
-      next.classList.add('active');
+      const nextId = n === 'wallet' ? 'step-wallet' : 'step' + n;
+      const next = document.getElementById(nextId);
+      if (next) next.classList.add('active');
 
-      // Scroll to top of page so step change is obvious
+      // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
       document.querySelector('.claim-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -1695,13 +1739,144 @@
             const inboxLink = document.getElementById('inbox-link');
             if (inboxLink) { inboxLink.href = data.inbox_url; inboxLink.style.display = 'inline-block'; }
           }
-          goToStep(6);
-          launchConfetti();
+          // Store verify response data for wallet panel
+          state.verifyData = data;
+          saveState();
+          // Go to wallet panel before confetti/step 6
+          goToStep('wallet');
+          initWalletPanel(data);
         })
         .catch(err => {
           if (btn) { btn.innerHTML = 'Verify →'; btn.disabled = false; }
           alert('Network error: ' + err.message);
         });
+    }
+
+    // ── WALLET PANEL ──────────────────────────────────────────────────────────────
+    let _walletPollInterval = null;
+    let _walletDepositAddress = null;
+    let _walletDispatchToken  = null;
+
+    function initWalletPanel(verifyData) {
+      // Resolve deposit address from response, or generate placeholder
+      const addr = verifyData && verifyData.deposit_address
+        ? verifyData.deposit_address
+        : generatePlaceholderAddress(state.business && state.business.business_id);
+
+      _walletDepositAddress = addr;
+      _walletDispatchToken  = (verifyData && verifyData.dispatch_token) || null;
+
+      // Set address in UI
+      const addrEl = document.getElementById('wallet-deposit-addr');
+      if (addrEl) addrEl.textContent = addr;
+
+      // Generate simple QR-like visual (text-based placeholder)
+      renderQrPlaceholder(addr);
+
+      // Start polling for deposit
+      if (_walletPollInterval) clearInterval(_walletPollInterval);
+      _walletPollInterval = setInterval(pollWalletFunded, 8000);
+    }
+
+    function generatePlaceholderAddress(businessId) {
+      // Deterministic placeholder from business_id for display until real one is wired
+      if (!businessId) return '0x' + '0'.repeat(40);
+      const raw = btoa(String(businessId)).replace(/[^a-f0-9]/gi, '').slice(0, 40).padEnd(40, '0');
+      return '0x' + raw;
+    }
+
+    function renderQrPlaceholder(addr) {
+      // Replace QR placeholder with a simple visual hint
+      const qrEl = document.getElementById('wallet-qr-placeholder');
+      if (!qrEl) return;
+      // Keep the SVG placeholder — real QR would require a library
+      qrEl.title = 'Scan to copy address: ' + addr;
+    }
+
+    function copyWalletAddress() {
+      if (!_walletDepositAddress) return;
+      const btn = document.getElementById('wallet-copy-btn');
+      navigator.clipboard.writeText(_walletDepositAddress)
+        .then(() => {
+          if (btn) {
+            const orig = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.style.color = 'var(--accent)';
+            setTimeout(() => {
+              btn.textContent = orig;
+              btn.style.color = '';
+            }, 2000);
+          }
+        })
+        .catch(() => {
+          // Fallback for browsers without clipboard API
+          try {
+            const ta = document.createElement('textarea');
+            ta.value = _walletDepositAddress;
+            ta.style.position = 'fixed';
+            ta.style.opacity  = '0';
+            document.body.appendChild(ta);
+            ta.focus(); ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            if (btn) {
+              const orig = btn.textContent;
+              btn.textContent = 'Copied!';
+              btn.style.color = 'var(--accent)';
+              setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 2000);
+            }
+          } catch(e) {
+            alert('Copy failed — please copy manually: ' + _walletDepositAddress);
+          }
+        });
+    }
+
+    async function pollWalletFunded() {
+      // Use dispatch_token if available, fall back to code entered in step 5
+      const token = _walletDispatchToken
+        || (document.getElementById('verifyCodeInput') && document.getElementById('verifyCodeInput').value.trim())
+        || null;
+
+      if (!token) return; // nothing to poll with
+
+      try {
+        const res  = await fetch(`${API}/inbox?token=${encodeURIComponent(token)}`);
+        const data = await res.json();
+
+        if (data.wallet_funded === true || (data.balance_usd_micro && data.balance_usd_micro > 0)) {
+          // Wallet funded!
+          clearInterval(_walletPollInterval);
+          _walletPollInterval = null;
+
+          const statusEl  = document.getElementById('wallet-poll-status');
+          const spinnerEl = document.getElementById('wallet-poll-spinner');
+          const labelEl   = document.getElementById('wallet-poll-label');
+          const skipEl    = document.getElementById('wallet-skip-link');
+
+          if (statusEl)  statusEl.classList.add('funded');
+          if (spinnerEl) spinnerEl.style.display = 'none';
+          if (labelEl)   labelEl.textContent = '✓ Wallet funded!';
+          if (skipEl)    skipEl.style.display = 'none';
+
+          // Auto-advance to step 6 after 2s
+          setTimeout(() => {
+            goToStep(6);
+            launchConfetti();
+          }, 2000);
+        }
+      } catch (e) {
+        // Silent — polling failures don't disrupt the user
+      }
+    }
+
+    function skipWallet() {
+      // Stop polling and go straight to success
+      if (_walletPollInterval) {
+        clearInterval(_walletPollInterval);
+        _walletPollInterval = null;
+      }
+      goToStep(6);
+      launchConfetti();
     }
 
     // ── CONFETTI ──

@@ -611,6 +611,46 @@
       margin: 0 20px;
     }
 
+    /* ── SIGNAL CARD ── */
+    .signal-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #2A3045;
+      transition: background 0.3s ease;
+      flex-shrink: 0;
+    }
+    .signal-dot.active {
+      background: #16A34A;
+    }
+    .signal-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 13px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .signal-item:last-child { border-bottom: none; }
+    .signal-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-2);
+    }
+    .signal-item-left svg { flex-shrink: 0; }
+    .signal-item.on .signal-item-left { color: var(--text); }
+    .signal-enable-link {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-text);
+      cursor: pointer;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .signal-enable-link:hover { text-decoration: underline; }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 520px) {
       .login-card { padding: 28px 20px; }
@@ -700,6 +740,22 @@
         </div>
       </div>
 
+      <!-- Signal strength card: shown after login -->
+      <div id="signal-card" class="card" style="display:none;margin-bottom:20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <span style="font-weight:600;font-size:15px;">Dispatch Signal</span>
+          <span id="signal-label" style="font-size:13px;color:var(--text-2);">Weak</span>
+        </div>
+        <div style="display:flex;gap:4px;margin-bottom:16px;">
+          <div class="signal-dot" id="sd1"></div>
+          <div class="signal-dot" id="sd2"></div>
+          <div class="signal-dot" id="sd3"></div>
+          <div class="signal-dot" id="sd4"></div>
+          <div class="signal-dot" id="sd5"></div>
+        </div>
+        <div id="signal-items" style="display:flex;flex-direction:column;gap:0;"></div>
+      </div>
+
       <!-- RFQ list -->
       <div id="rfq-list" class="rfq-list">
         <div class="loading-row">
@@ -785,6 +841,7 @@ function handleLogout() {
   document.getElementById('token-input').value = '';
   document.getElementById('nav-biz-name').classList.remove('visible');
   document.getElementById('approve-banner').classList.remove('visible');
+  document.getElementById('signal-card').style.display = 'none';
   clearCountdowns();
 }
 
@@ -811,6 +868,9 @@ function showInbox(data) {
 
   _rfqData = data.open_rfqs || [];
   renderRfqList(_rfqData);
+
+  // Show signal card after login
+  renderSignal(data);
 
   // Handle URL params
   const params = getParams();
@@ -1115,6 +1175,195 @@ function escHtml(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+// ── Signal strength card ───────────────────────────────────────────────────────
+function renderSignal(bizData) {
+  // Count active signals
+  const hasEmail    = true;                       // always on
+  const hasPush     = !!bizData.notify_push;
+  const hasWallet   = !!bizData.wallet_funded;
+  const hasHours    = !!bizData.has_hours;
+  const hasVerified = !!bizData.claimed_at;
+
+  const checks = [hasEmail, hasPush, hasWallet, hasHours, hasVerified];
+  const count  = checks.filter(Boolean).length;
+
+  // Activate dots
+  for (let i = 1; i <= 5; i++) {
+    const dot = document.getElementById('sd' + i);
+    if (dot) dot.classList.toggle('active', i <= count);
+  }
+
+  // Label + color
+  const labelMap  = { 1: 'Weak', 2: 'Basic', 3: 'Good', 4: 'Strong', 5: 'Full' };
+  const colorMap  = {
+    Weak:   'var(--error)',
+    Basic:  'var(--warn)',
+    Good:   'var(--warn)',
+    Strong: 'var(--accent-text)',
+    Full:   'var(--success)',
+  };
+  const label  = labelMap[count] || 'Weak';
+  const labelEl = document.getElementById('signal-label');
+  if (labelEl) {
+    labelEl.textContent = label;
+    labelEl.style.color = colorMap[label] || 'var(--text-2)';
+  }
+
+  // Build signal items
+  const itemsEl = document.getElementById('signal-items');
+  if (!itemsEl) return;
+
+  const checkIcon  = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const circleIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555B6E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>`;
+
+  const items = [
+    {
+      on:     hasEmail,
+      label:  'Email notifications',
+      action: null,
+    },
+    {
+      on:     hasPush,
+      label:  'Push notifications',
+      action: hasPush ? null : { text: 'Enable \u2192', onclick: 'enablePush()' },
+    },
+    {
+      on:     hasWallet,
+      label:  'Wallet funded',
+      action: hasWallet ? null : { text: 'Fund wallet \u2192', href: '/claim.html' },
+    },
+    {
+      on:     hasHours,
+      label:  'Business hours set',
+      action: hasHours ? null : { text: 'Set hours \u2192', href: '/claim.html' },
+    },
+    {
+      on:     hasVerified,
+      label:  'Listing verified',
+      action: hasVerified ? null : { text: 'Verify \u2192', href: '/claim.html' },
+    },
+  ];
+
+  itemsEl.innerHTML = items.map(item => {
+    let actionHtml;
+    if (!item.action) {
+      actionHtml = `<span style="font-size:12px;color:var(--accent-text);">Active</span>`;
+    } else if (item.action.onclick) {
+      actionHtml = `<button class="signal-enable-link" onclick="${item.action.onclick}">${item.action.text}</button>`;
+    } else {
+      actionHtml = `<a class="signal-enable-link" href="${item.action.href}">${item.action.text}</a>`;
+    }
+
+    return `<div class="signal-item${item.on ? ' on' : ''}">
+      <div class="signal-item-left">
+        ${item.on ? checkIcon : circleIcon}
+        <span>${item.label}</span>
+      </div>
+      ${actionHtml}
+    </div>`;
+  }).join('');
+
+  // Show the card
+  document.getElementById('signal-card').style.display = 'block';
+}
+
+// ── VAPID helper ──────────────────────────────────────────────────────────────
+function urlBase64ToUint8Array(base64String) {
+  const padding     = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64      = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData     = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+// ── Enable push notifications ─────────────────────────────────────────────────
+async function enablePush() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    alert('Push notifications are not supported in this browser.');
+    return;
+  }
+
+  try {
+    // 1. Register (or reuse) service worker
+    const registration = await navigator.serviceWorker.register('/sw-push.js');
+    await navigator.serviceWorker.ready;
+
+    // 2. Fetch VAPID public key from server
+    const vapidRes  = await fetch(API + '/push/vapid-public-key');
+    const vapidJson = await vapidRes.json();
+    const publicKey = vapidJson.public_key || vapidJson.publicKey || vapidJson.key;
+
+    if (!publicKey) throw new Error('No VAPID public key returned from server');
+
+    // 3. Subscribe
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly:      true,
+      applicationServerKey: urlBase64ToUint8Array(publicKey),
+    });
+
+    // 4. POST subscription to server
+    await fetch(API + '/push/subscribe', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ token: _token, subscription }),
+    });
+
+    // 5. Update signal card: re-render with push enabled
+    //    Find and update the push item row directly
+    const allItems = document.querySelectorAll('#signal-items .signal-item');
+    allItems.forEach(item => {
+      const span = item.querySelector('.signal-item-left span');
+      if (span && span.textContent.includes('Push notifications')) {
+        item.classList.add('on');
+        const svgEl = item.querySelector('.signal-item-left svg');
+        if (svgEl) {
+          svgEl.outerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+        }
+        const actionEl = item.querySelector('.signal-enable-link');
+        if (actionEl) {
+          actionEl.outerHTML = `<span style="font-size:12px;color:var(--accent-text);">Active</span>`;
+        }
+      }
+    });
+
+    // Re-count and update dots + label
+    const onCount = document.querySelectorAll('#signal-items .signal-item.on').length;
+    for (let i = 1; i <= 5; i++) {
+      const dot = document.getElementById('sd' + i);
+      if (dot) dot.classList.toggle('active', i <= onCount);
+    }
+    const labelMap  = { 1: 'Weak', 2: 'Basic', 3: 'Good', 4: 'Strong', 5: 'Full' };
+    const colorMap  = { Weak: 'var(--error)', Basic: 'var(--warn)', Good: 'var(--warn)', Strong: 'var(--accent-text)', Full: 'var(--success)' };
+    const newLabel  = labelMap[onCount] || 'Weak';
+    const labelEl   = document.getElementById('signal-label');
+    if (labelEl) {
+      labelEl.textContent = newLabel;
+      labelEl.style.color = colorMap[newLabel] || 'var(--text-2)';
+    }
+
+    // Brief confirmation
+    const confirmEl = document.createElement('div');
+    confirmEl.style.cssText = 'margin-top:10px;padding:8px 12px;background:var(--success-bg);border:1px solid rgba(34,197,94,0.25);border-radius:6px;color:var(--success);font-size:13px;';
+    confirmEl.textContent = '\u2713 Push enabled';
+    document.getElementById('signal-items').appendChild(confirmEl);
+    setTimeout(() => confirmEl.remove(), 4000);
+
+  } catch (err) {
+    const msg = err.name === 'NotAllowedError'
+      ? 'Push permission denied. Allow notifications in your browser settings and try again.'
+      : `Push setup failed: ${err.message}`;
+    alert(msg);
+  }
+}
+
+// Register service worker on page load so it\u2019s primed before login
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw-push.js').catch(() => {});
 }
 
 // ── Enter key on login ────────────────────────────────────────────────────────

@@ -752,6 +752,7 @@
           <div class="signal-dot" id="sd3"></div>
           <div class="signal-dot" id="sd4"></div>
           <div class="signal-dot" id="sd5"></div>
+          <div class="signal-dot" id="sd6"></div>
         </div>
         <div id="signal-items" style="display:flex;flex-direction:column;gap:0;"></div>
       </div>
@@ -1185,18 +1186,19 @@ function renderSignal(bizData) {
   const hasWallet   = !!bizData.wallet_funded;
   const hasHours    = !!bizData.has_hours;
   const hasVerified = !!bizData.claimed_at;
+  const hasSunbiz   = !!bizData.sunbiz_id;
 
-  const checks = [hasEmail, hasPush, hasWallet, hasHours, hasVerified];
+  const checks = [hasEmail, hasPush, hasWallet, hasHours, hasVerified, hasSunbiz];
   const count  = checks.filter(Boolean).length;
 
   // Activate dots
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 6; i++) {
     const dot = document.getElementById('sd' + i);
     if (dot) dot.classList.toggle('active', i <= count);
   }
 
   // Label + color
-  const labelMap  = { 1: 'Weak', 2: 'Basic', 3: 'Good', 4: 'Strong', 5: 'Full' };
+  const labelMap  = { 1: 'Weak', 2: 'Basic', 3: 'Good', 4: 'Strong', 5: 'Verified', 6: 'Full' };
   const colorMap  = {
     Weak:   'var(--error)',
     Basic:  'var(--warn)',
@@ -1243,6 +1245,13 @@ function renderSignal(bizData) {
       on:     hasVerified,
       label:  'Listing verified',
       action: hasVerified ? null : { text: 'Verify \u2192', href: '/claim.html' },
+    },
+    {
+      on:     hasSunbiz,
+      label:  bizData.sunbiz_id
+                ? `Sunbiz ID: ${bizData.sunbiz_id}`
+                : 'Sunbiz / EIN on file',
+      action: hasSunbiz ? null : { text: 'Add Sunbiz ID \u2192', href: '/claim.html' },
     },
   ];
 

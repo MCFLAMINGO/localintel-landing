@@ -1716,12 +1716,15 @@
       const btn = document.getElementById('btn-verify-code');
       if (btn) { btn.innerHTML = '<span class="btn-spinner"></span> Verifying...'; btn.disabled = true; }
 
+      // Pull sunbiz_id from step 3 verifyDoc field (pre-filled from search or typed)
+      const sunbizId = (document.getElementById('verifyDoc')?.value || '').trim().toUpperCase() || null;
       fetch(`${API}/claim/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           business_id: state.business.business_id,
           token: code,
+          sunbiz_id: sunbizId || undefined,
         }),
       })
         .then(r => r.json())

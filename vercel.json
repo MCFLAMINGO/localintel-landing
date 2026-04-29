@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/claim", "destination": "/claim.html", "permanent": false },
+    { "source": "/inbox", "destination": "/inbox.html", "permanent": false }
+  ]
+}

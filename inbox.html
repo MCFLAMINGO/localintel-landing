@@ -790,7 +790,7 @@ function getParams() {
 }
 
 // ── API ───────────────────────────────────────────────────────────────────────
-const API = '/api/local-intel';
+const API = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
 
 async function apiFetch(path, opts = {}) {
   const res = await fetch(API + path, {

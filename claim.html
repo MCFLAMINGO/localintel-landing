@@ -1181,11 +1181,15 @@
         <!-- STEP WALLET — Fund Wallet (between verify and success) -->
         <div class="step-panel" id="step-wallet" aria-labelledby="sw-heading">
           <div class="progress-label">Almost there</div>
-          <h2 class="step-heading" id="sw-heading">Activate your dispatch wallet</h2>
-          <p class="step-sub">Fund your wallet to start receiving jobs through LocalIntel. Businesses with funded wallets are prioritized in dispatch matching.</p>
+          <h2 class="step-heading" id="sw-heading">Add job credits</h2>
+          <p class="step-sub">LocalIntel uses a small digital balance to route jobs to your business — like a prepaid account. $50 covers hundreds of job requests. No crypto knowledge needed: send from Coinbase, a crypto exchange, or ask us and we'll help.</p>
+
+          <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text-2);line-height:1.6;">
+            <strong style="color:var(--text-1);">Why is this needed?</strong> When a homeowner or agent sends a job request, LocalIntel charges a small fee ($0.01–$0.05) to route it to you. Your balance covers that fee. You only pay when you get leads.
+          </div>
 
           <div style="margin-bottom:8px;">
-            <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:8px;">Deposit address</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:8px;">Your deposit address <span style="font-weight:400;color:var(--text-3);">(send USDC or pathUSD here)</span></div>
             <div style="display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;">
               <div class="wallet-address-box" id="wallet-deposit-addr">Loading...</div>
               <button class="wallet-copy-btn" id="wallet-copy-btn" onclick="copyWalletAddress()">Copy</button>
@@ -1308,9 +1312,11 @@
       const next = document.getElementById(nextId);
       if (next) next.classList.add('active');
 
-      // Scroll to top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      document.querySelector('.claim-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Scroll active step into view
+      setTimeout(() => {
+        const el = document.getElementById(nextId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
     }
 
     function updateStepIndicator(activeStep) {

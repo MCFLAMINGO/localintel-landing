@@ -230,6 +230,19 @@
       background: var(--bg-input);
       color: var(--text);
     }
+    .pos-type-btn {
+      padding: 8px 16px;
+      background: var(--bg-card-2);
+      color: var(--text-2);
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+    }
+    .pos-type-btn:hover { background: var(--bg-input); color: var(--text-1); }
+    .pos-type-btn.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
     .btn-danger {
       padding: 9px 16px;
       background: rgba(239,68,68,0.1);
@@ -726,6 +739,7 @@
         <div class="inbox-meta">
           <span class="meta-pill" id="meta-category"></span>
           <span class="meta-pill" id="meta-zip"></span>
+          <button class="btn-secondary" id="btn-edit-profile" onclick="toggleProfile()" style="margin-right:8px;">Edit Profile</button>
           <button class="btn-secondary" onclick="handleLogout()">Sign out</button>
         </div>
       </div>
@@ -756,6 +770,85 @@
         </div>
         <div id="signal-items" style="display:flex;flex-direction:column;gap:0;"></div>
       </div>
+
+      <!-- Profile Editor Panel -->
+      <div id="profile-panel" style="display:none;margin-bottom:20px;">
+
+        <!-- Hours -->
+        <div class="card" style="margin-bottom:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-weight:600;font-size:15px;">Business Hours</span>
+            <span style="font-size:12px;color:var(--text-3);">When are you open?</span>
+          </div>
+          <p style="font-size:13px;color:var(--text-3);margin:0 0 16px;">Set your hours so agents and customers know when to reach you. Jobs that arrive outside your hours are held until you open.</p>
+          <div id="hours-grid" style="display:grid;grid-template-columns:auto 1fr 1fr auto;gap:8px 12px;align-items:center;margin-bottom:16px;"></div>
+          <button onclick="saveHours()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;">Save Hours</button>
+          <span id="hours-msg" style="margin-left:12px;font-size:12px;color:var(--success);"></span>
+        </div>
+
+        <!-- Services + Menu -->
+        <div class="card" style="margin-bottom:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-weight:600;font-size:15px;">Services &amp; Menu</span>
+            <span style="font-size:12px;color:var(--text-3);">What do you offer?</span>
+          </div>
+          <p style="font-size:13px;color:var(--text-3);margin:0 0 16px;">This is what agents see when matching jobs to your business. The more detail you provide, the better the match. If you have an online menu or service list, paste the URL and we'll read it automatically.</p>
+
+          <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Menu or services URL <span style="font-weight:400;color:var(--text-3);">(optional — we'll fetch it)</span></label>
+          <input id="svc-menu-url" type="url" placeholder="https://yoursite.com/menu" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
+
+          <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Describe what you offer <span style="font-weight:400;color:var(--text-3);">(in your own words)</span></label>
+          <textarea id="svc-text" rows="4" placeholder="e.g. We serve breakfast and lunch Tuesday–Sunday. Specialties: grilled fish tacos, housemade sauces, daily specials. Catering available for groups over 20." style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);resize:vertical;margin-bottom:14px;"></textarea>
+
+          <button onclick="saveServices()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;">Save</button>
+          <span id="svc-msg" style="margin-left:12px;font-size:12px;color:var(--success);"></span>
+        </div>
+
+        <!-- POS Connect -->
+        <div class="card" style="margin-bottom:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-weight:600;font-size:15px;">Point of Sale Connect</span>
+            <span id="pos-connected-badge" style="display:none;font-size:12px;color:var(--success);background:rgba(22,163,74,0.12);padding:2px 8px;border-radius:20px;">Connected</span>
+          </div>
+          <p style="font-size:13px;color:var(--text-3);margin:0 0 16px;">Connect your POS so LocalIntel agents can see live menu items, pricing, and availability — without you having to update anything manually. Your credentials are encrypted and never shared.</p>
+
+          <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:8px;">POS System</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+            <button class="pos-type-btn" data-pos="toast" onclick="selectPos('toast')">Toast</button>
+            <button class="pos-type-btn" data-pos="square" onclick="selectPos('square')">Square</button>
+            <button class="pos-type-btn" data-pos="clover" onclick="selectPos('clover')">Clover</button>
+            <button class="pos-type-btn" data-pos="other" onclick="selectPos('other')">Other</button>
+          </div>
+
+          <div id="pos-fields" style="display:none;">
+            <div id="pos-toast-fields">
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Toast Client ID</label>
+              <input id="pos-toast-client-id" type="text" placeholder="Your Toast API client ID" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:10px;">
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Toast Client Secret</label>
+              <input id="pos-toast-client-secret" type="password" placeholder="Your Toast API client secret" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:10px;">
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Restaurant GUID <span style="font-weight:400;color:var(--text-3);">(from Toast admin)</span></label>
+              <input id="pos-toast-guid" type="text" placeholder="e.g. abc123de-..." style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
+            </div>
+            <div id="pos-square-fields" style="display:none;">
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Square Access Token</label>
+              <input id="pos-square-token" type="password" placeholder="Your Square API access token" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
+            </div>
+            <div id="pos-clover-fields" style="display:none;">
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Clover API Key</label>
+              <input id="pos-clover-key" type="password" placeholder="Your Clover API key" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
+            </div>
+            <div id="pos-other-fields" style="display:none;">
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">API Key or Token</label>
+              <input id="pos-other-key" type="password" placeholder="API key or access token" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:10px;">
+              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">System name</label>
+              <input id="pos-other-name" type="text" placeholder="e.g. Lightspeed, Revel, TouchBistro" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
+            </div>
+            <button onclick="savePos()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;">Save &amp; Encrypt</button>
+            <span id="pos-msg" style="margin-left:12px;font-size:12px;color:var(--success);"></span>
+          </div>
+        </div>
+
+      </div><!-- /profile-panel -->
 
       <!-- RFQ list -->
       <div id="rfq-list" class="rfq-list">
@@ -872,6 +965,9 @@ function showInbox(data) {
 
   // Show signal card after login
   renderSignal(data);
+
+  // Pre-fill profile editor with saved data
+  prefillProfile(data);
 
   // Handle URL params
   const params = getParams();
@@ -1239,7 +1335,7 @@ function renderSignal(bizData) {
     {
       on:     hasHours,
       label:  'Business hours set',
-      action: hasHours ? null : { text: 'Set hours \u2192', href: '/claim.html' },
+      action: hasHours ? null : { text: 'Set hours \u2192', onclick: 'toggleProfile()' },
     },
     {
       on:     hasVerified,
@@ -1403,6 +1499,141 @@ document.getElementById('token-input').addEventListener('keydown', (e) => {
     }
   }
 })();
+
+// ── Profile Editor ────────────────────────────────────────────────────────────
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DAY_SHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+let _profileOpen = false;
+let _selectedPos = null;
+
+function toggleProfile() {
+  _profileOpen = !_profileOpen;
+  const panel = document.getElementById('profile-panel');
+  const btn   = document.getElementById('btn-edit-profile');
+  panel.style.display = _profileOpen ? 'block' : 'none';
+  if (btn) btn.textContent = _profileOpen ? 'Close Profile' : 'Edit Profile';
+  if (_profileOpen) {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function initHoursGrid(savedHours) {
+  const grid = document.getElementById('hours-grid');
+  if (!grid) return;
+  grid.innerHTML = DAYS.map((day, i) => {
+    const saved  = savedHours && savedHours[day];
+    const isOpen = saved ? saved.open !== false : (i < 5); // default Mon-Fri open
+    const from   = saved?.from || '09:00';
+    const to     = saved?.to   || '17:00';
+    return `
+      <label style="font-size:13px;font-weight:500;color:var(--text-2);white-space:nowrap;">${DAY_SHORT[i]}</label>
+      <input type="time" id="h-from-${day}" value="${from}" ${!isOpen ? 'disabled' : ''}
+        style="background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:6px;padding:6px 8px;font-size:12px;color:var(--text-1);">
+      <input type="time" id="h-to-${day}" value="${to}" ${!isOpen ? 'disabled' : ''}
+        style="background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:6px;padding:6px 8px;font-size:12px;color:var(--text-1);">
+      <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-3);cursor:pointer;">
+        <input type="checkbox" id="h-open-${day}" ${isOpen ? 'checked' : ''}
+          onchange="toggleDayOpen('${day}', this.checked)"
+          style="accent-color:var(--accent);">
+        Open
+      </label>`;
+  }).join('');
+}
+
+function toggleDayOpen(day, isOpen) {
+  document.getElementById(`h-from-${day}`).disabled = !isOpen;
+  document.getElementById(`h-to-${day}`).disabled   = !isOpen;
+}
+
+async function saveHours() {
+  const hours = {};
+  for (const day of DAYS) {
+    const isOpen = document.getElementById(`h-open-${day}`)?.checked;
+    hours[day] = {
+      open: isOpen,
+      from: document.getElementById(`h-from-${day}`)?.value || '09:00',
+      to:   document.getElementById(`h-to-${day}`)?.value   || '17:00',
+    };
+  }
+  const msg = document.getElementById('hours-msg');
+  msg.textContent = 'Saving…';
+  try {
+    await apiFetch('/inbox/hours', { method: 'POST', body: JSON.stringify({ token: _token, hours }) });
+    msg.textContent = 'Saved ✓';
+    setTimeout(() => msg.textContent = '', 3000);
+  } catch (e) {
+    msg.style.color = 'var(--error)';
+    msg.textContent = e.message;
+  }
+}
+
+async function saveServices() {
+  const menu_url     = document.getElementById('svc-menu-url')?.value.trim() || null;
+  const services_text = document.getElementById('svc-text')?.value.trim()    || null;
+  const msg = document.getElementById('svc-msg');
+  msg.style.color = 'var(--success)';
+  msg.textContent = 'Saving…';
+  try {
+    const r = await apiFetch('/inbox/services', { method: 'POST', body: JSON.stringify({ token: _token, menu_url, services_text }) });
+    msg.textContent = r.menu_fetch_queued ? 'Saved ✓  (fetching menu in background…)' : 'Saved ✓';
+    setTimeout(() => msg.textContent = '', 4000);
+  } catch (e) {
+    msg.style.color = 'var(--error)';
+    msg.textContent = e.message;
+  }
+}
+
+function selectPos(type) {
+  _selectedPos = type;
+  document.querySelectorAll('.pos-type-btn').forEach(b => b.classList.toggle('selected', b.dataset.pos === type));
+  ['toast','square','clover','other'].forEach(t => {
+    document.getElementById(`pos-${t}-fields`).style.display = t === type ? 'block' : 'none';
+  });
+  document.getElementById('pos-fields').style.display = 'block';
+}
+
+async function savePos() {
+  const msg = document.getElementById('pos-msg');
+  if (!_selectedPos) { msg.style.color='var(--error)'; msg.textContent='Select a POS system first'; return; }
+  let credentials = {};
+  if (_selectedPos === 'toast') {
+    credentials = {
+      client_id:     document.getElementById('pos-toast-client-id')?.value.trim(),
+      client_secret: document.getElementById('pos-toast-client-secret')?.value.trim(),
+      restaurant_guid: document.getElementById('pos-toast-guid')?.value.trim(),
+    };
+  } else if (_selectedPos === 'square') {
+    credentials = { access_token: document.getElementById('pos-square-token')?.value.trim() };
+  } else if (_selectedPos === 'clover') {
+    credentials = { api_key: document.getElementById('pos-clover-key')?.value.trim() };
+  } else {
+    credentials = {
+      api_key:     document.getElementById('pos-other-key')?.value.trim(),
+      system_name: document.getElementById('pos-other-name')?.value.trim(),
+    };
+  }
+  msg.style.color = 'var(--success)';
+  msg.textContent = 'Encrypting & saving…';
+  try {
+    await apiFetch('/inbox/pos', { method: 'POST', body: JSON.stringify({ token: _token, pos_type: _selectedPos, credentials }) });
+    msg.textContent = 'Saved & encrypted ✓';
+    document.getElementById('pos-connected-badge').style.display = 'inline-block';
+    setTimeout(() => msg.textContent = '', 4000);
+  } catch (e) {
+    msg.style.color = 'var(--error)';
+    msg.textContent = e.message;
+  }
+}
+
+function prefillProfile(bizData) {
+  initHoursGrid(bizData.hours_json);
+  if (bizData.services_text) document.getElementById('svc-text').value = bizData.services_text;
+  if (bizData.menu_url)      document.getElementById('svc-menu-url').value = bizData.menu_url;
+  if (bizData.pos_type) {
+    selectPos(bizData.pos_type);
+    document.getElementById('pos-connected-badge').style.display = 'inline-block';
+  }
+}
 </script>
 
 </body>

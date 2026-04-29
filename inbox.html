@@ -802,6 +802,18 @@
 
           <button onclick="saveServices()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;">Save</button>
           <span id="svc-msg" style="margin-left:12px;font-size:12px;color:var(--success);"></span>
+
+          <!-- Menu fetch status -->
+          <div id="menu-fetch-status" style="display:none;margin-top:16px;padding:12px 14px;border-radius:8px;font-size:13px;border:1px solid var(--border);"></div>
+
+          <!-- Menu preview -->
+          <div id="menu-preview" style="display:none;margin-top:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-size:13px;font-weight:600;color:var(--text-2);">Fetched menu items</span>
+              <button onclick="toggleMenuPreview()" style="background:none;border:none;color:var(--text-3);font-size:12px;cursor:pointer;" id="menu-preview-toggle">Hide ▲</button>
+            </div>
+            <div id="menu-items-list" style="display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;"></div>
+          </div>
         </div>
 
         <!-- POS Connect -->
@@ -1571,20 +1583,99 @@ async function saveHours() {
   }
 }
 
+let _menuPollInterval = null;
+let _menuPreviewOpen  = true;
+
 async function saveServices() {
-  const menu_url     = document.getElementById('svc-menu-url')?.value.trim() || null;
-  const services_text = document.getElementById('svc-text')?.value.trim()    || null;
-  const msg = document.getElementById('svc-msg');
-  msg.style.color = 'var(--success)';
-  msg.textContent = 'Saving…';
+  const menu_url      = document.getElementById('svc-menu-url')?.value.trim() || null;
+  const services_text = document.getElementById('svc-text')?.value.trim()     || null;
+  const msg           = document.getElementById('svc-msg');
+  msg.style.color     = 'var(--success)';
+  msg.textContent     = 'Saving…';
   try {
     const r = await apiFetch('/inbox/services', { method: 'POST', body: JSON.stringify({ token: _token, menu_url, services_text }) });
-    msg.textContent = r.menu_fetch_queued ? 'Saved ✓  (fetching menu in background…)' : 'Saved ✓';
-    setTimeout(() => msg.textContent = '', 4000);
+    msg.textContent = 'Saved ✓';
+    setTimeout(() => msg.textContent = '', 3000);
+    if (r.menu_fetch_queued && menu_url) {
+      startMenuPoll();
+    }
   } catch (e) {
     msg.style.color = 'var(--error)';
     msg.textContent = e.message;
   }
+}
+
+function startMenuPoll() {
+  const statusEl = document.getElementById('menu-fetch-status');
+  statusEl.style.display   = 'block';
+  statusEl.style.background = 'rgba(234,179,8,0.08)';
+  statusEl.style.borderColor = 'rgba(234,179,8,0.3)';
+  statusEl.style.color      = '#ca8a04';
+  statusEl.innerHTML        = '⏳ Fetching your menu in the background… this takes up to 30 seconds.';
+  if (_menuPollInterval) clearInterval(_menuPollInterval);
+  let attempts = 0;
+  _menuPollInterval = setInterval(async () => {
+    attempts++;
+    try {
+      const fresh = await apiFetch(`/inbox?token=${encodeURIComponent(_token)}`);
+      if (fresh.menu_fetch_error) {
+        clearInterval(_menuPollInterval);
+        statusEl.style.background  = 'rgba(239,68,68,0.08)';
+        statusEl.style.borderColor = 'rgba(239,68,68,0.3)';
+        statusEl.style.color       = 'var(--error)';
+        statusEl.innerHTML = `❌ Fetch failed: ${fresh.menu_fetch_error}<br><span style="color:var(--text-3);">Your text description will be used instead.</span>`;
+      } else if (fresh.menu_fetched_at) {
+        clearInterval(_menuPollInterval);
+        const ts = new Date(fresh.menu_fetched_at).toLocaleTimeString();
+        statusEl.style.background  = 'rgba(22,163,74,0.08)';
+        statusEl.style.borderColor = 'rgba(22,163,74,0.3)';
+        statusEl.style.color       = 'var(--success)';
+        statusEl.innerHTML = `✅ Menu fetched successfully at ${ts}`;
+        renderMenuPreview(fresh.services_json);
+      } else if (attempts >= 12) {
+        clearInterval(_menuPollInterval);
+        statusEl.style.background  = 'rgba(239,68,68,0.08)';
+        statusEl.style.borderColor = 'rgba(239,68,68,0.3)';
+        statusEl.style.color       = 'var(--error)';
+        statusEl.innerHTML = '⚠️ Fetch is taking longer than expected. Check back in a few minutes or try a different URL.';
+      }
+    } catch (e) { /* ignore poll errors */ }
+  }, 5000);
+}
+
+function renderMenuPreview(servicesJson) {
+  const preview = document.getElementById('menu-preview');
+  const list    = document.getElementById('menu-items-list');
+  if (!servicesJson) return;
+  const items = servicesJson.items || servicesJson.menu_items || [];
+  if (!items.length) {
+    // Try flat object
+    const keys = Object.keys(servicesJson).filter(k => k !== 'source' && k !== 'fetched_at');
+    if (!keys.length) return;
+    list.innerHTML = `<pre style="font-size:11px;color:var(--text-2);white-space:pre-wrap;margin:0;">${JSON.stringify(servicesJson, null, 2).slice(0, 3000)}</pre>`;
+  } else {
+    list.innerHTML = items.map(item => {
+      const tags  = (item.tags || []).map(t => `<span style="font-size:10px;background:rgba(22,163,74,0.12);color:var(--success);padding:1px 6px;border-radius:10px;">${t}</span>`).join(' ');
+      const price = item.price ? `<span style="font-size:12px;color:var(--text-2);margin-left:auto;">${item.price}</span>` : '';
+      return `<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg-card-2,#1a1a1a);border-radius:6px;border:1px solid var(--border);">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:500;color:var(--text-1);">${item.name || item.title || 'Item'}</div>
+          ${item.description ? `<div style="font-size:11px;color:var(--text-3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.description}</div>` : ''}
+          ${tags ? `<div style="margin-top:4px;display:flex;gap:4px;flex-wrap:wrap;">${tags}</div>` : ''}
+        </div>
+        ${price}
+      </div>`;
+    }).join('');
+  }
+  preview.style.display = 'block';
+}
+
+function toggleMenuPreview() {
+  _menuPreviewOpen = !_menuPreviewOpen;
+  const list   = document.getElementById('menu-items-list');
+  const toggle = document.getElementById('menu-preview-toggle');
+  list.style.display   = _menuPreviewOpen ? 'flex' : 'none';
+  toggle.textContent   = _menuPreviewOpen ? 'Hide ▲' : 'Show ▼';
 }
 
 function selectPos(type) {
@@ -1631,11 +1722,28 @@ async function savePos() {
 
 function prefillProfile(bizData) {
   initHoursGrid(bizData.hours_json);
-  if (bizData.services_text) document.getElementById('svc-text').value = bizData.services_text;
-  if (bizData.menu_url)      document.getElementById('svc-menu-url').value = bizData.menu_url;
+  if (bizData.services_text) document.getElementById('svc-text').value       = bizData.services_text;
+  if (bizData.menu_url)      document.getElementById('svc-menu-url').value   = bizData.menu_url;
   if (bizData.pos_type) {
     selectPos(bizData.pos_type);
     document.getElementById('pos-connected-badge').style.display = 'inline-block';
+  }
+  // Show existing fetch status
+  const statusEl = document.getElementById('menu-fetch-status');
+  if (bizData.menu_fetch_error) {
+    statusEl.style.display     = 'block';
+    statusEl.style.background  = 'rgba(239,68,68,0.08)';
+    statusEl.style.borderColor = 'rgba(239,68,68,0.3)';
+    statusEl.style.color       = 'var(--error)';
+    statusEl.innerHTML = `❌ Last fetch failed: ${bizData.menu_fetch_error}<br><span style="color:var(--text-3);">Your text description will be used instead. Re-save to retry.</span>`;
+  } else if (bizData.menu_fetched_at) {
+    const ts = new Date(bizData.menu_fetched_at).toLocaleTimeString();
+    statusEl.style.display     = 'block';
+    statusEl.style.background  = 'rgba(22,163,74,0.08)';
+    statusEl.style.borderColor = 'rgba(22,163,74,0.3)';
+    statusEl.style.color       = 'var(--success)';
+    statusEl.innerHTML = `✅ Menu fetched successfully at ${ts}`;
+    if (bizData.services_json) renderMenuPreview(bizData.services_json);
   }
 }
 </script>

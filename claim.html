@@ -1743,6 +1743,11 @@
           }
           // Success — clear saved state
           try { sessionStorage.removeItem('li_claim_state'); } catch(e) {}
+          // Returning owner — verified identity, skip wallet step, go straight to inbox
+          if (data.returning && data.inbox_url) {
+            window.location.href = data.inbox_url;
+            return;
+          }
           // Wire up inbox link if server returned dispatch_token
           if (data.inbox_url) {
             const inboxLink = document.getElementById('inbox-link');

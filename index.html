@@ -257,6 +257,65 @@
       margin: 0 auto 36px;
       line-height: 1.6;
     }
+    /* ── Hero Ask bar ── */
+    .hero-ask-form {
+      width: 100%;
+      max-width: 640px;
+      margin: 28px auto 0;
+    }
+    .hero-ask-wrap {
+      display: flex;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: 48px;
+      padding: 6px 8px 6px 18px;
+      gap: 10px;
+      transition: border-color .18s;
+      box-shadow: 0 2px 16px rgba(0,0,0,.18);
+    }
+    .hero-ask-wrap:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99,102,241,.15), 0 2px 16px rgba(0,0,0,.18);
+    }
+    .hero-ask-icon {
+      flex-shrink: 0;
+      color: var(--text-2);
+    }
+    .hero-ask-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.4;
+      padding: 8px 0;
+      min-width: 0;
+    }
+    .hero-ask-input::placeholder { color: var(--text-2); }
+    .hero-ask-btn {
+      flex-shrink: 0;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 40px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .hero-ask-btn:hover { background: var(--accent-hover, #4f46e5); }
+    .hero-ask-hint {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-2);
+      margin: 8px 0 0;
+      letter-spacing: .02em;
+    }
+    /* ── end hero ask bar ── */
     .hero-ctas {
       display: flex;
       align-items: center;
@@ -645,6 +704,10 @@
     @media (max-width: 480px) {
       .footer-links { flex-direction: column; gap: 24px; }
     }
+    @media (max-width: 640px) {
+      .hero-ask-btn { padding: 9px 14px; font-size: 13px; }
+      .hero-ask-input { font-size: 14px; }
+    }
   </style>
 </head>
 <body>
@@ -691,7 +754,16 @@
         </div>
         <h1>The local intelligence layer your market is missing.</h1>
         <p class="hero-sub">Real data on businesses, permits, market gaps, and growth trends across Northeast Florida. Used by realtors, contractors, and AI agents — all asking the same question: what's actually happening here?</p>
-        <div class="hero-ctas">
+        <!-- Google-style Ask bar -->
+        <form class="hero-ask-form" action="search.html" method="GET" onsubmit="heroAsk(event)">
+          <div class="hero-ask-wrap">
+            <svg class="hero-ask-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="heroQ" name="q" class="hero-ask-input" type="text" placeholder="Ask anything — &ldquo;coffee shops in 32082&rdquo; or &ldquo;market gaps near St. Augustine&rdquo;" autocomplete="off" />
+            <button type="submit" class="hero-ask-btn">Ask LocalIntel</button>
+          </div>
+          <p class="hero-ask-hint">Free &middot; No sign-up &middot; Plain English</p>
+        </form>
+        <div class="hero-ctas" style="margin-top:20px;">
           <a href="claim.html" class="btn btn-primary">Claim Your Business Listing</a>
           <a href="#how-it-works" class="btn btn-secondary">Explore the Data →</a>
           <a href="/login" class="btn btn-ghost" style="font-size:14px;margin-top:4px;">Already claimed? Access your dashboard →</a>
@@ -989,6 +1061,14 @@
       el.style.transition = 'opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s, border-color 0.2s';
       observer.observe(el);
     });
+  </script>
+  <script>
+    function heroAsk(e) {
+      e.preventDefault();
+      const q = document.getElementById('heroQ').value.trim();
+      if (!q) return;
+      window.location.href = 'search.html?q=' + encodeURIComponent(q);
+    }
   </script>
 
 </body>

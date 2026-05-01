@@ -520,18 +520,59 @@
       }
     }
 
+    // Dig through the nested /ask response to find the human-readable answer string
+    // and any business arrays buried inside
+    function parseAskResult(raw) {
+      // raw may be a JSON string — parse it
+      let obj = raw;
+      if (typeof raw === 'string') {
+        try { obj = JSON.parse(raw); } catch (_) { return { text: raw, businesses: [] }; }
+      }
+      if (!obj || typeof obj !== 'object') return { text: String(raw), businesses: [] };
+
+      // Drill through up to 3 levels of nested .answer
+      let cur = obj;
+      for (let i = 0; i < 4; i++) {
+        if (typeof cur?.answer === 'string') { cur = { answer: cur.answer, businesses: cur.businesses || cur.results || [] }; break; }
+        if (cur?.answer && typeof cur.answer === 'object') { cur = cur.answer; continue; }
+        break;
+      }
+
+      const businesses = cur?.businesses || cur?.results || obj?.businesses || obj?.results || [];
+      const text = (typeof cur?.answer === 'string' ? cur.answer : null)
+        || cur?.narrative
+        || cur?.summary
+        || obj?.narrative
+        || null;
+
+      return { text, businesses: Array.isArray(businesses) ? businesses : [], raw: obj };
+    }
+
     function renderResults(result, query, zip, category, status) {
       const wrap = document.getElementById('resultsWrap');
 
       // Parse result — /ask returns { answer, zip, category, tool_used, latency_ms }
+      // answer may be a JSON string wrapping nested objects
+      const { text: nlAnswer, businesses: parsedBiz } = parseAskResult(result?.answer);
+
       let businesses = [];
       const rawAnswer = result?.answer;
-      if (rawAnswer?.businesses)          businesses = rawAnswer.businesses;
-      else if (rawAnswer?.results)        businesses = rawAnswer.results;
-      else if (Array.isArray(rawAnswer))  businesses = rawAnswer;
-      else {
-        const result2 = rawAnswer || result;
-        // Natural language answer — show as intel card
+      if (rawAnswer?.businesses)           businesses = rawAnswer.businesses;
+      else if (rawAnswer?.results)         businesses = rawAnswer.results;
+      else if (Array.isArray(rawAnswer))   businesses = rawAnswer;
+      else if (parsedBiz?.length)          businesses = parsedBiz;
+
+      if (!businesses.length) {
+        // Show natural language answer card
+        const displayText = nlAnswer || (typeof rawAnswer === 'string' && rawAnswer.length < 300 ? rawAnswer : null) || null;
+        const isNoData = !displayText || displayText.toLowerCase().includes('no data found') || displayText.toLowerCase().includes('no results');
+
+        if (isNoData) {
+          showState('📭', 'No results found',
+            `We don\'t have specific data for <strong>${esc(query)}</strong> yet. Try a business name, category ("plumber", "restaurant"), or a ZIP code like 32082.`);
+          return;
+        }
+
         wrap.innerHTML = `
           <div style="max-width:760px;">
             <div class="results-meta">
@@ -539,11 +580,10 @@
             </div>
             <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;">
               <div style="font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">LocalIntel Analysis</div>
-              <p style="font-size:15px;line-height:1.7;color:var(--text);">${esc(typeof result2 === 'string' ? result2 : result2?.answer || JSON.stringify(result2))}</p>
-              ${Array.isArray(result2?.sources) && result2.sources.length ? `<div style="margin-top:16px;font-size:13px;color:var(--text-2);">Sources: ${result2.sources.join(', ')}</div>` : ''}
+              <p style="font-size:15px;line-height:1.7;color:var(--text);">${esc(displayText)}</p>
             </div>
             <p style="margin-top:20px;font-size:14px;color:var(--text-2);">
-              Want business-level results? Try filtering by ZIP or category above.
+              Want business listings? Try a category or ZIP above.
             </p>
           </div>
         `;

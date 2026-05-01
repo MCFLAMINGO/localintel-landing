@@ -649,8 +649,41 @@
       `;
     }
 
+    function renderServiceRequest(result) {
+      // Natural-language service request — show RFQ card + matching providers
+      const wrap = document.getElementById('resultsWrap');
+      const narrativeHtml = result.narrative ? renderNarrative(result.narrative) : '';
+      let providerHtml = '';
+      if (Array.isArray(result.results) && result.results.length) {
+        providerHtml = `
+          <div style="margin-top:16px;">
+            <div style="font-size:13px;color:var(--text-2);margin-bottom:10px;">Matching providers:</div>
+            ${result.results.map(renderCard).join('')}
+          </div>`;
+      }
+      wrap.innerHTML = `
+        ${narrativeHtml}
+        <div style="margin-top:16px;background:var(--bg-card);border:1px solid var(--border);
+                    border-radius:var(--radius);padding:20px;text-align:center;">
+          <div style="font-size:22px;margin-bottom:8px">📞</div>
+          <div style="font-weight:600;font-size:15px;margin-bottom:6px;">Want someone to handle this?</div>
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:14px;">
+            Call us and describe what you need — we’ll route it to the right local provider.
+          </div>
+          <a href="tel:+19045067476" style="display:inline-block;background:var(--accent);color:#fff;
+             font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;text-decoration:none;">
+            Call (904) 506-7476
+          </a>
+        </div>
+        ${providerHtml}
+      \`;
+    }
+
     function renderResults(result, query, zip, category, status) {
       const wrap = document.getElementById('resultsWrap');
+
+      // Service request (“I need X”) — intercept before business card render
+      if (result.type === 'service_request') { renderServiceRequest(result); return; }
 
       // /search returns { total, results: [...], narrative? } — clean and direct
       let businesses = Array.isArray(result?.results) ? result.results : [];
@@ -662,62 +695,4 @@
       }
 
       // Filter by status if set
-      if (status === 'claimed')   businesses = businesses.filter(b => b.claimed_at || b.wallet);
-      if (status === 'unclaimed') businesses = businesses.filter(b => !b.claimed_at && !b.wallet);
-
-      if (!businesses.length) {
-        showState('📭', 'No results found', `No businesses matched "${query || zip || category}". Try a different search or check the spelling.`);
-        return;
-      }
-
-      const narrativeHtml = result.narrative ? renderNarrative(result.narrative) : '';
-      const cards = businesses.map(renderCard).join('');
-      wrap.innerHTML = `
-        ${narrativeHtml}
-        <div class="results-meta">
-          Found <strong>${businesses.length} business${businesses.length !== 1 ? 'es' : ''}</strong>${query ? ` matching "${esc(query)}"` : ''}${zip ? ` in ${esc(zip)}` : ''}${category ? ` · ${esc(category)}` : ''}
-        </div>
-        ${cards}
-        <div style="margin-top:24px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);text-align:center;">
-          <p style="font-size:14px;color:var(--text-2);">
-            Is your business listed here? <a href="claim.html" style="color:var(--accent);font-weight:600;">Claim your listing →</a>
-          </p>
-        </div>
-      `;
-    }
-
-    // Enter key triggers search
-    document.getElementById('searchInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') runSearch();
-    });
-
-    // Filter changes auto-search if there's already a query
-    ['zipFilter','categoryFilter','statusFilter'].forEach(id => {
-      document.getElementById(id).addEventListener('change', () => {
-        const q = document.getElementById('searchInput').value.trim();
-        const z = document.getElementById('zipFilter').value;
-        const c = document.getElementById('categoryFilter').value;
-        if (q || z || c) runSearch();
-      });
-    });
-
-    // Pre-fill from URL params — wrapped in DOMContentLoaded to guarantee elements exist
-    function initFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      const qVal = params.get('q');
-      const zipVal = params.get('zip');
-      const catVal = params.get('cat');
-      if (qVal)   { const el = document.getElementById('searchInput');    if (el) el.value = qVal; }
-      if (zipVal) { const el = document.getElementById('zipFilter');      if (el) el.value = zipVal; }
-      if (catVal) { const el = document.getElementById('categoryFilter'); if (el) el.value = catVal; }
-      if (qVal || zipVal || catVal) runSearch();
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initFromUrl);
-    } else {
-      initFromUrl();
-    }
-  </script>
-
-</body>
-</html>
+      if (status === 'cla

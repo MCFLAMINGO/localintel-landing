@@ -399,7 +399,7 @@
   </div>
 
   <script>
-    const ASK_URL = 'https://gsb-swarm-production.up.railway.app/api/local-intel/ask';
+    const SEARCH_URL = 'https://gsb-swarm-production.up.railway.app/api/local-intel/search';
     let currentPage = 1;
     let lastQuery = {};
     let isLoading = false;
@@ -480,12 +480,12 @@
       `;
     }
 
-    async function callAsk(q, zip, cat) {
+    async function callSearch(q, zip, cat) {
       const params = new URLSearchParams();
       if (q)   params.set('q', q);
       if (zip) params.set('zip', zip);
       if (cat) params.set('cat', cat);
-      const res = await fetch(`${ASK_URL}?${params}`, {
+      const res = await fetch(`${SEARCH_URL}?${params}`, {
         headers: { 'X-Agent-Origin': 'localintel-search-ui' },
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -511,82 +511,24 @@
       showLoading();
 
       try {
-        const result = await callAsk(query, zip, category);
+        const result = await callSearch(query, zip, category);
         renderResults(result, query, zip, category, status);
       } catch (e) {
-        showState('⚠️', 'Search unavailable', `${e.message}. The LocalIntel MCP server may be temporarily unreachable.`);
+        showState('⚠️', 'Search unavailable', `${e.message}. Try again in a moment.`);
       } finally {
         isLoading = false;
       }
     }
 
-    // Dig through the nested /ask response to find the human-readable answer string
-    // and any business arrays buried inside
-    function parseAskResult(raw) {
-      // raw may be a JSON string — parse it
-      let obj = raw;
-      if (typeof raw === 'string') {
-        try { obj = JSON.parse(raw); } catch (_) { return { text: raw, businesses: [] }; }
-      }
-      if (!obj || typeof obj !== 'object') return { text: String(raw), businesses: [] };
-
-      // Drill through up to 3 levels of nested .answer
-      let cur = obj;
-      for (let i = 0; i < 4; i++) {
-        if (typeof cur?.answer === 'string') { cur = { answer: cur.answer, businesses: cur.businesses || cur.results || [] }; break; }
-        if (cur?.answer && typeof cur.answer === 'object') { cur = cur.answer; continue; }
-        break;
-      }
-
-      const businesses = cur?.businesses || cur?.results || obj?.businesses || obj?.results || [];
-      const text = (typeof cur?.answer === 'string' ? cur.answer : null)
-        || cur?.narrative
-        || cur?.summary
-        || obj?.narrative
-        || null;
-
-      return { text, businesses: Array.isArray(businesses) ? businesses : [], raw: obj };
-    }
-
     function renderResults(result, query, zip, category, status) {
       const wrap = document.getElementById('resultsWrap');
 
-      // Parse result — /ask returns { answer, zip, category, tool_used, latency_ms }
-      // answer may be a JSON string wrapping nested objects
-      const { text: nlAnswer, businesses: parsedBiz } = parseAskResult(result?.answer);
-
-      let businesses = [];
-      const rawAnswer = result?.answer;
-      if (rawAnswer?.businesses)           businesses = rawAnswer.businesses;
-      else if (rawAnswer?.results)         businesses = rawAnswer.results;
-      else if (Array.isArray(rawAnswer))   businesses = rawAnswer;
-      else if (parsedBiz?.length)          businesses = parsedBiz;
+      // /search returns { total, results: [...] } — clean and direct
+      let businesses = Array.isArray(result?.results) ? result.results : [];
 
       if (!businesses.length) {
-        // Show natural language answer card
-        const displayText = nlAnswer || (typeof rawAnswer === 'string' && rawAnswer.length < 300 ? rawAnswer : null) || null;
-        const isNoData = !displayText || displayText.toLowerCase().includes('no data found') || displayText.toLowerCase().includes('no results');
-
-        if (isNoData) {
-          showState('📭', 'No results found',
-            `We don\'t have specific data for <strong>${esc(query)}</strong> yet. Try a business name, category ("plumber", "restaurant"), or a ZIP code like 32082.`);
-          return;
-        }
-
-        wrap.innerHTML = `
-          <div style="max-width:760px;">
-            <div class="results-meta">
-              Intel result for <strong>${esc(query)}${zip ? ' · ' + zip : ''}</strong>
-            </div>
-            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;">
-              <div style="font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">LocalIntel Analysis</div>
-              <p style="font-size:15px;line-height:1.7;color:var(--text);">${esc(displayText)}</p>
-            </div>
-            <p style="margin-top:20px;font-size:14px;color:var(--text-2);">
-              Want business listings? Try a category or ZIP above.
-            </p>
-          </div>
-        `;
+        showState('📭', 'No results found',
+          `Nothing matched <strong>${esc(query || zip || category)}</strong>. Try a business name, category ("plumber", "restaurant"), or a ZIP like 32082.`);
         return;
       }
 

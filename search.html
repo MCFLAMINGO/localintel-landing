@@ -399,7 +399,7 @@
   </div>
 
   <script>
-    const MCP_URL = 'https://gsb-swarm-production.up.railway.app/api/local-intel/mcp';
+    const ASK_URL = 'https://gsb-swarm-production.up.railway.app/api/local-intel/ask';
     let currentPage = 1;
     let lastQuery = {};
     let isLoading = false;
@@ -480,20 +480,16 @@
       `;
     }
 
-    async function callMCP(toolName, args) {
-      const body = {
-        jsonrpc: '2.0', id: 1, method: 'tools/call',
-        params: { name: toolName, arguments: args }
-      };
-      const res = await fetch(MCP_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Agent-Origin': 'localintel-search-ui' },
-        body: JSON.stringify(body),
+    async function callAsk(q, zip, cat) {
+      const params = new URLSearchParams();
+      if (q)   params.set('q', q);
+      if (zip) params.set('zip', zip);
+      if (cat) params.set('cat', cat);
+      const res = await fetch(`${ASK_URL}?${params}`, {
+        headers: { 'X-Agent-Origin': 'localintel-search-ui' },
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message || 'MCP error');
-      return data.result;
+      return await res.json();
     }
 
     async function runSearch(page = 1) {
@@ -515,24 +511,7 @@
       showLoading();
 
       try {
-        // Build the MCP query — use toolNearby for ZIP-based, pgCategorySearch for category,
-        // or a general query for name/keyword searches
-        let result;
-
-        if (zip && !query && !category) {
-          // ZIP-only → nearby search
-          result = await callMCP('local_intel_nearby', {
-            zip,
-            radius_miles: 5,
-            limit: 20,
-            category: category || undefined,
-          });
-        } else {
-          // Keyword/category search → use the natural language oracle
-          const q = [query, category, zip].filter(Boolean).join(' near ');
-          result = await callMCP('local_intel_query', { query: q });
-        }
-
+        const result = await callAsk(query, zip, category);
         renderResults(result, query, zip, category, status);
       } catch (e) {
         showState('⚠️', 'Search unavailable', `${e.message}. The LocalIntel MCP server may be temporarily unreachable.`);
@@ -544,12 +523,14 @@
     function renderResults(result, query, zip, category, status) {
       const wrap = document.getElementById('resultsWrap');
 
-      // Parse result — MCP returns different shapes per tool
+      // Parse result — /ask returns { answer, zip, category, tool_used, latency_ms }
       let businesses = [];
-      if (result?.businesses)          businesses = result.businesses;
-      else if (result?.results)        businesses = result.results;
-      else if (Array.isArray(result))  businesses = result;
-      else if (result?.answer) {
+      const rawAnswer = result?.answer;
+      if (rawAnswer?.businesses)          businesses = rawAnswer.businesses;
+      else if (rawAnswer?.results)        businesses = rawAnswer.results;
+      else if (Array.isArray(rawAnswer))  businesses = rawAnswer;
+      else {
+        const result2 = rawAnswer || result;
         // Natural language answer — show as intel card
         wrap.innerHTML = `
           <div style="max-width:760px;">
@@ -558,8 +539,8 @@
             </div>
             <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;">
               <div style="font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">LocalIntel Analysis</div>
-              <p style="font-size:15px;line-height:1.7;color:var(--text);">${esc(result.answer || JSON.stringify(result))}</p>
-              ${result.sources?.length ? `<div style="margin-top:16px;font-size:13px;color:var(--text-2);">Sources: ${result.sources.join(', ')}</div>` : ''}
+              <p style="font-size:15px;line-height:1.7;color:var(--text);">${esc(typeof result2 === 'string' ? result2 : result2?.answer || JSON.stringify(result2))}</p>
+              ${Array.isArray(result2?.sources) && result2.sources.length ? `<div style="margin-top:16px;font-size:13px;color:var(--text-2);">Sources: ${result2.sources.join(', ')}</div>` : ''}
             </div>
             <p style="margin-top:20px;font-size:14px;color:var(--text-2);">
               Want business-level results? Try filtering by ZIP or category above.

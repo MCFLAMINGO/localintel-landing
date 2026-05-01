@@ -628,12 +628,22 @@
       });
     });
 
-    // Pre-fill from URL params
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('q'))   { document.getElementById('searchInput').value = params.get('q'); }
-    if (params.get('zip')) { document.getElementById('zipFilter').value   = params.get('zip'); }
-    if (params.get('cat')) { document.getElementById('categoryFilter').value = params.get('cat'); }
-    if (params.get('q') || params.get('zip') || params.get('cat')) runSearch();
+    // Pre-fill from URL params — wrapped in DOMContentLoaded to guarantee elements exist
+    function initFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const qVal = params.get('q');
+      const zipVal = params.get('zip');
+      const catVal = params.get('cat');
+      if (qVal)   { const el = document.getElementById('searchInput');    if (el) el.value = qVal; }
+      if (zipVal) { const el = document.getElementById('zipFilter');      if (el) el.value = zipVal; }
+      if (catVal) { const el = document.getElementById('categoryFilter'); if (el) el.value = catVal; }
+      if (qVal || zipVal || catVal) runSearch();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initFromUrl);
+    } else {
+      initFromUrl();
+    }
   </script>
 
 </body>

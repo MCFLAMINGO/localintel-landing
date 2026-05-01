@@ -203,9 +203,31 @@
       font-weight: 700;
       color: var(--text);
       margin-bottom: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      overflow: visible;
+      word-break: break-word;
+    }
+    .result-details {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 8px;
+    }
+    .result-detail-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: var(--text-2);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .result-detail-link:hover {
+      color: var(--accent);
+    }
+    .result-detail-link svg {
+      flex-shrink: 0;
+      opacity: .7;
     }
     .result-meta {
       font-size: 13px;
@@ -458,25 +480,51 @@
 
     function renderCard(biz) {
       const icon     = getIcon(biz.category || biz.category_group);
-      const claimed  = biz.claimed_at || biz.wallet;
+      const claimed  = biz.claimed || biz.claimed_at || biz.wallet;
       const category = biz.category || biz.category_group || 'Business';
-      const city     = biz.city || '';
-      const addr     = biz.address ? `${biz.address}${city ? ', ' + city : ''}` : city;
+
+      // Build full address string including ZIP
+      const addrParts = [biz.address, biz.city, biz.zip].filter(p => p && p.trim() && !/^\d{5}$/.test(p.trim()) === false || (p && !/^\d{5}$/.test(p.trim())));
+      // Simpler: just combine what we have
+      const addrLine = [biz.address, biz.city].filter(Boolean).join(', ');
+      const fullAddr = addrLine ? `${addrLine}, FL ${biz.zip || ''}` : (biz.zip ? `ZIP ${biz.zip}, FL` : '');
+
+      // OSM map URL — use lat/lon if available, otherwise address search
+      const mapUrl = (biz.lat && biz.lon)
+        ? `https://www.openstreetmap.org/?mlat=${biz.lat}&mlon=${biz.lon}&zoom=17`
+        : `https://www.openstreetmap.org/search?query=${encodeURIComponent(fullAddr)}`;
 
       return `
         <div class="result-card">
           <div class="result-icon">${icon}</div>
           <div class="result-body">
-            <div class="result-name">${esc(biz.name || 'Unnamed Business')}</div>
-            <div class="result-meta">
+            <div class="result-name" title="${esc(biz.name || '')}">
+              ${biz.website
+                ? `<a href="${esc(biz.website)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dotted var(--border);">${esc(biz.name || 'Unnamed Business')}</a>`
+                : esc(biz.name || 'Unnamed Business')}
+            </div>
+            <div class="result-meta" style="margin-top:6px;">
               ${category ? `<span class="result-tag">${esc(category)}</span>` : ''}
-              ${addr ? `<span>📍 ${esc(addr)}</span>` : ''}
-              ${biz.phone ? `<span>📞 ${esc(biz.phone)}</span>` : ''}
+            </div>
+            <div class="result-details">
+              ${fullAddr ? `<a href="${mapUrl}" target="_blank" rel="noopener" class="result-detail-link">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                ${esc(fullAddr)}
+              </a>` : ''}
+              ${biz.phone ? `<a href="tel:${esc(biz.phone.replace(/\D/g,''))}" class="result-detail-link">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.6 4.38 2 2 0 0 1 3.57 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg>
+                ${esc(biz.phone)}
+              </a>` : ''}
+              ${biz.website ? `<a href="${esc(biz.website)}" target="_blank" rel="noopener" class="result-detail-link">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                ${esc(biz.website.replace(/^https?:\/\//,''))}
+              </a>` : ''}
             </div>
           </div>
           <div class="result-right">
             <div class="result-zip">${biz.zip || ''}</div>
             <div class="result-status${claimed ? ' claimed' : ''}">${claimed ? '✓ Claimed' : 'Unclaimed'}</div>
+            <a href="${mapUrl}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;font-size:11px;color:var(--accent);text-decoration:none;font-weight:600;">View on Map →</a>
           </div>
         </div>
       `;

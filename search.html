@@ -666,10 +666,11 @@
         <div style="margin-top:16px;background:var(--bg-card);border:1px solid var(--border);
                     border-radius:var(--radius);padding:20px;text-align:center;">
           <div style="font-size:22px;margin-bottom:8px">📞</div>
-          <div style="font-weight:600;font-size:15px;margin-bottom:6px;">Want someone to handle this?</div>
-          <div style="font-size:13px;color:var(--text-2);margin-bottom:14px;">
-            Call us and describe what you need — we’ll route it to the right local provider.
+          <div style="font-weight:600;font-size:15px;margin-bottom:6px;">Providers notified — call for a callback</div>
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:6px;">
+            We’ve broadcast your request to local providers. Call us and we’ll call you back when they respond.
           </div>
+          ${result.job_code ? `<div style="font-size:12px;color:var(--text-2);margin-bottom:12px;">Job ID: <strong>${result.job_code}</strong></div>` : ''}
           <a href="tel:+19045067476" style="display:inline-block;background:var(--accent);color:#fff;
              font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;text-decoration:none;">
             Call (904) 506-7476

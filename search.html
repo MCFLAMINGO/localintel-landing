@@ -331,9 +331,47 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* NARRATIVE INTEL CARD */
+    .narrative-card {
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+      border: 1.5px solid #86EFAC;
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .narrative-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .narrative-label-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .narrative-text {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #1A2E1A;
+    }
+    .narrative-text a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
     @media (max-width: 640px) {
       .result-card { flex-wrap: wrap; gap: 12px; }
       .result-right { flex: 0 0 100%; text-align: left; display: flex; gap: 12px; align-items: center; }
+      .narrative-card { padding: 18px 18px; }
     }
   </style>
 </head>
@@ -594,10 +632,27 @@
       }
     }
 
+    function renderNarrative(text) {
+      // Convert bare URLs in narrative to clickable links
+      const linked = text.replace(
+        /(https?:\/\/[^\s<>"]+)/g,
+        url => `<a href="${url}" target="_blank" rel="noopener">${url.replace(/^https?:\/\//,'')}</a>`
+      );
+      return `
+        <div class="narrative-card">
+          <div class="narrative-label">
+            <span class="narrative-label-dot"></span>
+            LocalIntel Intelligence
+          </div>
+          <div class="narrative-text">${linked}</div>
+        </div>
+      `;
+    }
+
     function renderResults(result, query, zip, category, status) {
       const wrap = document.getElementById('resultsWrap');
 
-      // /search returns { total, results: [...] } — clean and direct
+      // /search returns { total, results: [...], narrative? } — clean and direct
       let businesses = Array.isArray(result?.results) ? result.results : [];
 
       if (!businesses.length) {
@@ -615,10 +670,12 @@
         return;
       }
 
+      const narrativeHtml = result.narrative ? renderNarrative(result.narrative) : '';
       const cards = businesses.map(renderCard).join('');
       wrap.innerHTML = `
+        ${narrativeHtml}
         <div class="results-meta">
-          Found <strong>${businesses.length} businesses</strong>${query ? ` matching "${esc(query)}"` : ''}${zip ? ` in ${esc(zip)}` : ''}${category ? ` · ${esc(category)}` : ''}
+          Found <strong>${businesses.length} business${businesses.length !== 1 ? 'es' : ''}</strong>${query ? ` matching "${esc(query)}"` : ''}${zip ? ` in ${esc(zip)}` : ''}${category ? ` · ${esc(category)}` : ''}
         </div>
         ${cards}
         <div style="margin-top:24px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);text-align:center;">

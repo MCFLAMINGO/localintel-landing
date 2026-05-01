@@ -257,6 +257,69 @@
       margin: 0 auto 36px;
       line-height: 1.6;
     }
+    /* ── Call CTA ── */
+    .hero-call-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 28px;
+      padding: 16px 28px;
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      border: 1.5px solid rgba(255,255,255,.15);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: #fff;
+      box-shadow: 0 4px 24px rgba(22,163,74,.35);
+      transition: transform .15s, box-shadow .15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-call-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(22,163,74,.45);
+    }
+    .hero-call-pulse {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #4ade80;
+      flex-shrink: 0;
+      animation: pulse-ring 1.8s ease-out infinite;
+    }
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(74,222,128,.6); }
+      70%  { box-shadow: 0 0 0 8px rgba(74,222,128,0); }
+      100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+    }
+    .hero-call-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      opacity: .85;
+      display: block;
+    }
+    .hero-call-number {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.01em;
+      display: block;
+      line-height: 1.1;
+    }
+    .hero-call-sub {
+      font-size: 13px;
+      opacity: .8;
+      display: block;
+      margin-top: 2px;
+    }
+    .hero-call-cta > span:not(.hero-call-pulse) {
+      display: flex;
+      flex-direction: column;
+    }
+    @media (max-width: 640px) {
+      .hero-call-number { font-size: 18px; }
+      .hero-call-cta { padding: 14px 20px; gap: 10px; }
+    }
+    /* ── end Call CTA ── */
     /* ── Ask LocalIntel CTA button ── */
     .btn-ask {
       display: inline-flex;
@@ -722,6 +785,14 @@
           <a href="#how-it-works" class="btn btn-secondary">Explore the Data →</a>
           <a href="/login" class="btn btn-ghost" style="font-size:14px;margin-top:4px;">Already claimed? Access your dashboard →</a>
         </div>
+        <!-- Call CTA -->
+        <a href="tel:+19045067476" class="hero-call-cta">
+          <span class="hero-call-pulse"></span>
+          <span class="hero-call-label">Ready to get it done?</span>
+          <span class="hero-call-number">Call (904) 506-7476</span>
+          <span class="hero-call-sub">Tell us what you need &mdash; we&rsquo;ll handle it</span>
+        </a>
+
         <p style="margin-top: 20px; margin-bottom: -12px; font-size: 14px; color: var(--text-2);">📍 <strong style="color: var(--text);">Make sure your business is on the map.</strong> LocalIntel uses OpenStreetMap to place your exact location. <a href="https://www.openstreetmap.org/edit" target="_blank" rel="noopener" style="color: var(--accent); font-weight: 600; text-decoration: underline;">Add or verify your pin on OSM →</a></p>
 
         <div class="hero-stats">

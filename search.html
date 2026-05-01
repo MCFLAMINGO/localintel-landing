@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LocalIntel — Search Businesses</title>
+  <meta name="description" content="Search 122,000+ verified Florida businesses by name, category, or ZIP code.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --bg-card: #F9FAFB;
+      --text: #111827;
+      --text-2: #6B7280;
+      --text-3: #9CA3AF;
+      --accent: #16A34A;
+      --accent-hover: #15803D;
+      --accent-light: #DCFCE7;
+      --accent-text: #166534;
+      --border: #E5E7EB;
+      --radius-sm: 6px;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --shadow: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --max: 1160px;
+      --nav-h: 64px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font); font-size: 16px; line-height: 1.65; color: var(--text); background: var(--bg); }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: var(--nav-h);
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: var(--max); margin: 0 auto; padding: 0 24px;
+      height: 100%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 17px; font-weight: 700; letter-spacing: -0.4px;
+    }
+    .logo-dot {
+      width: 22px; height: 22px; background: var(--accent);
+      border-radius: 50%; position: relative; flex-shrink: 0;
+    }
+    .logo-dot::after {
+      content: ''; position: absolute;
+      width: 8px; height: 8px; background: white;
+      border-radius: 50%; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .nav-back {
+      font-size: 14px; font-weight: 500; color: var(--text-2);
+      display: flex; align-items: center; gap: 6px;
+      transition: color 0.15s;
+    }
+    .nav-back:hover { color: var(--text); }
+
+    /* SEARCH HERO */
+    .search-hero {
+      padding-top: calc(var(--nav-h) + 56px);
+      padding-bottom: 40px;
+      text-align: center;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+    }
+    .search-hero h1 {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+    .search-hero p {
+      font-size: 15px;
+      color: var(--text-2);
+      margin-bottom: 28px;
+    }
+
+    /* SEARCH BAR */
+    .search-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    .search-bar {
+      display: flex;
+      gap: 0;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: white;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: border-color 0.2s;
+    }
+    .search-bar:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.12), var(--shadow);
+    }
+    .search-input {
+      flex: 1;
+      padding: 16px 20px;
+      font-size: 16px;
+      font-family: var(--font);
+      border: none;
+      outline: none;
+      color: var(--text);
+      background: transparent;
+    }
+    .search-input::placeholder { color: var(--text-3); }
+    .search-btn {
+      padding: 14px 24px;
+      background: var(--accent);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: background 0.18s;
+      border: none;
+      white-space: nowrap;
+    }
+    .search-btn:hover { background: var(--accent-hover); }
+
+    /* FILTERS */
+    .filters {
+      max-width: 680px;
+      margin: 14px auto 0;
+      padding: 0 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-select {
+      padding: 8px 14px;
+      font-size: 14px;
+      font-family: var(--font);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: white;
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .filter-select:focus { border-color: var(--accent); }
+
+    /* RESULTS AREA */
+    .results-wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+    .results-meta {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .results-meta strong { color: var(--text); }
+
+    /* RESULT CARD */
+    .result-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .result-card:hover {
+      box-shadow: var(--shadow);
+      border-color: #D1FAE5;
+    }
+    .result-icon {
+      width: 44px; height: 44px;
+      background: var(--accent-light);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .result-body { flex: 1; min-width: 0; }
+    .result-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .result-meta {
+      font-size: 13px;
+      color: var(--text-2);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .result-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: var(--accent-light);
+      color: var(--accent-text);
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+    .result-right {
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .result-zip {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .result-status {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+    .result-status.claimed {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* STATES */
+    .state-box {
+      text-align: center;
+      padding: 64px 24px;
+      color: var(--text-2);
+    }
+    .state-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+    .state-box h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .state-box p {
+      font-size: 15px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* PAGINATION */
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      justify-content: center;
+    }
+    .page-btn {
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: white;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .page-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* LOADING SPINNER */
+    .spinner {
+      display: inline-block;
+      width: 20px; height: 20px;
+      border: 2.5px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 640px) {
+      .result-card { flex-wrap: wrap; gap: 12px; }
+      .result-right { flex: 0 0 100%; text-align: left; display: flex; gap: 12px; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <div class="logo-dot"></div>
+        LocalIntel
+      </a>
+      <a href="/" class="nav-back">← Back to home</a>
+    </div>
+  </nav>
+
+  <!-- SEARCH HERO -->
+  <section class="search-hero">
+    <div class="container" style="max-width:1160px;margin:0 auto;padding:0 24px;">
+      <h1>Search Florida Businesses</h1>
+      <p>122,000+ verified listings across Northeast Florida</p>
+      <div class="search-wrap">
+        <div class="search-bar">
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Business name, category, or ZIP code..."
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button class="search-btn" onclick="runSearch()">Search</button>
+        </div>
+        <div class="filters">
+          <select id="zipFilter" class="filter-select">
+            <option value="">All ZIPs</option>
+            <option value="32082">32082 — Ponte Vedra Beach</option>
+            <option value="32081">32081 — Nocatee</option>
+            <option value="32092">32092 — World Golf Village</option>
+            <option value="32080">32080 — St. Augustine</option>
+            <option value="32084">32084 — St. Augustine</option>
+            <option value="32205">32205 — Jacksonville</option>
+            <option value="32207">32207 — Jacksonville</option>
+            <option value="32210">32210 — Jacksonville</option>
+            <option value="32216">32216 — Jacksonville</option>
+            <option value="32224">32224 — Jacksonville Beach</option>
+            <option value="32225">32225 — Jacksonville</option>
+            <option value="32256">32256 — Jacksonville</option>
+            <option value="32259">32259 — St. Johns</option>
+          </select>
+          <select id="categoryFilter" class="filter-select">
+            <option value="">All Categories</option>
+            <option value="Restaurant">Restaurant</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Retail">Retail</option>
+            <option value="Construction">Construction</option>
+            <option value="Professional Services">Professional Services</option>
+            <option value="Landscaping">Landscaping</option>
+            <option value="Cleaning">Cleaning</option>
+            <option value="HVAC">HVAC</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Real Estate">Real Estate</option>
+            <option value="Financial Services">Financial Services</option>
+            <option value="Automotive">Automotive</option>
+            <option value="Beauty & Wellness">Beauty & Wellness</option>
+            <option value="Education">Education</option>
+          </select>
+          <select id="statusFilter" class="filter-select">
+            <option value="">Any Status</option>
+            <option value="claimed">Claimed</option>
+            <option value="unclaimed">Unclaimed</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <div class="results-wrap" id="resultsWrap">
+    <div class="state-box" id="stateBox">
+      <div class="state-icon">🔍</div>
+      <h3>Search any business, category, or ZIP</h3>
+      <p>Type above to find verified Florida businesses from state records and Sunbiz filings.</p>
+    </div>
+  </div>
+
+  <script>
+    const MCP_URL = 'https://gsb-swarm-production.up.railway.app/api/local-intel/mcp';
+    let currentPage = 1;
+    let lastQuery = {};
+    let isLoading = false;
+
+    // Category → emoji mapping
+    const CAT_ICONS = {
+      restaurant: '🍽️', food: '🍽️', cafe: '☕', bar: '🍺',
+      health: '🏥', medical: '🏥', dental: '🦷', pharmacy: '💊',
+      retail: '🛍️', shop: '🛍️', store: '🛍️',
+      construction: '🔨', contractor: '🔨', roofing: '🏗️',
+      landscaping: '🌿', lawn: '🌿', tree: '🌿',
+      cleaning: '🧹', maid: '🧹',
+      hvac: '❄️', plumbing: '🔧', electrical: '⚡',
+      realty: '🏠', real estate: '🏠',
+      auto: '🚗', car: '🚗',
+      beauty: '💅', salon: '💇', spa: '💆',
+      education: '📚', school: '📚',
+      finance: '💼', insurance: '🛡️', law: '⚖️',
+      default: '🏢',
+    };
+
+    function getIcon(category) {
+      if (!category) return CAT_ICONS.default;
+      const lower = (category || '').toLowerCase();
+      for (const [key, icon] of Object.entries(CAT_ICONS)) {
+        if (lower.includes(key)) return icon;
+      }
+      return CAT_ICONS.default;
+    }
+
+    function renderCard(biz) {
+      const icon     = getIcon(biz.category || biz.category_group);
+      const claimed  = biz.claimed_at || biz.wallet;
+      const category = biz.category || biz.category_group || 'Business';
+      const city     = biz.city || '';
+      const addr     = biz.address ? `${biz.address}${city ? ', ' + city : ''}` : city;
+
+      return `
+        <div class="result-card">
+          <div class="result-icon">${icon}</div>
+          <div class="result-body">
+            <div class="result-name">${esc(biz.name || 'Unnamed Business')}</div>
+            <div class="result-meta">
+              ${category ? `<span class="result-tag">${esc(category)}</span>` : ''}
+              ${addr ? `<span>📍 ${esc(addr)}</span>` : ''}
+              ${biz.phone ? `<span>📞 ${esc(biz.phone)}</span>` : ''}
+            </div>
+          </div>
+          <div class="result-right">
+            <div class="result-zip">${biz.zip || ''}</div>
+            <div class="result-status${claimed ? ' claimed' : ''}">${claimed ? '✓ Claimed' : 'Unclaimed'}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function esc(str) {
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function showState(icon, title, body) {
+      document.getElementById('resultsWrap').innerHTML = `
+        <div class="state-box">
+          <div class="state-icon">${icon}</div>
+          <h3>${title}</h3>
+          <p>${body}</p>
+        </div>
+      `;
+    }
+
+    function showLoading() {
+      document.getElementById('resultsWrap').innerHTML = `
+        <div class="state-box">
+          <div class="spinner"></div>
+          <h3 style="margin-top:16px;">Searching...</h3>
+          <p>Querying 122,000+ businesses</p>
+        </div>
+      `;
+    }
+
+    async function callMCP(toolName, args) {
+      const body = {
+        jsonrpc: '2.0', id: 1, method: 'tools/call',
+        params: { name: toolName, arguments: args }
+      };
+      const res = await fetch(MCP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Agent-Origin': 'localintel-search-ui' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message || 'MCP error');
+      return data.result;
+    }
+
+    async function runSearch(page = 1) {
+      const query    = document.getElementById('searchInput').value.trim();
+      const zip      = document.getElementById('zipFilter').value;
+      const category = document.getElementById('categoryFilter').value;
+      const status   = document.getElementById('statusFilter').value;
+
+      if (!query && !zip && !category) {
+        showState('🔍', 'Enter a search term', 'Try a business name, category like "plumber", or a ZIP code.');
+        return;
+      }
+
+      if (isLoading) return;
+      isLoading = true;
+      currentPage = page;
+      lastQuery = { query, zip, category, status };
+
+      showLoading();
+
+      try {
+        // Build the MCP query — use toolNearby for ZIP-based, pgCategorySearch for category,
+        // or a general query for name/keyword searches
+        let result;
+
+        if (zip && !query && !category) {
+          // ZIP-only → nearby search
+          result = await callMCP('local_intel_nearby', {
+            zip,
+            radius_miles: 5,
+            limit: 20,
+            category: category || undefined,
+          });
+        } else {
+          // Keyword/category search → use the natural language oracle
+          const q = [query, category, zip].filter(Boolean).join(' near ');
+          result = await callMCP('local_intel_query', { query: q });
+        }
+
+        renderResults(result, query, zip, category, status);
+      } catch (e) {
+        showState('⚠️', 'Search unavailable', `${e.message}. The LocalIntel MCP server may be temporarily unreachable.`);
+      } finally {
+        isLoading = false;
+      }
+    }
+
+    function renderResults(result, query, zip, category, status) {
+      const wrap = document.getElementById('resultsWrap');
+
+      // Parse result — MCP returns different shapes per tool
+      let businesses = [];
+      if (result?.businesses)          businesses = result.businesses;
+      else if (result?.results)        businesses = result.results;
+      else if (Array.isArray(result))  businesses = result;
+      else if (result?.answer) {
+        // Natural language answer — show as intel card
+        wrap.innerHTML = `
+          <div style="max-width:760px;">
+            <div class="results-meta">
+              Intel result for <strong>${esc(query)}${zip ? ' · ' + zip : ''}</strong>
+            </div>
+            <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;">
+              <div style="font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">LocalIntel Analysis</div>
+              <p style="font-size:15px;line-height:1.7;color:var(--text);">${esc(result.answer || JSON.stringify(result))}</p>
+              ${result.sources?.length ? `<div style="margin-top:16px;font-size:13px;color:var(--text-2);">Sources: ${result.sources.join(', ')}</div>` : ''}
+            </div>
+            <p style="margin-top:20px;font-size:14px;color:var(--text-2);">
+              Want business-level results? Try filtering by ZIP or category above.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      // Filter by status if set
+      if (status === 'claimed')   businesses = businesses.filter(b => b.claimed_at || b.wallet);
+      if (status === 'unclaimed') businesses = businesses.filter(b => !b.claimed_at && !b.wallet);
+
+      if (!businesses.length) {
+        showState('📭', 'No results found', `No businesses matched "${query || zip || category}". Try a different search or check the spelling.`);
+        return;
+      }
+
+      const cards = businesses.map(renderCard).join('');
+      wrap.innerHTML = `
+        <div class="results-meta">
+          Found <strong>${businesses.length} businesses</strong>${query ? ` matching "${esc(query)}"` : ''}${zip ? ` in ${esc(zip)}` : ''}${category ? ` · ${esc(category)}` : ''}
+        </div>
+        ${cards}
+        <div style="margin-top:24px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);text-align:center;">
+          <p style="font-size:14px;color:var(--text-2);">
+            Is your business listed here? <a href="claim.html" style="color:var(--accent);font-weight:600;">Claim your listing →</a>
+          </p>
+        </div>
+      `;
+    }
+
+    // Enter key triggers search
+    document.getElementById('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') runSearch();
+    });
+
+    // Filter changes auto-search if there's already a query
+    ['zipFilter','categoryFilter','statusFilter'].forEach(id => {
+      document.getElementById(id).addEventListener('change', () => {
+        const q = document.getElementById('searchInput').value.trim();
+        const z = document.getElementById('zipFilter').value;
+        const c = document.getElementById('categoryFilter').value;
+        if (q || z || c) runSearch();
+      });
+    });
+
+    // Pre-fill from URL params
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('q'))   { document.getElementById('searchInput').value = params.get('q'); }
+    if (params.get('zip')) { document.getElementById('zipFilter').value   = params.get('zip'); }
+    if (params.get('cat')) { document.getElementById('categoryFilter').value = params.get('cat'); }
+    if (params.get('q') || params.get('zip') || params.get('cat')) runSearch();
+  </script>
+
+</body>
+</html>

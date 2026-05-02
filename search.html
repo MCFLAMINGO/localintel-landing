@@ -697,3 +697,44 @@
 
       // Filter by status if set
       if (status === 'cla
+      if (status === 'claimed') {
+        businesses = businesses.filter(b => b.claimed || b.claimed_at || b.wallet);
+      } else if (status === 'unclaimed') {
+        businesses = businesses.filter(b => !b.claimed && !b.claimed_at && !b.wallet);
+      }
+
+      if (!businesses.length) {
+        showState('📭', 'No results found',
+          `No ${status} businesses matched. Try removing the status filter.`);
+        return;
+      }
+
+      const narrativeHtml = result.narrative ? renderNarrative(result.narrative) : '';
+      wrap.innerHTML = `
+        ${narrativeHtml}
+        <div class="results-header">
+          <span>${result.total || businesses.length} businesses found</span>
+        </div>
+        <div class="results-list">
+          ${businesses.map(renderCard).join('')}
+        </div>
+      `;
+    }
+
+    // Auto-search on filter change
+    document.getElementById('zipFilter').addEventListener('change', () => runSearch());
+    document.getElementById('categoryFilter').addEventListener('change', () => runSearch());
+    document.getElementById('statusFilter').addEventListener('change', () => { if (lastQuery.zip || lastQuery.query || lastQuery.category) runSearch(); });
+    document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
+
+    // Load default results on page load — show all businesses in 32082 by default
+    window.addEventListener('DOMContentLoaded', () => {
+      // Pre-select 32082 so users see results immediately
+      const zipEl = document.getElementById('zipFilter');
+      if (zipEl && !zipEl.value) zipEl.value = '32082';
+      runSearch();
+    });
+
+  </script>
+</body>
+</html>

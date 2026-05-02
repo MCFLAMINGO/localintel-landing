@@ -423,21 +423,21 @@
           </select>
           <select id="categoryFilter" class="filter-select">
             <option value="">All Categories</option>
-            <option value="Restaurant">Restaurant</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Retail">Retail</option>
-            <option value="Construction">Construction</option>
-            <option value="Professional Services">Professional Services</option>
-            <option value="Landscaping">Landscaping</option>
-            <option value="Cleaning">Cleaning</option>
-            <option value="HVAC">HVAC</option>
-            <option value="Plumbing">Plumbing</option>
-            <option value="Electrical">Electrical</option>
-            <option value="Real Estate">Real Estate</option>
-            <option value="Financial Services">Financial Services</option>
-            <option value="Automotive">Automotive</option>
-            <option value="Beauty & Wellness">Beauty & Wellness</option>
-            <option value="Education">Education</option>
+            <option value="restaurant">Restaurant</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="retail">Retail</option>
+            <option value="construction">Construction</option>
+            <option value="professional_services">Professional Services</option>
+            <option value="landscaping">Landscaping</option>
+            <option value="cleaning">Cleaning</option>
+            <option value="hvac">HVAC</option>
+            <option value="plumber">Plumbing</option>
+            <option value="electrician">Electrical</option>
+            <option value="real_estate">Real Estate</option>
+            <option value="finance">Financial Services</option>
+            <option value="auto_repair">Automotive</option>
+            <option value="beauty">Beauty & Wellness</option>
+            <option value="education">Education</option>
           </select>
           <select id="statusFilter" class="filter-select">
             <option value="">Any Status</option>
@@ -696,7 +696,6 @@
       }
 
       // Filter by status if set
-      if (status === 'cla
       if (status === 'claimed') {
         businesses = businesses.filter(b => b.claimed || b.claimed_at || b.wallet);
       } else if (status === 'unclaimed') {

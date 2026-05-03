@@ -466,6 +466,7 @@
 
   <script>
     const SEARCH_URL = 'https://gsb-swarm-production.up.railway.app/api/local-intel/search';
+    const API_BASE   = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
 
     // ── State ──────────────────────────────────────────────────────────────────
     const thread = [];
@@ -783,6 +784,302 @@
         </div>`;
     }
 
+    // ── Agentic Food Order flow ────────────────────────────────────────────────
+    // Triggered by intent === 'order_item_search'. Fetches menu, fuzzy-matches,
+    // shows item-found card → pickup/delivery → payment popup → confirmation.
+    const orderState = {}; // { [orderId]: { businessId, businessName, item, fulfillment, receiptId, paymentUrl, pollTimer } }
+
+    function fmtPrice(n) {
+      const v = Number(n) || 0;
+      return v.toFixed(2);
+    }
+
+    function buildOrderPanel(html) {
+      return `
+        <div class="bubble-agent">
+          <div class="agent-avatar"></div>
+          <div class="bubble-agent-body">${html}</div>
+        </div>`;
+    }
+
+    function pushAgentHtml(html) {
+      thread.push({ role: 'agent', html });
+      renderThread();
+    }
+
+    function replaceLastAgent(html) {
+      // Replace the most recent agent bubble in the thread with new html
+      for (let i = thread.length - 1; i >= 0; i--) {
+        if (thread[i].role === 'agent') { thread[i].html = html; break; }
+      }
+      renderThread();
+    }
+
+    function escAttr(s) { return esc(s).replace(/'/g, '&#39;'); }
+
+    function renderItemFoundCard(orderId, biz, item, fullMenu) {
+      const s = orderState[orderId];
+      s.item = item;
+      const seeMenuBtn = (fullMenu && fullMenu.length > 1)
+        ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:13px;color:var(--text-2);">
+             Not what you wanted?
+             <button onclick="showFullMenu('${orderId}')" style="background:none;border:none;color:var(--accent);font-weight:600;font-size:13px;cursor:pointer;padding:0 4px;text-decoration:underline;">See full menu ↗</button>
+           </div>`
+        : '';
+      return buildOrderPanel(`
+        <div class="agent-narrative" style="border-color:#86EFAC;">
+          <div class="label"><span class="label-dot"></span> 🍽 ${esc(biz.name)} ${biz.zip ? `<span style="margin-left:auto;color:var(--text-3);font-weight:400;">${esc(biz.zip)}</span>` : ''}</div>
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:8px;">We found:</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--accent-light);border-radius:8px;margin-bottom:14px;">
+            <span style="font-weight:600;">${esc(item.name)}</span>
+            <span style="font-weight:700;color:var(--accent-text);">$${fmtPrice(item.priceUsd)}</span>
+          </div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:8px;">How would you like it?</div>
+          <div style="display:flex;gap:10px;">
+            <button onclick="placeOrder('${orderId}','pickup')" style="flex:1;padding:12px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;">🏃 Pickup</button>
+            <button onclick="placeOrder('${orderId}','delivery')" style="flex:1;padding:12px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;">🚗 Delivery</button>
+          </div>
+          ${seeMenuBtn}
+        </div>`);
+    }
+
+    function renderFullMenuCard(orderId, biz, items) {
+      const groups = {};
+      items.forEach(it => {
+        const k = it.category || 'Menu';
+        (groups[k] = groups[k] || []).push(it);
+      });
+      const sections = Object.entries(groups).map(([cat, list]) => `
+        <div style="margin-top:10px;">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-3);font-weight:700;margin-bottom:6px;">${esc(cat)}</div>
+          ${list.map((it, idx) => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:600;font-size:14px;">${esc(it.name)}</div>
+                <div style="font-size:12px;color:var(--text-2);">$${fmtPrice(it.priceUsd)}</div>
+              </div>
+              <button onclick="pickMenuItem('${orderId}', ${idx}, '${escAttr(cat)}')" style="font-size:12px;padding:6px 10px;background:var(--accent);color:#fff;border-radius:6px;font-weight:600;cursor:pointer;">Order this</button>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+      // Stash the menu so pickMenuItem can resolve idx
+      orderState[orderId].fullMenu = items;
+      orderState[orderId].menuGroups = groups;
+      return buildOrderPanel(`
+        <div class="agent-narrative" style="border-color:#86EFAC;">
+          <div class="label"><span class="label-dot"></span> 🍽 ${esc(biz.name)} — Full Menu</div>
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:6px;">Pick an item to order.</div>
+          ${sections}
+        </div>`);
+    }
+
+    window.showFullMenu = function(orderId) {
+      const s = orderState[orderId];
+      if (!s || !s.fullMenu) return;
+      replaceLastAgent(renderFullMenuCard(orderId, { name: s.businessName }, s.fullMenu));
+    };
+
+    window.pickMenuItem = function(orderId, idx, cat) {
+      const s = orderState[orderId];
+      if (!s || !s.menuGroups) return;
+      const list = s.menuGroups[cat] || [];
+      const item = list[idx];
+      if (!item) return;
+      replaceLastAgent(renderItemFoundCard(orderId, { name: s.businessName }, item, s.fullMenu));
+    };
+
+    window.placeOrder = async function(orderId, fulfillment) {
+      const s = orderState[orderId];
+      if (!s || !s.item) return;
+      s.fulfillment = fulfillment;
+      replaceLastAgent(buildOrderPanel(`
+        <div class="agent-narrative" style="border-color:#86EFAC;">
+          <div class="label"><span class="label-dot"></span> ${esc(s.businessName)}</div>
+          <div class="thinking-bubble" style="border:none;padding:0;">
+            <div class="spinner"></div>
+            <span>Creating your order...</span>
+          </div>
+        </div>`));
+
+      try {
+        const res = await fetch(`${API_BASE}/place-order`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Agent-Origin': 'localintel-search-ui' },
+          body: JSON.stringify({
+            business_id: s.businessId,
+            sku:         s.item.sku,
+            qty:         1,
+            fulfillment,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        s.receiptId  = data.receiptId;
+        s.paymentUrl = data.paymentUrl;
+        // Open payment in a new tab
+        try { window.open(data.paymentUrl, '_blank', 'noopener'); } catch {}
+        replaceLastAgent(renderOrderCreatedCard(orderId));
+      } catch (e) {
+        replaceLastAgent(buildOrderPanel(`
+          <div class="agent-narrative">
+            <div class="label"><span class="label-dot"></span> LocalIntel</div>
+            <div>Couldn't create order: ${esc(e.message)}. Try again, or call the business directly.</div>
+          </div>`));
+      }
+    };
+
+    function renderOrderCreatedCard(orderId) {
+      const s = orderState[orderId];
+      const fulfillLabel = s.fulfillment === 'pickup' ? 'Pickup' : 'Delivery';
+      return buildOrderPanel(`
+        <div class="agent-narrative" style="border-color:#86EFAC;">
+          <div class="label"><span class="label-dot"></span> ✓ Order created at ${esc(s.businessName)}</div>
+          <div style="margin:6px 0 12px;padding:10px 12px;background:var(--accent-light);border-radius:8px;">
+            <div style="display:flex;justify-content:space-between;font-weight:600;">
+              <span>${esc(s.item.name)}</span>
+              <span>$${fmtPrice(s.item.priceUsd)}</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-2);margin-top:4px;">Fulfillment: ${fulfillLabel}</div>
+          </div>
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:12px;">
+            Payment window opened. Once paid, your order goes straight to ${esc(s.businessName)}'s kitchen.
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button onclick="checkOrderStatus('${orderId}')" style="padding:9px 14px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;">Check payment status</button>
+            <button onclick="reopenPayment('${orderId}')" style="padding:9px 14px;background:#fff;color:var(--accent);border:1.5px solid var(--accent);border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;">Open payment again</button>
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:var(--text-3);">
+            No crypto wallet? <a href="https://surge.basalthq.com/signup" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">Get one free →</a>
+          </div>
+        </div>`);
+    }
+
+    window.reopenPayment = function(orderId) {
+      const s = orderState[orderId];
+      if (s && s.paymentUrl) window.open(s.paymentUrl, '_blank', 'noopener');
+    };
+
+    window.checkOrderStatus = function(orderId) {
+      const s = orderState[orderId];
+      if (!s || !s.receiptId) return;
+      if (s.pollTimer) return; // already polling
+      const startedAt = Date.now();
+      const MAX_MS   = 2 * 60 * 1000;
+      replaceLastAgent(buildOrderPanel(`
+        <div class="agent-narrative" style="border-color:#86EFAC;">
+          <div class="label"><span class="label-dot"></span> ${esc(s.businessName)}</div>
+          <div class="thinking-bubble" style="border:none;padding:0;">
+            <div class="spinner"></div>
+            <span>Waiting for payment confirmation...</span>
+          </div>
+        </div>`));
+      const poll = async () => {
+        try {
+          const r = await fetch(`${API_BASE}/order-status/${encodeURIComponent(s.receiptId)}`, {
+            headers: { 'X-Agent-Origin': 'localintel-search-ui' },
+          });
+          const d = await r.json();
+          if (d.paid) {
+            clearInterval(s.pollTimer);
+            s.pollTimer = null;
+            const msg = s.fulfillment === 'pickup'
+              ? '✅ Order confirmed! Ready for pickup in ~15 min.'
+              : '✅ Order confirmed! A driver is being dispatched.';
+            replaceLastAgent(buildOrderPanel(`
+              <div class="agent-narrative" style="border-color:#86EFAC;">
+                <div class="label"><span class="label-dot"></span> ${esc(s.businessName)}</div>
+                <div style="font-size:16px;font-weight:600;color:var(--accent-text);">${esc(msg)}</div>
+                <div style="font-size:13px;color:var(--text-2);margin-top:6px;">${esc(s.item.name)} — $${fmtPrice(s.item.priceUsd)}</div>
+              </div>`));
+            return;
+          }
+          if (Date.now() - startedAt > MAX_MS) {
+            clearInterval(s.pollTimer);
+            s.pollTimer = null;
+            replaceLastAgent(buildOrderPanel(`
+              <div class="agent-narrative">
+                <div class="label"><span class="label-dot"></span> ${esc(s.businessName)}</div>
+                <div>Still waiting on payment confirmation. Once you complete payment in the popup, the order will fire automatically.</div>
+                <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+                  <button onclick="checkOrderStatus('${orderId}')" style="padding:9px 14px;background:var(--accent);color:#fff;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;">Check again</button>
+                  <button onclick="reopenPayment('${orderId}')" style="padding:9px 14px;background:#fff;color:var(--accent);border:1.5px solid var(--accent);border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;">Open payment again</button>
+                </div>
+              </div>`));
+          }
+        } catch (e) {
+          // swallow polling errors; keep trying until timeout
+          console.warn('[order-status poll]', e.message);
+        }
+      };
+      s.pollTimer = setInterval(poll, 3000);
+      poll();
+    };
+
+    async function handleOrderItemSearch(result, rawQuery) {
+      const orderId = `o_${Date.now()}_${Math.floor(Math.random()*1000)}`;
+      orderState[orderId] = {
+        businessId:   result.business_id,
+        businessName: result.business_name,
+        itemQuery:    result.item_query || '',
+      };
+      // Step 1: agent bubble with the routing message
+      pushAgentHtml(buildOrderPanel(`
+        <div class="agent-narrative" style="border-color:#86EFAC;">
+          <div class="label"><span class="label-dot"></span> LocalIntel</div>
+          <div>${esc(result.message)}</div>
+          <div class="thinking-bubble" style="border:none;padding:0;margin-top:10px;">
+            <div class="spinner"></div>
+            <span>Checking the menu...</span>
+          </div>
+        </div>`));
+
+      // Step 2: fetch menu
+      try {
+        const url = `${API_BASE}/menu/${encodeURIComponent(result.business_id)}` +
+                    (result.item_query ? `?q=${encodeURIComponent(result.item_query)}` : '');
+        const r = await fetch(url, { headers: { 'X-Agent-Origin': 'localintel-search-ui' } });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`);
+
+        const items   = Array.isArray(d.items) ? d.items : [];
+        const matched = !!d.matched && items.length > 0;
+
+        if (!items.length) {
+          replaceLastAgent(buildOrderPanel(`
+            <div class="agent-narrative">
+              <div class="label"><span class="label-dot"></span> ${esc(result.business_name)}</div>
+              <div>No menu items available right now. Try again later or call the business directly.</div>
+            </div>`));
+          return;
+        }
+
+        if (matched) {
+          // Top match — show item-found card. Stash full menu (re-fetch w/o q) for "see full menu".
+          // To avoid an extra round-trip, we infer "full menu" from a follow-up call only if needed.
+          orderState[orderId].fullMenu = items; // matched items, used as fallback
+          // Fire a background fetch for the full menu so "See full menu" works
+          fetch(`${API_BASE}/menu/${encodeURIComponent(result.business_id)}`, {
+            headers: { 'X-Agent-Origin': 'localintel-search-ui' },
+          }).then(r2 => r2.json()).then(d2 => {
+            if (Array.isArray(d2.items) && d2.items.length) {
+              orderState[orderId].fullMenu = d2.items;
+            }
+          }).catch(() => {});
+          replaceLastAgent(renderItemFoundCard(orderId, { name: result.business_name }, items[0], items));
+        } else {
+          // No match — show full menu
+          replaceLastAgent(renderFullMenuCard(orderId, { name: result.business_name }, items));
+        }
+      } catch (e) {
+        replaceLastAgent(buildOrderPanel(`
+          <div class="agent-narrative">
+            <div class="label"><span class="label-dot"></span> LocalIntel</div>
+            <div>Couldn't load the menu: ${esc(e.message)}. Try again.</div>
+          </div>`));
+      }
+    }
+
     // ── Main send handler ──────────────────────────────────────────────────────
     async function sendMessage() {
       const input = document.getElementById('searchInput');
@@ -808,8 +1105,15 @@
         } else {
           const { q, zip, cat } = resolveQuery(raw);
           const result = await callSearch(q, zip, cat);
-          thread.push({ role: 'agent', html: buildAgentBubble(result, raw) });
-          updateContext(result, zip, cat);
+          // Agentic order flow — user said "order ITEM at BIZ"
+          if (result && result.intent === 'order_item_search' && result.business_id) {
+            // Clear thinking bubble, then run the order flow (which manages its own bubbles)
+            document.getElementById('resultsArea').innerHTML = '';
+            await handleOrderItemSearch(result, raw);
+          } else {
+            thread.push({ role: 'agent', html: buildAgentBubble(result, raw) });
+            updateContext(result, zip, cat);
+          }
         }
       } catch (e) {
         thread.push({ role: 'agent', html: `

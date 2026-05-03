@@ -632,19 +632,36 @@
       }
     }
 
-    function renderNarrative(text) {
-      // Convert bare URLs in narrative to clickable links
-      const linked = text.replace(
+    function renderNarrative(text, notables) {
+      if (!text && (!notables || !notables.length)) return '';
+
+      // Spotlight: claimed businesses with real descriptions
+      const spotlit = (notables || [])
+        .filter(b => b.description || (b.tags && b.tags.length))
+        .slice(0, 3);
+
+      const spotlightHtml = spotlit.map(b => {
+        const desc = b.description || `Known for: ${(b.tags||[]).slice(0,4).join(', ')}`;
+        return `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.12);">
+          <span style="font-weight:600;">${esc(b.name)}</span>
+          <span style="opacity:0.85;font-size:13px;"> — ${esc(desc)}</span>
+          ${b.website ? `<a href="${esc(b.website)}" target="_blank" rel="noopener" style="margin-left:8px;font-size:12px;opacity:0.7;color:inherit;">↗</a>` : ''}
+        </div>`;
+      }).join('');
+
+      const mainText = (text || '').replace(
         /(https?:\/\/[^\s<>"]+)/g,
-        url => `<a href="${url}" target="_blank" rel="noopener">${url.replace(/^https?:\/\//,'')}</a>`
+        url => `<a href="${url}" target="_blank" rel="noopener" style="color:inherit;opacity:0.8;">${url.replace(/^https?:\/\//,'')}</a>`
       );
+
       return `
         <div class="narrative-card">
           <div class="narrative-label">
             <span class="narrative-label-dot"></span>
-            LocalIntel Intelligence
+            LocalIntel
           </div>
-          <div class="narrative-text">${linked}</div>
+          ${mainText ? `<div class="narrative-text">${mainText}</div>` : ''}
+          ${spotlightHtml}
         </div>
       `;
     }
@@ -686,7 +703,7 @@
       // Service request (“I need X”) — intercept before business card render
       if (result.type === 'service_request') { renderServiceRequest(result); return; }
 
-      // /search returns { total, results: [...], narrative? } — clean and direct
+      // /search returns { total, results: [...], narrative?, notable_businesses? }
       let businesses = Array.isArray(result?.results) ? result.results : [];
 
       if (!businesses.length) {
@@ -708,7 +725,7 @@
         return;
       }
 
-      const narrativeHtml = result.narrative ? renderNarrative(result.narrative) : '';
+      const narrativeHtml = renderNarrative(result.narrative || null, result.notable_businesses || []);
       wrap.innerHTML = `
         ${narrativeHtml}
         <div class="results-header">

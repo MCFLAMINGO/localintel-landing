@@ -225,6 +225,8 @@
       font-weight: 500;
       max-width: 80%;
       line-height: 1.5;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
 
     /* AGENT ANSWER */
@@ -438,8 +440,8 @@
       header.classList.remove('idle');
       header.classList.add('active');
       document.body.classList.add('search-active');
-      // Focus input after transition
-      setTimeout(() => document.getElementById('searchInput').focus(), 300);
+      // Scroll to very top so sticky header locks into place immediately
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     // ── Utilities ──────────────────────────────────────────────────────────────
@@ -660,14 +662,17 @@
         return item.html || '';
       }).join('');
 
-      // Scroll so the last user bubble is just below the sticky header
-      const lastUserBubble = el.querySelectorAll('.bubble-user');
-      if (lastUserBubble.length) {
-        const last = lastUserBubble[lastUserBubble.length - 1];
-        const headerEl = document.getElementById('searchHeader');
-        const headerH  = headerEl.offsetHeight + document.querySelector('nav').offsetHeight;
-        const top      = last.getBoundingClientRect().top + window.scrollY - headerH - 12;
-        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+      // In active mode: scroll so the latest user bubble is visible just below the sticky header
+      if (hasSearched) {
+        const lastUserBubble = el.querySelectorAll('.bubble-user');
+        if (lastUserBubble.length) {
+          const last     = lastUserBubble[lastUserBubble.length - 1];
+          const navH     = document.querySelector('nav').offsetHeight;
+          const headerH  = document.getElementById('searchHeader').offsetHeight;
+          const offset   = navH + headerH + 12;
+          const top      = last.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+        }
       }
     }
 

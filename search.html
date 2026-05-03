@@ -28,7 +28,7 @@
       --shadow: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
       --shadow-lg: 0 12px 32px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
       --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --max: 1160px;
+      --max: 860px;
       --nav-h: 64px;
     }
 
@@ -50,104 +50,43 @@
       max-width: var(--max); margin: 0 auto; padding: 0 24px;
       height: 100%; display: flex; align-items: center; justify-content: space-between;
     }
-    .nav-logo {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 17px; font-weight: 700; letter-spacing: -0.4px;
-    }
-    .logo-dot {
-      width: 22px; height: 22px; background: var(--accent);
-      border-radius: 50%; position: relative; flex-shrink: 0;
-    }
-    .logo-dot::after {
-      content: ''; position: absolute;
-      width: 8px; height: 8px; background: white;
-      border-radius: 50%; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    .nav-back {
-      font-size: 14px; font-weight: 500; color: var(--text-2);
-      display: flex; align-items: center; gap: 6px;
-      transition: color 0.15s;
-    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; letter-spacing: -0.4px; }
+    .logo-dot { width: 22px; height: 22px; background: var(--accent); border-radius: 50%; position: relative; flex-shrink: 0; }
+    .logo-dot::after { content: ''; position: absolute; width: 8px; height: 8px; background: white; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    .nav-back { font-size: 14px; font-weight: 500; color: var(--text-2); display: flex; align-items: center; gap: 6px; transition: color 0.15s; }
     .nav-back:hover { color: var(--text); }
 
-    /* SEARCH HERO */
-    .search-hero {
-      padding-top: calc(var(--nav-h) + 56px);
-      padding-bottom: 40px;
-      text-align: center;
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border);
+    /* PAGE LAYOUT */
+    .page-wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: calc(var(--nav-h) + 24px) 16px 180px;
     }
-    .search-hero h1 {
-      font-size: clamp(1.8rem, 3vw, 2.4rem);
+
+    /* PAGE HEADER */
+    .page-header {
+      text-align: center;
+      padding: 32px 16px 28px;
+    }
+    .page-header h1 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
       font-weight: 800;
       letter-spacing: -0.03em;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
-    .search-hero p {
-      font-size: 15px;
-      color: var(--text-2);
-      margin-bottom: 28px;
-    }
+    .page-header p { font-size: 14px; color: var(--text-2); }
 
-    /* SEARCH BAR */
-    .search-wrap {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 16px;
-    }
-    .search-bar {
+    /* FILTERS ROW */
+    .filters-row {
       display: flex;
-      gap: 0;
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      background: white;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      transition: border-color 0.2s;
-    }
-    .search-bar:focus-within {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(22,163,74,0.12), var(--shadow);
-    }
-    .search-input {
-      flex: 1;
-      padding: 16px 20px;
-      font-size: 16px;
-      font-family: var(--font);
-      border: none;
-      outline: none;
-      color: var(--text);
-      background: transparent;
-    }
-    .search-input::placeholder { color: var(--text-3); }
-    .search-btn {
-      padding: 14px 24px;
-      background: var(--accent);
-      color: white;
-      font-size: 15px;
-      font-weight: 600;
-      font-family: var(--font);
-      cursor: pointer;
-      transition: background 0.18s;
-      border: none;
-      white-space: nowrap;
-    }
-    .search-btn:hover { background: var(--accent-hover); }
-
-    /* FILTERS */
-    .filters {
-      max-width: 680px;
-      margin: 14px auto 0;
-      padding: 0 16px;
-      display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
+      margin-bottom: 24px;
+      padding: 0 4px;
     }
     .filter-select {
-      padding: 8px 14px;
-      font-size: 14px;
+      padding: 8px 12px;
+      font-size: 13px;
       font-family: var(--font);
       border: 1.5px solid var(--border);
       border-radius: var(--radius-sm);
@@ -156,222 +95,241 @@
       cursor: pointer;
       outline: none;
       transition: border-color 0.15s;
+      flex: 1;
+      min-width: 120px;
     }
     .filter-select:focus { border-color: var(--accent); }
 
-    /* RESULTS AREA */
-    .results-wrap {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 32px 24px 64px;
+    /* CONVERSATION THREAD */
+    .thread {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 24px;
     }
-    .results-meta {
-      font-size: 14px;
-      color: var(--text-2);
-      margin-bottom: 20px;
+
+    /* USER BUBBLE */
+    .bubble-user {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .bubble-user-inner {
+      background: var(--accent);
+      color: white;
+      border-radius: 18px 18px 4px 18px;
+      padding: 12px 18px;
+      font-size: 15px;
       font-weight: 500;
+      max-width: 80%;
+      line-height: 1.5;
     }
-    .results-meta strong { color: var(--text); }
+
+    /* AGENT ANSWER */
+    .bubble-agent {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .agent-avatar {
+      width: 32px; height: 32px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 2px;
+    }
+    .agent-avatar::after {
+      content: '';
+      width: 12px; height: 12px;
+      background: white;
+      border-radius: 50%;
+    }
+    .bubble-agent-body { flex: 1; min-width: 0; }
+
+    /* NARRATIVE ANSWER */
+    .agent-narrative {
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+      border: 1.5px solid #86EFAC;
+      border-radius: 4px 18px 18px 18px;
+      padding: 16px 20px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #1A2E1A;
+      margin-bottom: 12px;
+    }
+    .agent-narrative .label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .label-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink:0; }
+
+    /* TASK HANDOFF CARD */
+    .agent-task-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 4px 12px 12px 12px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+    }
+    .task-job-id {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 4px;
+    }
+    .task-status {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .task-action-btn {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 9px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-top: 4px;
+    }
+
+    /* RESULT CARDS SECTION */
+    .results-section {
+      margin-top: 4px;
+    }
+    .results-count {
+      font-size: 13px;
+      color: var(--text-2);
+      font-weight: 500;
+      margin-bottom: 10px;
+      padding-left: 2px;
+    }
 
     /* RESULT CARD */
     .result-card {
       background: white;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px 24px;
-      margin-bottom: 12px;
+      padding: 16px 20px;
+      margin-bottom: 8px;
       display: flex;
       align-items: flex-start;
-      gap: 20px;
+      gap: 16px;
       transition: box-shadow 0.2s, border-color 0.2s;
     }
-    .result-card:hover {
-      box-shadow: var(--shadow);
-      border-color: #D1FAE5;
-    }
-    .result-icon {
-      width: 44px; height: 44px;
-      background: var(--accent-light);
-      border-radius: var(--radius-sm);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
+    .result-card:hover { box-shadow: var(--shadow); border-color: #D1FAE5; }
+    .result-icon { width: 40px; height: 40px; background: var(--accent-light); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
     .result-body { flex: 1; min-width: 0; }
-    .result-name {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 4px;
-      white-space: normal;
-      overflow: visible;
-      word-break: break-word;
-    }
-    .result-details {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin-top: 8px;
-    }
-    .result-detail-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 13px;
-      color: var(--text-2);
-      text-decoration: none;
-      transition: color .15s;
-    }
-    .result-detail-link:hover {
-      color: var(--accent);
-    }
-    .result-detail-link svg {
-      flex-shrink: 0;
-      opacity: .7;
-    }
-    .result-meta {
-      font-size: 13px;
-      color: var(--text-2);
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .result-tag {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      background: var(--accent-light);
-      color: var(--accent-text);
-      padding: 3px 9px;
-      border-radius: 999px;
-    }
-    .result-right {
-      flex-shrink: 0;
-      text-align: right;
-    }
-    .result-zip {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .result-status {
-      font-size: 12px;
-      color: var(--text-3);
-      margin-top: 2px;
-    }
-    .result-status.claimed {
-      color: var(--accent);
-      font-weight: 600;
-    }
-
-    /* STATES */
-    .state-box {
-      text-align: center;
-      padding: 64px 24px;
-      color: var(--text-2);
-    }
-    .state-icon {
-      font-size: 40px;
-      margin-bottom: 16px;
-      line-height: 1;
-    }
-    .state-box h3 {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-    .state-box p {
-      font-size: 15px;
-      max-width: 400px;
-      margin: 0 auto;
-    }
-
-    /* PAGINATION */
-    .pagination {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 32px;
-      justify-content: center;
-    }
-    .page-btn {
-      padding: 8px 14px;
-      font-size: 14px;
-      font-weight: 600;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: white;
-      color: var(--text-2);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .page-btn:hover:not(:disabled) {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .page-btn.active {
-      background: var(--accent);
-      color: white;
-      border-color: var(--accent);
-    }
-    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .result-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .result-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; background: var(--accent-light); color: var(--accent-text); padding: 2px 8px; border-radius: 999px; margin-bottom: 6px; }
+    .result-detail-link { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text-2); margin-right: 12px; margin-top: 3px; transition: color .15s; }
+    .result-detail-link:hover { color: var(--accent); }
+    .result-right { flex-shrink: 0; text-align: right; }
+    .result-zip { font-size: 13px; font-weight: 700; }
+    .result-status { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+    .result-status.claimed { color: var(--accent); font-weight: 600; }
 
     /* LOADING SPINNER */
-    .spinner {
-      display: inline-block;
-      width: 20px; height: 20px;
-      border: 2.5px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2.5px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .thinking-bubble {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 4px 18px 18px 18px;
+      color: var(--text-2);
+      font-size: 14px;
+    }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 40px 24px; color: var(--text-2); }
+    .empty-icon { font-size: 36px; margin-bottom: 12px; }
+
+    /* STICKY INPUT BAR */
+    .input-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px 16px;
+      z-index: 90;
+    }
+    .input-bar-inner {
+      max-width: var(--max);
       margin: 0 auto;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* NARRATIVE INTEL CARD */
-    .narrative-card {
-      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-      border: 1.5px solid #86EFAC;
-      border-radius: var(--radius-lg);
-      padding: 24px 28px;
-      margin-bottom: 20px;
-      position: relative;
+    .input-row {
+      display: flex;
+      gap: 8px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: white;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: border-color 0.2s;
     }
-    .narrative-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 10px;
-    }
-    .narrative-label-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--accent);
-      flex-shrink: 0;
-    }
-    .narrative-text {
+    .input-row:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(22,163,74,0.1), var(--shadow); }
+    .search-input {
+      flex: 1;
+      padding: 14px 16px;
       font-size: 15px;
-      line-height: 1.7;
-      color: #1A2E1A;
+      font-family: var(--font);
+      border: none;
+      outline: none;
+      color: var(--text);
+      background: transparent;
     }
-    .narrative-text a {
-      color: var(--accent);
-      text-decoration: underline;
-      text-underline-offset: 3px;
+    .search-input::placeholder { color: var(--text-3); }
+    .send-btn {
+      padding: 12px 20px;
+      background: var(--accent);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: var(--font);
+      transition: background 0.18s;
+      border: none;
+      white-space: nowrap;
+      display: flex; align-items: center; gap: 8px;
     }
+    .send-btn:hover { background: var(--accent-hover); }
+    .send-icon { font-size: 16px; }
+
+    /* CALL CTA */
+    .call-cta {
+      text-align: center;
+      margin-top: 8px;
+    }
+    .call-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px;
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      border-radius: 8px; color: #fff;
+      box-shadow: 0 2px 10px rgba(22,163,74,.25);
+      font-size: 13px; font-weight: 600;
+      text-decoration: none;
+    }
+    .call-pulse { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; flex-shrink:0; animation: pulse-ring 1.8s ease-out infinite; }
+    @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(74,222,128,.6); } 70% { box-shadow: 0 0 0 6px rgba(74,222,128,0); } 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); } }
 
     @media (max-width: 640px) {
-      .result-card { flex-wrap: wrap; gap: 12px; }
+      .result-card { flex-wrap: wrap; gap: 10px; }
       .result-right { flex: 0 0 100%; text-align: left; display: flex; gap: 12px; align-items: center; }
-      .narrative-card { padding: 18px 18px; }
+      .bubble-user-inner { max-width: 90%; }
     }
   </style>
 </head>
@@ -379,378 +337,410 @@
 
   <nav>
     <div class="nav-inner">
-      <a href="/" class="nav-logo">
-        <div class="logo-dot"></div>
-        LocalIntel
-      </a>
+      <a href="/" class="nav-logo"><div class="logo-dot"></div>LocalIntel</a>
       <a href="/" class="nav-back">← Back to home</a>
     </div>
   </nav>
 
-  <!-- SEARCH HERO -->
-  <section class="search-hero">
-    <div class="container" style="max-width:1160px;margin:0 auto;padding:0 24px;">
+  <div class="page-wrap">
+
+    <div class="page-header">
       <h1>Search Florida Businesses</h1>
-      <p>122,000+ verified listings across Northeast Florida</p>
-      <div class="search-wrap">
-        <div class="search-bar">
-          <input
-            type="text"
-            id="searchInput"
-            class="search-input"
-            placeholder="Business name, category, or ZIP code..."
-            autocomplete="off"
-            spellcheck="false"
-          >
-          <button class="search-btn" onclick="runSearch()">Search</button>
-        </div>
-        <div class="filters">
-          <select id="zipFilter" class="filter-select">
-            <option value="">All ZIPs</option>
-            <option value="32082">32082 — Ponte Vedra Beach</option>
-            <option value="32081">32081 — Nocatee</option>
-            <option value="32092">32092 — World Golf Village</option>
-            <option value="32080">32080 — St. Augustine</option>
-            <option value="32084">32084 — St. Augustine</option>
-            <option value="32205">32205 — Jacksonville</option>
-            <option value="32207">32207 — Jacksonville</option>
-            <option value="32210">32210 — Jacksonville</option>
-            <option value="32216">32216 — Jacksonville</option>
-            <option value="32224">32224 — Jacksonville Beach</option>
-            <option value="32225">32225 — Jacksonville</option>
-            <option value="32256">32256 — Jacksonville</option>
-            <option value="32259">32259 — St. Johns</option>
-          </select>
-          <select id="categoryFilter" class="filter-select">
-            <option value="">All Categories</option>
-            <option value="restaurant">Restaurant</option>
-            <option value="healthcare">Healthcare</option>
-            <option value="retail">Retail</option>
-            <option value="construction">Construction</option>
-            <option value="professional_services">Professional Services</option>
-            <option value="landscaping">Landscaping</option>
-            <option value="cleaning">Cleaning</option>
-            <option value="hvac">HVAC</option>
-            <option value="plumber">Plumbing</option>
-            <option value="electrician">Electrical</option>
-            <option value="real_estate">Real Estate</option>
-            <option value="finance">Financial Services</option>
-            <option value="auto_repair">Automotive</option>
-            <option value="beauty">Beauty & Wellness</option>
-            <option value="education">Education</option>
-          </select>
-          <select id="statusFilter" class="filter-select">
-            <option value="">Any Status</option>
-            <option value="claimed">Claimed</option>
-            <option value="unclaimed">Unclaimed</option>
-          </select>
-        </div>
-      </div>
+      <p>122,000+ verified listings — ask anything in plain English</p>
     </div>
-  </section>
 
-  <!-- Call CTA -->
-  <div style="text-align:center;padding:20px 24px 8px;">
-    <a href="tel:+19045067476" style="
-      display:inline-flex;align-items:center;gap:12px;
-      padding:14px 28px;
-      background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);
-      border-radius:12px;text-decoration:none;color:#fff;
-      box-shadow:0 4px 20px rgba(22,163,74,.3);
-      transition:transform .15s,box-shadow .15s;
-    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
-      <span style="width:9px;height:9px;border-radius:50%;background:#4ade80;flex-shrink:0;animation:pulse-ring 1.8s ease-out infinite;"></span>
-      <span style="display:flex;flex-direction:column;text-align:left;">
-        <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.85;">Skip the search &mdash; just call</span>
-        <span style="font-size:20px;font-weight:800;line-height:1.15;">(904) 506-7476</span>
-        <span style="font-size:12px;opacity:.8;">Tell us what you need &mdash; we&rsquo;ll get it done</span>
-      </span>
-    </a>
+    <div class="filters-row">
+      <select id="zipFilter" class="filter-select">
+        <option value="">All ZIPs</option>
+        <option value="32082">32082 — Ponte Vedra Beach</option>
+        <option value="32081">32081 — Nocatee</option>
+        <option value="32092">32092 — World Golf Village</option>
+        <option value="32080">32080 — St. Augustine</option>
+        <option value="32084">32084 — St. Augustine</option>
+        <option value="32205">32205 — Jacksonville</option>
+        <option value="32207">32207 — Jacksonville</option>
+        <option value="32210">32210 — Jacksonville</option>
+        <option value="32216">32216 — Jacksonville</option>
+        <option value="32224">32224 — Jacksonville Beach</option>
+        <option value="32225">32225 — Jacksonville</option>
+        <option value="32256">32256 — Jacksonville</option>
+        <option value="32259">32259 — St. Johns</option>
+      </select>
+      <select id="categoryFilter" class="filter-select">
+        <option value="">All Categories</option>
+        <option value="restaurant">Restaurant</option>
+        <option value="healthcare">Healthcare</option>
+        <option value="retail">Retail</option>
+        <option value="construction">Construction</option>
+        <option value="professional_services">Professional Services</option>
+        <option value="landscaping">Landscaping</option>
+        <option value="cleaning">Cleaning</option>
+        <option value="hvac">HVAC</option>
+        <option value="plumber">Plumbing</option>
+        <option value="electrician">Electrical</option>
+        <option value="real_estate">Real Estate</option>
+        <option value="finance">Financial Services</option>
+        <option value="auto_repair">Automotive</option>
+        <option value="beauty">Beauty &amp; Wellness</option>
+        <option value="education">Education</option>
+      </select>
+      <select id="statusFilter" class="filter-select">
+        <option value="">Any Status</option>
+        <option value="claimed">Claimed</option>
+        <option value="unclaimed">Unclaimed</option>
+      </select>
+    </div>
+
+    <!-- CONVERSATION THREAD -->
+    <div class="thread" id="thread"></div>
+
+    <!-- RESULTS (latest query) -->
+    <div id="resultsArea"></div>
+
   </div>
-  <style>
-    @keyframes pulse-ring {
-      0%   { box-shadow: 0 0 0 0 rgba(74,222,128,.6); }
-      70%  { box-shadow: 0 0 0 8px rgba(74,222,128,0); }
-      100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
-    }
-  </style>
 
-  <!-- RESULTS -->
-  <div class="results-wrap" id="resultsWrap">
-    <div class="state-box" id="stateBox">
-      <div class="state-icon">🔍</div>
-      <h3>Search any business, category, or ZIP</h3>
-      <p>Type above to find verified Florida businesses from state records and Sunbiz filings.</p>
+  <!-- STICKY INPUT BAR -->
+  <div class="input-bar">
+    <div class="input-bar-inner">
+      <div class="input-row">
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Ask anything — &quot;I need a landscaper&quot;, &quot;restaurants in 32082&quot;, &quot;what does McFlamingo serve?&quot;"
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <button class="send-btn" onclick="sendMessage()" id="sendBtn">
+          <span id="sendLabel">Ask</span>
+          <span class="send-icon">→</span>
+        </button>
+      </div>
+      <div class="call-cta">
+        <a href="tel:+19045067476" class="call-link">
+          <span class="call-pulse"></span>
+          Skip the search — just call (904) 506-7476
+        </a>
+      </div>
     </div>
   </div>
 
   <script>
     const SEARCH_URL = 'https://gsb-swarm-production.up.railway.app/api/local-intel/search';
-    let currentPage = 1;
-    let lastQuery = {};
+
+    // ── Conversation state ─────────────────────────────────────────────────────
+    // Thread = [{role:'user'|'agent', text, result, cards}]
+    // Context = last resolved entity (business name, zip, category) for follow-ups
+    const thread = [];
+    let context = { zip: null, category: null, lastBusiness: null, lastResultNames: [] };
     let isLoading = false;
 
-    // Category → emoji mapping
-    const CAT_ICONS = {
-      restaurant: '🍽️', food: '🍽️', cafe: '☕', bar: '🍺',
-      health: '🏥', medical: '🏥', dental: '🦷', pharmacy: '💊',
-      retail: '🛍️', shop: '🛍️', store: '🛍️',
-      construction: '🔨', contractor: '🔨', roofing: '🏗️',
-      landscaping: '🌿', lawn: '🌿', tree: '🌿',
-      cleaning: '🧹', maid: '🧹',
-      hvac: '❄️', plumbing: '🔧', electrical: '⚡',
-      realty: '🏠', 'real estate': '🏠',
-      auto: '🚗', car: '🚗',
-      beauty: '💅', salon: '💇', spa: '💆',
-      education: '📚', school: '📚',
-      finance: '💼', insurance: '🛡️', law: '⚖️',
-      default: '🏢',
-    };
+    // ── Utilities ──────────────────────────────────────────────────────────────
+    function esc(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
 
-    function getIcon(category) {
-      if (!category) return CAT_ICONS.default;
-      const lower = (category || '').toLowerCase();
-      for (const [key, icon] of Object.entries(CAT_ICONS)) {
-        if (lower.includes(key)) return icon;
-      }
+    const CAT_ICONS = {
+      restaurant:'🍽️', food:'🍽️', cafe:'☕', bar:'🍺',
+      health:'🏥', medical:'🏥', dental:'🦷', pharmacy:'💊',
+      retail:'🛍️', shop:'🛍️', store:'🛍️',
+      construction:'🔨', contractor:'🔨', roofing:'🏗️',
+      landscaping:'🌿', lawn:'🌿', tree:'🌿',
+      cleaning:'🧹', maid:'🧹',
+      hvac:'❄️', plumbing:'🔧', electrical:'⚡',
+      realty:'🏠', 'real estate':'🏠',
+      auto:'🚗', car:'🚗',
+      beauty:'💅', salon:'💇', spa:'💆',
+      education:'📚', school:'📚',
+      finance:'💼', insurance:'🛡️', law:'⚖️',
+      default:'🏢',
+    };
+    function getIcon(cat) {
+      const lower = (cat||'').toLowerCase();
+      for (const [k,v] of Object.entries(CAT_ICONS)) { if (lower.includes(k)) return v; }
       return CAT_ICONS.default;
     }
 
-    function renderCard(biz) {
-      const icon     = getIcon(biz.category || biz.category_group);
-      const claimed  = biz.claimed || biz.claimed_at || biz.wallet;
-      const category = biz.category || biz.category_group || 'Business';
+    // ── Context resolution ─────────────────────────────────────────────────────
+    // Detect follow-up pronouns/references and inject prior context into the query
+    const FOLLOW_UP_RE = /\b(they|them|their|it|this company|this business|that place|the company|the business)\b/i;
 
-      // Build full address string including ZIP
-      const addrParts = [biz.address, biz.city, biz.zip].filter(p => p && p.trim() && !/^\d{5}$/.test(p.trim()) === false || (p && !/^\d{5}$/.test(p.trim())));
-      // Simpler: just combine what we have
-      const addrLine = [biz.address, biz.city].filter(Boolean).join(', ');
-      const fullAddr = addrLine ? `${addrLine}, FL ${biz.zip || ''}` : (biz.zip ? `ZIP ${biz.zip}, FL` : '');
+    function resolveQuery(raw) {
+      let q    = raw.trim();
+      let zip  = document.getElementById('zipFilter').value;
+      let cat  = document.getElementById('categoryFilter').value;
 
-      // OSM map URL — use lat/lon if available, otherwise address search
-      const mapUrl = (biz.lat && biz.lon)
-        ? `https://www.openstreetmap.org/?mlat=${biz.lat}&mlon=${biz.lon}&zoom=17`
-        : `https://www.openstreetmap.org/search?query=${encodeURIComponent(fullAddr)}`;
+      // If query references prior results by pronoun, inject last business name
+      if (FOLLOW_UP_RE.test(q) && context.lastBusiness) {
+        q = q.replace(FOLLOW_UP_RE, context.lastBusiness);
+      }
 
-      return `
-        <div class="result-card">
-          <div class="result-icon">${icon}</div>
-          <div class="result-body">
-            <div class="result-name" title="${esc(biz.name || '')}">
-              ${biz.website
-                ? `<a href="${esc(biz.website)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dotted var(--border);">${esc(biz.name || 'Unnamed Business')}</a>`
-                : esc(biz.name || 'Unnamed Business')}
-            </div>
-            <div class="result-meta" style="margin-top:6px;">
-              ${category ? `<span class="result-tag">${esc(category)}</span>` : ''}
-            </div>
-            <div class="result-details">
-              ${fullAddr ? `<a href="${mapUrl}" target="_blank" rel="noopener" class="result-detail-link">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                ${esc(fullAddr)}
-              </a>` : ''}
-              ${biz.phone ? `<a href="tel:${esc(biz.phone.replace(/\D/g,''))}" class="result-detail-link">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.6 4.38 2 2 0 0 1 3.57 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg>
-                ${esc(biz.phone)}
-              </a>` : ''}
-              ${biz.website ? `<a href="${esc(biz.website)}" target="_blank" rel="noopener" class="result-detail-link">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                ${esc(biz.website.replace(/^https?:\/\//,''))}
-              </a>` : ''}
-            </div>
-          </div>
-          <div class="result-right">
-            <div class="result-zip">${biz.zip || ''}</div>
-            <div class="result-status${claimed ? ' claimed' : ''}">${claimed ? '✓ Claimed' : 'Unclaimed'}</div>
-            <a href="${mapUrl}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;font-size:11px;color:var(--accent);text-decoration:none;font-weight:600;">View on Map →</a>
-          </div>
-        </div>
-      `;
+      // Inherit ZIP from filter or prior context
+      if (!zip && context.zip) zip = context.zip;
+      if (!cat && context.category) cat = context.category;
+
+      return { q, zip, cat };
     }
 
-    function esc(str) {
-      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
+    // ── Detect task handoff intent ─────────────────────────────────────────────
+    const TASK_FIRE_RE = /\b(ok(?:ay)?[\s,]+(?:call|contact|text|email|send|reach|ping|message|ask)\s+them|go\s+ahead|yes[\s,]+call|send\s+(?:them|it)|fire\s+(?:it|that)|book\s+it|schedule\s+it|do\s+it)\b/i;
 
-    function showState(icon, title, body) {
-      document.getElementById('resultsWrap').innerHTML = `
-        <div class="state-box">
-          <div class="state-icon">${icon}</div>
-          <h3>${title}</h3>
-          <p>${body}</p>
-        </div>
-      `;
-    }
-
-    function showLoading() {
-      document.getElementById('resultsWrap').innerHTML = `
-        <div class="state-box">
-          <div class="spinner"></div>
-          <h3 style="margin-top:16px;">Searching...</h3>
-          <p>Querying 122,000+ businesses</p>
-        </div>
-      `;
-    }
-
+    // ── API call ───────────────────────────────────────────────────────────────
     async function callSearch(q, zip, cat) {
       const params = new URLSearchParams();
       if (q)   params.set('q', q);
       if (zip) params.set('zip', zip);
       if (cat) params.set('cat', cat);
+      // Pass full thread context for follow-up awareness
+      if (context.lastBusiness) params.set('ctx_business', context.lastBusiness);
+      if (context.lastResultNames.length) params.set('ctx_names', context.lastResultNames.slice(0,5).join(','));
       const res = await fetch(`${SEARCH_URL}?${params}`, {
         headers: { 'X-Agent-Origin': 'localintel-search-ui' },
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      return res.json();
     }
 
-    async function runSearch(page = 1) {
-      const query    = document.getElementById('searchInput').value.trim();
-      const zip      = document.getElementById('zipFilter').value;
-      const category = document.getElementById('categoryFilter').value;
-      const status   = document.getElementById('statusFilter').value;
-
-      if (!query && !zip && !category) {
-        showState('🔍', 'Enter a search term', 'Try a business name, category like "plumber", or a ZIP code.');
-        return;
-      }
-
-      if (isLoading) return;
-      isLoading = true;
-      currentPage = page;
-      lastQuery = { query, zip, category, status };
-
-      showLoading();
-
-      try {
-        const result = await callSearch(query, zip, category);
-        renderResults(result, query, zip, category, status);
-      } catch (e) {
-        showState('⚠️', 'Search unavailable', `${e.message}. Try again in a moment.`);
-      } finally {
-        isLoading = false;
-      }
-    }
-
-    function renderNarrative(text, notables) {
-      if (!text && (!notables || !notables.length)) return '';
-
-      // Spotlight: claimed businesses with real descriptions
-      const spotlit = (notables || [])
-        .filter(b => b.description || (b.tags && b.tags.length))
-        .slice(0, 3);
-
-      const spotlightHtml = spotlit.map(b => {
-        const desc = b.description || `Known for: ${(b.tags||[]).slice(0,4).join(', ')}`;
-        return `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.12);">
-          <span style="font-weight:600;">${esc(b.name)}</span>
-          <span style="opacity:0.85;font-size:13px;"> — ${esc(desc)}</span>
-          ${b.website ? `<a href="${esc(b.website)}" target="_blank" rel="noopener" style="margin-left:8px;font-size:12px;opacity:0.7;color:inherit;">↗</a>` : ''}
-        </div>`;
-      }).join('');
-
-      const mainText = (text || '').replace(
-        /(https?:\/\/[^\s<>"]+)/g,
-        url => `<a href="${url}" target="_blank" rel="noopener" style="color:inherit;opacity:0.8;">${url.replace(/^https?:\/\//,'')}</a>`
-      );
+    // ── Render a business card ─────────────────────────────────────────────────
+    function renderCard(biz) {
+      const icon    = getIcon(biz.category || biz.category_group);
+      const claimed = biz.claimed || biz.claimed_at || biz.wallet;
+      const cat     = biz.category || biz.category_group || '';
+      const addr    = [biz.address, biz.city].filter(Boolean).join(', ');
+      const full    = addr ? `${addr}, FL ${biz.zip||''}` : (biz.zip ? `${biz.zip}, FL` : '');
+      const mapUrl  = (biz.lat && biz.lon)
+        ? `https://www.openstreetmap.org/?mlat=${biz.lat}&mlon=${biz.lon}&zoom=17`
+        : `https://www.openstreetmap.org/search?query=${encodeURIComponent(full)}`;
 
       return `
-        <div class="narrative-card">
-          <div class="narrative-label">
-            <span class="narrative-label-dot"></span>
-            LocalIntel
+        <div class="result-card">
+          <div class="result-icon">${icon}</div>
+          <div class="result-body">
+            <div class="result-name">
+              ${biz.website
+                ? `<a href="${esc(biz.website)}" target="_blank" rel="noopener" style="border-bottom:1px dotted var(--border);">${esc(biz.name||'Unnamed')}</a>`
+                : esc(biz.name||'Unnamed')}
+            </div>
+            ${cat ? `<span class="result-tag">${esc(cat)}</span>` : ''}
+            <div>
+              ${full ? `<a href="${mapUrl}" target="_blank" rel="noopener" class="result-detail-link">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                ${esc(full)}</a>` : ''}
+              ${biz.phone ? `<a href="tel:${biz.phone.replace(/\D/g,'')}" class="result-detail-link">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.6 4.38 2 2 0 0 1 3.57 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg>
+                ${esc(biz.phone)}</a>` : ''}
+              ${biz.website ? `<a href="${esc(biz.website)}" target="_blank" rel="noopener" class="result-detail-link">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                ${esc(biz.website.replace(/^https?:\/\//,''))}</a>` : ''}
+            </div>
           </div>
-          ${mainText ? `<div class="narrative-text">${mainText}</div>` : ''}
-          ${spotlightHtml}
-        </div>
-      `;
+          <div class="result-right">
+            <div class="result-zip">${esc(biz.zip||'')}</div>
+            <div class="result-status${claimed?' claimed':''}">
+              ${claimed ? '✓ Claimed' : 'Unclaimed'}
+            </div>
+            <a href="${mapUrl}" target="_blank" rel="noopener"
+               style="display:inline-block;margin-top:6px;font-size:11px;color:var(--accent);font-weight:600;">
+              Map →
+            </a>
+          </div>
+        </div>`;
     }
 
-    function renderServiceRequest(result) {
-      // Natural-language service request — show RFQ card + matching providers
-      const wrap = document.getElementById('resultsWrap');
-      const narrativeHtml = result.narrative ? renderNarrative(result.narrative) : '';
-      let providerHtml = '';
-      if (Array.isArray(result.results) && result.results.length) {
-        providerHtml = `
-          <div style="margin-top:16px;">
-            <div style="font-size:13px;color:var(--text-2);margin-bottom:10px;">Matching providers:</div>
-            ${result.results.map(renderCard).join('')}
+    // ── Render agent answer bubble ─────────────────────────────────────────────
+    function buildAgentBubble(result, rawQuery) {
+      let narrativeHtml = '';
+      let cardsHtml     = '';
+      let countHtml     = '';
+
+      const businesses  = Array.isArray(result?.results) ? result.results : [];
+      const narrative   = result?.narrative || null;
+      const notables    = result?.notable_businesses || [];
+      const isTask      = result?.type === 'service_request';
+      const jobCode     = result?.job_code || null;
+
+      // ── Narrative / answer text ──
+      if (narrative || notables.length) {
+        const spotlit = notables.filter(b => b.description || (b.tags && b.tags.length)).slice(0,3);
+        const spotlightHtml = spotlit.map(b => {
+          const desc = b.description || `Known for: ${(b.tags||[]).slice(0,4).join(', ')}`;
+          return `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(22,163,74,0.15);">
+            <span style="font-weight:600;">${esc(b.name)}</span>
+            <span style="opacity:0.85;font-size:14px;"> — ${esc(desc)}</span>
+            ${b.website ? `<a href="${esc(b.website)}" target="_blank" rel="noopener" style="margin-left:6px;font-size:12px;opacity:0.6;color:inherit;">↗</a>` : ''}
+          </div>`;
+        }).join('');
+
+        const mainText = (narrative || '').replace(
+          /(https?:\/\/[^\s<>"]+)/g,
+          url => `<a href="${url}" target="_blank" rel="noopener" style="color:var(--accent);">${url.replace(/^https?:\/\//,'')}</a>`
+        );
+
+        narrativeHtml = `
+          <div class="agent-narrative">
+            <div class="label"><span class="label-dot"></span> LocalIntel</div>
+            ${mainText ? `<div>${mainText}</div>` : ''}
+            ${spotlightHtml}
+          </div>`;
+      } else if (!businesses.length) {
+        // No results at all
+        narrativeHtml = `
+          <div class="agent-narrative">
+            <div class="label"><span class="label-dot"></span> LocalIntel</div>
+            <div>No results found for <strong>${esc(rawQuery)}</strong>. Try a different name, category, or ZIP.</div>
           </div>`;
       }
-      wrap.innerHTML = `
-        ${narrativeHtml}
-        <div style="margin-top:16px;background:var(--bg-card);border:1px solid var(--border);
-                    border-radius:var(--radius);padding:20px;text-align:center;">
-          <div style="font-size:22px;margin-bottom:8px">📞</div>
-          <div style="font-weight:600;font-size:15px;margin-bottom:6px;">Providers notified — call for a callback</div>
-          <div style="font-size:13px;color:var(--text-2);margin-bottom:6px;">
-            We’ve broadcast your request to local providers. Call us and we’ll call you back when they respond.
+
+      // ── Task handoff card (service request fired) ──
+      if (isTask) {
+        narrativeHtml += `
+          <div class="agent-task-card">
+            ${jobCode ? `<div class="task-job-id">Job ${esc(jobCode)}</div>` : ''}
+            <div class="task-status">Request sent to matching providers</div>
+            <div style="font-size:13px;color:var(--text-2);margin-bottom:12px;">
+              Providers have been notified. Call us and we'll connect you when someone responds.
+            </div>
+            <a href="tel:+19045067476" class="task-action-btn">Call (904) 506-7476</a>
+          </div>`;
+      }
+
+      // ── Business cards ──
+      if (businesses.length) {
+        const status   = document.getElementById('statusFilter').value;
+        let filtered   = businesses;
+        if (status === 'claimed')   filtered = filtered.filter(b => b.claimed || b.claimed_at || b.wallet);
+        if (status === 'unclaimed') filtered = filtered.filter(b => !b.claimed && !b.claimed_at && !b.wallet);
+
+        if (filtered.length) {
+          countHtml = `<div class="results-count">${result.total || filtered.length} businesses found</div>`;
+          cardsHtml = `<div>${filtered.map(renderCard).join('')}</div>`;
+        }
+      }
+
+      return `
+        <div class="bubble-agent">
+          <div class="agent-avatar"></div>
+          <div class="bubble-agent-body">
+            ${narrativeHtml}
+            <div class="results-section">
+              ${countHtml}
+              ${cardsHtml}
+            </div>
           </div>
-          ${result.job_code ? `<div style="font-size:12px;color:var(--text-2);margin-bottom:12px;">Job ID: <strong>${result.job_code}</strong></div>` : ''}
-          <a href="tel:+19045067476" style="display:inline-block;background:var(--accent);color:#fff;
-             font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;text-decoration:none;">
-            Call (904) 506-7476
-          </a>
-        </div>
-        ${providerHtml}
-      `;
+        </div>`;
     }
 
-    function renderResults(result, query, zip, category, status) {
-      const wrap = document.getElementById('resultsWrap');
-
-      // Service request (“I need X”) — intercept before business card render
-      if (result.type === 'service_request') { renderServiceRequest(result); return; }
-
-      // /search returns { total, results: [...], narrative?, notable_businesses? }
-      let businesses = Array.isArray(result?.results) ? result.results : [];
-
-      if (!businesses.length) {
-        showState('📭', 'No results found',
-          `Nothing matched <strong>${esc(query || zip || category)}</strong>. Try a business name, category ("plumber", "restaurant"), or a ZIP like 32082.`);
-        return;
+    // ── Update context from result ─────────────────────────────────────────────
+    function updateContext(result, zip, cat) {
+      if (zip) context.zip = zip;
+      if (cat) context.category = cat;
+      const names = (result?.results||[]).map(b => b.name).filter(Boolean);
+      if (names.length) {
+        context.lastResultNames = names;
+        context.lastBusiness    = names[0]; // top result = default "they/them" reference
       }
-
-      // Filter by status if set
-      if (status === 'claimed') {
-        businesses = businesses.filter(b => b.claimed || b.claimed_at || b.wallet);
-      } else if (status === 'unclaimed') {
-        businesses = businesses.filter(b => !b.claimed && !b.claimed_at && !b.wallet);
-      }
-
-      if (!businesses.length) {
-        showState('📭', 'No results found',
-          `No ${status} businesses matched. Try removing the status filter.`);
-        return;
-      }
-
-      const narrativeHtml = renderNarrative(result.narrative || null, result.notable_businesses || []);
-      wrap.innerHTML = `
-        ${narrativeHtml}
-        <div class="results-header">
-          <span>${result.total || businesses.length} businesses found</span>
-        </div>
-        <div class="results-list">
-          ${businesses.map(renderCard).join('')}
-        </div>
-      `;
     }
 
-    // Auto-search on filter change
-    document.getElementById('zipFilter').addEventListener('change', () => runSearch());
-    document.getElementById('categoryFilter').addEventListener('change', () => runSearch());
-    document.getElementById('statusFilter').addEventListener('change', () => { if (lastQuery.zip || lastQuery.query || lastQuery.category) runSearch(); });
-    document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
+    // ── Render entire thread ───────────────────────────────────────────────────
+    function renderThread() {
+      const el = document.getElementById('thread');
+      el.innerHTML = thread.map(item => {
+        if (item.role === 'user') {
+          return `<div class="bubble-user"><div class="bubble-user-inner">${esc(item.text)}</div></div>`;
+        }
+        return item.html || '';
+      }).join('');
+      // Scroll to bottom
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
 
-    // Load default results on page load — show all businesses in 32082 by default
+    // ── Show thinking indicator ────────────────────────────────────────────────
+    function showThinking() {
+      const el = document.getElementById('resultsArea');
+      el.innerHTML = `
+        <div class="bubble-agent">
+          <div class="agent-avatar"></div>
+          <div class="bubble-agent-body">
+            <div class="thinking-bubble">
+              <div class="spinner"></div>
+              <span>Searching 122,000+ businesses...</span>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // ── Main send handler ──────────────────────────────────────────────────────
+    async function sendMessage() {
+      const input = document.getElementById('searchInput');
+      const raw   = input.value.trim();
+      if (!raw || isLoading) return;
+
+      isLoading = true;
+      input.value = '';
+      document.getElementById('sendBtn').disabled = true;
+
+      // Push user bubble to thread
+      thread.push({ role: 'user', text: raw });
+      renderThread();
+      showThinking();
+
+      try {
+        // Task handoff shortcut — "ok call them"
+        if (TASK_FIRE_RE.test(raw) && context.lastBusiness) {
+          // Fire RFQ for the last business in context
+          const taskResult = await callSearch(`contact ${context.lastBusiness}`, context.zip, context.category);
+          const html = buildAgentBubble(taskResult, raw);
+          thread.push({ role: 'agent', html });
+          updateContext(taskResult, context.zip, context.category);
+        } else {
+          const { q, zip, cat } = resolveQuery(raw);
+          const result = await callSearch(q, zip, cat);
+          const html   = buildAgentBubble(result, raw);
+          thread.push({ role: 'agent', html });
+          updateContext(result, zip, cat);
+        }
+      } catch (e) {
+        thread.push({ role: 'agent', html: `
+          <div class="bubble-agent">
+            <div class="agent-avatar"></div>
+            <div class="bubble-agent-body">
+              <div class="agent-narrative">
+                <div class="label"><span class="label-dot"></span> LocalIntel</div>
+                <div>Something went wrong: ${esc(e.message)}. Try again.</div>
+              </div>
+            </div>
+          </div>` });
+      } finally {
+        isLoading = false;
+        document.getElementById('sendBtn').disabled = false;
+        document.getElementById('resultsArea').innerHTML = '';
+        renderThread();
+        input.focus();
+      }
+    }
+
+    // ── Filter change — re-run last query ──────────────────────────────────────
+    function rerunLastQuery() {
+      if (!thread.length) return;
+      const lastUser = [...thread].reverse().find(t => t.role === 'user');
+      if (lastUser) {
+        document.getElementById('searchInput').value = lastUser.text;
+        sendMessage();
+      }
+    }
+    document.getElementById('zipFilter').addEventListener('change', rerunLastQuery);
+    document.getElementById('categoryFilter').addEventListener('change', rerunLastQuery);
+    document.getElementById('statusFilter').addEventListener('change', () => { if (thread.length) renderThread(); });
+    document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+
+    // ── Auto-open with 32082 default ───────────────────────────────────────────
     window.addEventListener('DOMContentLoaded', () => {
-      // Pre-select 32082 so users see results immediately
       const zipEl = document.getElementById('zipFilter');
       if (zipEl && !zipEl.value) zipEl.value = '32082';
-      runSearch();
+      // Seed first message
+      document.getElementById('searchInput').value = 'Show me businesses in 32082';
+      sendMessage();
     });
-
   </script>
 </body>
 </html>

@@ -275,6 +275,46 @@
       font-weight: 600; font-size: 14px; padding: 9px 20px; border-radius: 8px; margin-top: 4px;
     }
 
+    /* ORDER CARD */
+    .order-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+    .order-card-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px; margin-bottom: 8px;
+    }
+    .order-card-name {
+      font-size: 17px; font-weight: 700; color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .order-card-zip { font-size: 13px; font-weight: 700; color: var(--text-3); }
+    .order-card-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; margin-bottom: 4px; }
+    .order-card-addr { font-size: 13px; color: var(--text-2); margin-bottom: 14px; }
+    .order-card-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+    .order-cta-btn {
+      display: inline-block; background: var(--accent); color: white;
+      font-weight: 700; font-size: 14px; padding: 10px 22px; border-radius: 8px;
+      text-decoration: none; transition: background .15s;
+    }
+    .order-cta-btn:hover { background: #15803D; }
+    .order-phone-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; color: var(--text-2); font-weight: 600;
+    }
+    .order-phone-link:hover { color: var(--accent); }
+    .order-card-footer {
+      font-size: 11px; color: var(--text-3);
+      border-top: 1px solid var(--border);
+      padding-top: 10px; margin-top: 4px;
+      letter-spacing: .02em;
+    }
+
     /* RESULT CARDS */
     .results-section { margin-top: 4px; }
     .results-count { font-size: 13px; color: var(--text-2); font-weight: 500; margin-bottom: 10px; padding-left: 2px; }
@@ -562,6 +602,55 @@
 
     // ── Build agent bubble ─────────────────────────────────────────────────────
     function buildAgentBubble(result, rawQuery) {
+      // ── ORDER intent: focused order-start CTA, no business list ─────────────
+      if (result?.intent === 'order' && result.business) {
+        const b       = result.business;
+        const ctaUrl  = result.cta_url || b.menu_url || b.website || '';
+        const phoneRaw= (result.fallback_phone || b.phone || '').replace(/\D/g,'');
+        const fullAddr= b.address ? esc(b.address) : '';
+        const desc    = b.description ? esc(b.description.slice(0,140)) + (b.description.length>140?'…':'') : '';
+        const message = esc(result.message || `Starting your order at ${b.name}.`);
+        const orderCardHtml = `
+          <div class="order-card">
+            <div class="order-card-header">
+              <div class="order-card-name">🍽 ${esc(b.name||'')}</div>
+              <div class="order-card-zip">${esc(result.business_zip || b.zip || '')}</div>
+            </div>
+            ${desc ? `<div class="order-card-desc">${desc}</div>` : ''}
+            ${fullAddr ? `<div class="order-card-addr">${fullAddr}</div>` : ''}
+            <div class="order-card-actions">
+              ${ctaUrl ? `<a href="${esc(ctaUrl)}" target="_blank" rel="noopener" class="order-cta-btn">${esc(result.cta_label || 'Start Order →')}</a>` : ''}
+              ${phoneRaw ? `<a href="tel:${phoneRaw}" class="order-phone-link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.6 4.38 2 2 0 0 1 3.57 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg>
+                ${esc(b.phone || '')}</a>` : ''}
+            </div>
+            <div class="order-card-footer">Powered by Toast · Routed by LocalIntel</div>
+          </div>`;
+        return `
+          <div class="bubble-agent">
+            <div class="agent-avatar"></div>
+            <div class="bubble-agent-body">
+              <div class="agent-narrative">
+                <div class="label"><span class="label-dot"></span> LocalIntel</div>
+                <div>${message}</div>
+              </div>
+              ${orderCardHtml}
+            </div>
+          </div>`;
+      }
+      if (result?.intent === 'order_not_found') {
+        return `
+          <div class="bubble-agent">
+            <div class="agent-avatar"></div>
+            <div class="bubble-agent-body">
+              <div class="agent-narrative">
+                <div class="label"><span class="label-dot"></span> LocalIntel</div>
+                <div>${esc(result.message || "I couldn't find that business in this area.")}</div>
+              </div>
+            </div>
+          </div>`;
+      }
+
       let narrativeHtml = '';
       let cardsHtml     = '';
       let countHtml     = '';

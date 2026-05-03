@@ -512,6 +512,11 @@
         ? `https://www.openstreetmap.org/?mlat=${biz.lat}&mlon=${biz.lon}&zoom=17`
         : `https://www.openstreetmap.org/search?query=${encodeURIComponent(full)}`;
 
+      // Rich detail lines — only show when data exists
+      const blurb   = biz.description || biz.services_text || '';
+      const hoursStr = biz.hours || '';
+      const tier    = biz.price_tier ? { casual:'$–$$', upscale:'$$$', fine_dining:'$$$$' }[biz.price_tier] || biz.price_tier : '';
+
       return `
         <div class="result-card">
           <div class="result-icon">${icon}</div>
@@ -521,7 +526,12 @@
                 ? `<a href="${esc(biz.website)}" target="_blank" rel="noopener" style="border-bottom:1px dotted var(--border);">${esc(biz.name||'Unnamed')}</a>`
                 : esc(biz.name||'Unnamed')}
             </div>
-            ${cat ? `<span class="result-tag">${esc(cat)}</span>` : ''}
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
+              ${cat ? `<span class="result-tag">${esc(cat)}</span>` : ''}
+              ${tier ? `<span class="result-tag" style="background:#FEF9C3;color:#854D0E;">${esc(tier)}</span>` : ''}
+            </div>
+            ${blurb ? `<div style="font-size:13px;color:var(--text-2);margin-bottom:5px;line-height:1.5;">${esc(blurb.slice(0,120))}${blurb.length>120?'…':''}</div>` : ''}
+            ${hoursStr ? `<div style="font-size:12px;color:var(--text-3);margin-bottom:4px;">🕐 ${esc(hoursStr)}</div>` : ''}
             <div>
               ${full ? `<a href="${mapUrl}" target="_blank" rel="noopener" class="result-detail-link">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -557,6 +567,7 @@
       const narrative   = result?.narrative || null;
       const notables    = result?.notable_businesses || [];
       const isTask      = result?.type === 'service_request';
+      const isDeflect   = result?.type === 'out_of_scope';
       const jobCode     = result?.job_code || null;
 
       // ── Narrative / answer text ──
@@ -581,6 +592,12 @@
             <div class="label"><span class="label-dot"></span> LocalIntel</div>
             ${mainText ? `<div>${mainText}</div>` : ''}
             ${spotlightHtml}
+          </div>`;
+      } else if (isDeflect) {
+        narrativeHtml = `
+          <div class="agent-narrative">
+            <div class="label"><span class="label-dot"></span> LocalIntel</div>
+            <div>${esc(result.narrative || "That's outside my lane — try asking for a restaurant, landscaper, doctor, or any local service.")}</div>
           </div>`;
       } else if (!businesses.length) {
         // No results at all
@@ -738,7 +755,7 @@
       const zipEl = document.getElementById('zipFilter');
       if (zipEl && !zipEl.value) zipEl.value = '32082';
       // Seed first message
-      document.getElementById('searchInput').value = 'Show me businesses in 32082';
+      document.getElementById('searchInput').value = 'Where should I eat in Ponte Vedra?';
       sendMessage();
     });
   </script>

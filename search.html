@@ -976,7 +976,7 @@
         </div>`));
       const poll = async () => {
         try {
-          const r = await fetch(`${API_BASE}/order-status/${encodeURIComponent(s.receiptId)}`, {
+          const r = await fetch(`${API_BASE}/order-status/${encodeURIComponent(s.receiptId)}?business_id=${encodeURIComponent(s.businessId)}`, {
             headers: { 'X-Agent-Origin': 'localintel-search-ui' },
           });
           const d = await r.json();

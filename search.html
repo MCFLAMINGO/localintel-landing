@@ -333,6 +333,14 @@
     .result-icon { width: 40px; height: 40px; background: var(--accent-light); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
     .result-body { flex: 1; min-width: 0; }
     .result-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .match-reason {
+      font-size: 0.72rem;
+      color: #6b7280;
+      margin-top: 2px;
+      margin-bottom: 4px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
     .result-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; background: var(--accent-light); color: var(--accent-text); padding: 2px 8px; border-radius: 999px; margin-bottom: 6px; }
     .result-detail-link { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text-2); margin-right: 12px; margin-top: 3px; transition: color .15s; }
     .result-detail-link:hover { color: var(--accent); }
@@ -567,6 +575,7 @@
                 ? `<a href="${esc(biz.website)}" target="_blank" rel="noopener" style="border-bottom:1px dotted var(--border);">${esc(biz.name||'Unnamed')}</a>`
                 : esc(biz.name||'Unnamed')}
             </div>
+            ${biz.matchReason ? `<div class="match-reason">${esc(biz.matchReason)}</div>` : ''}
             <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
               ${cat ? `<span class="result-tag">${esc(cat)}</span>` : ''}
               ${tier ? `<span class="result-tag" style="background:#FEF9C3;color:#854D0E;">${esc(tier)}</span>` : ''}

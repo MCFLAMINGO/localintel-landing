@@ -914,17 +914,27 @@
           }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        if (!res.ok) {
+          const err = new Error(data.error || `HTTP ${res.status}`);
+          err.data = data;
+          throw err;
+        }
         s.receiptId  = data.receiptId;
         s.paymentUrl = data.paymentUrl;
         // Open payment in embedded iframe modal (origin-verified PostMessage)
         try { openPaymentModal(data.paymentUrl); } catch {}
         replaceLastAgent(renderOrderCreatedCard(orderId));
       } catch (e) {
+        const closedMsg = (e.data && e.data.error === 'business_closed' && e.data.message)
+          ? e.data.message
+          : null;
+        const body = closedMsg
+          ? `<div>${esc(closedMsg)}</div>`
+          : `<div>Couldn't create order: ${esc(e.message)}. Try again, or call the business directly.</div>`;
         replaceLastAgent(buildOrderPanel(`
           <div class="agent-narrative">
             <div class="label"><span class="label-dot"></span> LocalIntel</div>
-            <div>Couldn't create order: ${esc(e.message)}. Try again, or call the business directly.</div>
+            ${body}
           </div>`));
       }
     };

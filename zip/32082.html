@@ -267,7 +267,7 @@ function renderGaps(gaps) {
   const show = gaps.filter(g => g.tier !== 'balanced').slice(0, 8);
   if (!show.length) { grid.innerHTML = '<p class="gap-loading">Sector data loading…</p>'; return; }
   document.getElementById('gap-sub').textContent =
-    show.filter(g=>g.gap>0).length + ' undersupplied sectors detected across ' + show.length + ' industries analyzed. Full breakdown available to verified business owners.';
+    show.filter(g=>g.gapPct>0).length + ' undersupplied sectors detected across ' + show.length + ' industries analyzed. Full breakdown available to verified business owners.';
   grid.innerHTML = show.map(g => {
     const t = TIER[g.tier];
     return `<div class="gc ${t.cls}">

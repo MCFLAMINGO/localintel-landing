@@ -223,17 +223,20 @@ const RAILWAY = 'https://gsb-swarm-production.up.railway.app';
 const ZIP = '32081';
 
 // ── Sector gap engine ─────────────────────────────────────────────────────────
+// Hybrid benchmarks: DB suburban median for food/hospitality/health/construction/services
+// BLS national for retail/fitness/finance/legal/automotive
+// See gsb-swarm/docs/BENCHMARKS.md for full rationale
 const BENCHMARKS = [
-  {key:'health',      label:'Healthcare',           icon:'🏥', base:40,  inc:1.1 },
-  {key:'food',        label:'Food & Dining',         icon:'🍽️', base:28,  inc:1.2 },
-  {key:'retail',      label:'Retail & Shopping',     icon:'🛍️', base:18,  inc:1.25},
-  {key:'fitness',     label:'Fitness & Wellness',    icon:'💪', base:5,   inc:1.35},
-  {key:'finance',     label:'Financial Services',    icon:'🏦', base:8,   inc:1.2 },
-  {key:'hospitality', label:'Hospitality',           icon:'🏨', base:4,   inc:1.0 },
-  {key:'legal',       label:'Legal Services',        icon:'⚖️', base:6,   inc:1.15},
-  {key:'construction',label:'Construction & Trades', icon:'🔨', base:28,  inc:1.0 },
-  {key:'automotive',  label:'Automotive Services',   icon:'🚗', base:6,   inc:0.9 },
-  {key:'services',    label:'Professional Services', icon:'💼', base:35,  inc:1.1 },
+  {key:'health',       label:'Healthcare',           icon:'🏥', base:27.6, inc:1.15},
+  {key:'food',         label:'Food & Dining',         icon:'🍽️', base:27.7, inc:1.10},
+  {key:'retail',       label:'Retail & Shopping',     icon:'🛍️', base:20.0, inc:1.10},
+  {key:'fitness',      label:'Fitness & Wellness',    icon:'💪', base:9.0,  inc:1.25},
+  {key:'finance',      label:'Financial Services',    icon:'🏦', base:8.0,  inc:1.15},
+  {key:'hospitality',  label:'Hospitality',           icon:'🏨', base:3.0,  inc:1.00},
+  {key:'legal',        label:'Legal Services',        icon:'⚖️', base:5.4,  inc:1.20},
+  {key:'construction', label:'Construction & Trades', icon:'🔨', base:17.8, inc:1.00},
+  {key:'automotive',   label:'Automotive Services',   icon:'🚗', base:5.1,  inc:0.90},
+  {key:'services',     label:'Professional Services', icon:'💼', base:91.2, inc:1.10},
 ];
 
 const TIER = {
@@ -249,11 +252,14 @@ function computeGaps(sb, pop, hhi) {
   return BENCHMARKS.map(s => {
     const actual   = sb[s.key] || 0;
     const expected = Math.max(1, Math.round(s.base * (aff ? s.inc : 1.0) * p10));
-    const gap      = expected - actual;
-    const tier     = gap >= 10 ? 'high' : gap >= 4 ? 'medium' : gap > 0 ? 'low'
-                   : gap <= -8 ? 'saturated' : 'balanced';
-    return {...s, actual, expected, gap, tier};
-  }).sort((a,b) => b.gap - a.gap);
+    const gapPct   = (expected - actual) / expected;
+    const tier     = gapPct >= 0.30 ? 'high'
+                   : gapPct >= 0.15 ? 'medium'
+                   : gapPct >= 0.05 ? 'low'
+                   : gapPct <= -0.20 ? 'saturated'
+                   : 'balanced';
+    return {...s, actual, expected, gapPct, tier};
+  }).sort((a,b) => b.gapPct - a.gapPct);
 }
 
 function renderGaps(gaps) {

@@ -1,4 +1,8 @@
 {
+  "rewrites": [
+    { "source": "/zip/32081", "destination": "/zip/32081.html" },
+    { "source": "/zip/32082", "destination": "/zip/32082.html" }
+  ],
   "redirects": [
     { "source": "/claim", "destination": "/claim.html", "permanent": false },
     { "source": "/inbox", "destination": "/inbox.html", "permanent": false },

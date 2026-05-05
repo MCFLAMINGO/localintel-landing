@@ -849,6 +849,70 @@
   <div class="page-wrap">
     <div class="claim-layout">
 
+      <!-- ── MAGIC-LINK / EMAIL-FIRST CARD ────────────────────────────────── -->
+      <div id="merchantPortalCard"
+        style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 24px;margin-bottom:28px;box-shadow:var(--shadow-sm);">
+        <h2 style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-0.3px;">
+          Merchant dashboard
+        </h2>
+        <p style="font-size:14px;color:var(--text-2);margin-bottom:18px;">
+          Enter your email — we'll send you a private link to your dashboard, or claim a new listing.
+        </p>
+
+        <form id="merchantLinkForm" autocomplete="on" novalidate>
+          <div class="form-group" style="margin-bottom:14px;">
+            <label class="form-label" for="merchantEmail" style="display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;">Email</label>
+            <input class="form-input" type="email" id="merchantEmail" name="email" placeholder="you@example.com" autocomplete="email" required
+              style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:15px;background:#fff;">
+          </div>
+
+          <!-- Hidden new-merchant fields, revealed when API returns 'new_merchant' -->
+          <div id="newMerchantFields" style="display:none;">
+            <div class="form-group" style="margin-bottom:12px;">
+              <label class="form-label" for="merchantName" style="display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;">Business name</label>
+              <input class="form-input" type="text" id="merchantName" name="name" placeholder="e.g. Sunset Plumbing"
+                style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:15px;background:#fff;">
+            </div>
+            <div class="form-group" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div>
+                <label class="form-label" for="merchantZip" style="display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;">ZIP</label>
+                <input class="form-input" type="text" id="merchantZip" name="zip" placeholder="32082" inputmode="numeric" maxlength="5"
+                  style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:15px;background:#fff;">
+              </div>
+              <div>
+                <label class="form-label" for="merchantPhone" style="display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;">Phone (optional)</label>
+                <input class="form-input" type="tel" id="merchantPhone" name="phone" placeholder="+1 904 555 0100"
+                  style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:15px;background:#fff;">
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label class="form-label" for="merchantAddress" style="display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;">Address (optional)</label>
+              <input class="form-input" type="text" id="merchantAddress" name="address" placeholder="123 Main St"
+                style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:15px;background:#fff;">
+            </div>
+            <div class="form-group" style="margin-bottom:14px;">
+              <label class="form-label" for="merchantCategory" style="display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;">Category</label>
+              <input class="form-input" type="text" id="merchantCategory" name="category" placeholder="plumber, restaurant, salon, etc."
+                style="width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius);font-size:15px;background:#fff;">
+            </div>
+            <p style="font-size:13px;color:var(--text-2);margin-bottom:12px;">
+              We didn't find your business in our network — fill these in to claim a new listing.
+            </p>
+          </div>
+
+          <button type="submit" id="merchantLinkBtn"
+            style="width:100%;background:var(--accent);color:#fff;padding:13px 20px;border-radius:var(--radius);font-weight:600;font-size:15px;cursor:pointer;transition:background var(--transition);">
+            Send my dashboard link →
+          </button>
+        </form>
+
+        <div id="merchantLinkMsg" style="margin-top:14px;font-size:14px;display:none;"></div>
+      </div>
+
+      <div style="text-align:center;margin:0 0 18px;color:var(--text-3);font-size:13px;letter-spacing:0.5px;text-transform:uppercase;">
+        Or claim a Florida Sunbiz business below
+      </div>
+
       <!-- STEP INDICATOR -->
       <nav class="step-indicator" aria-label="Claim progress">
         <div class="step-item">
@@ -1925,6 +1989,87 @@
 
     // ── INITIAL STATE ──
     updateStepIndicator(1);
+
+    // ── MERCHANT MAGIC-LINK HANDLER ──
+    (function () {
+      const API_MERCHANT = 'https://gsb-swarm-production.up.railway.app/api/merchant/request-link';
+      const form  = document.getElementById('merchantLinkForm');
+      const btn   = document.getElementById('merchantLinkBtn');
+      const msg   = document.getElementById('merchantLinkMsg');
+      const fresh = document.getElementById('newMerchantFields');
+      if (!form) return;
+
+      function showMsg(text, kind) {
+        msg.style.display = 'block';
+        msg.textContent   = text;
+        msg.style.color   = kind === 'error' ? 'var(--error)'
+                          : kind === 'ok'    ? 'var(--accent-text)'
+                          : 'var(--text-2)';
+        msg.style.background = kind === 'error' ? 'var(--error-light)'
+                              : kind === 'ok'   ? 'var(--accent-light)'
+                              : 'transparent';
+        msg.style.padding = (kind ? '10px 12px' : '0');
+        msg.style.borderRadius = 'var(--radius)';
+      }
+
+      form.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const email = document.getElementById('merchantEmail').value.trim();
+        if (!email) { showMsg('Email is required.', 'error'); return; }
+
+        const payload = { email };
+        // If new-merchant fields are visible, include them
+        if (fresh.style.display !== 'none') {
+          const name     = document.getElementById('merchantName').value.trim();
+          const zip      = document.getElementById('merchantZip').value.trim();
+          const phone    = document.getElementById('merchantPhone').value.trim();
+          const address  = document.getElementById('merchantAddress').value.trim();
+          const category = document.getElementById('merchantCategory').value.trim();
+          if (!name || !zip) { showMsg('Business name and ZIP are required to claim.', 'error'); return; }
+          payload.name     = name;
+          payload.zip      = zip;
+          if (phone)    payload.phone    = phone;
+          if (address)  payload.address  = address;
+          if (category) payload.category = category;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
+        showMsg('Working…', 'info');
+
+        try {
+          const res = await fetch(API_MERCHANT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json().catch(() => ({}));
+
+          if (data && data.error === 'new_merchant') {
+            fresh.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Claim and send link →';
+            showMsg(data.message || 'Tell us a little about your business so we can claim it.', 'info');
+            return;
+          }
+
+          if (data && data.success) {
+            showMsg(`Check your email — we sent a dashboard link to ${email}.`, 'ok');
+            btn.disabled = false;
+            btn.textContent = 'Send another link';
+            return;
+          }
+
+          showMsg((data && (data.error || data.message)) || `Request failed (${res.status}).`, 'error');
+          btn.disabled = false;
+          btn.textContent = 'Send my dashboard link →';
+        } catch (err) {
+          showMsg('Network error. Please try again.', 'error');
+          btn.disabled = false;
+          btn.textContent = 'Send my dashboard link →';
+        }
+      });
+    })();
   </script>
 
 </body>

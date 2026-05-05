@@ -666,7 +666,7 @@
       let countHtml     = '';
 
       const businesses = Array.isArray(result?.results) ? result.results : [];
-      const narrative  = result?.narrative || null;
+      const narrative  = result?.narrative || result?.meta?.narrative || null;
       const notables   = result?.notable_businesses || [];
       const isTask     = result?.type === 'service_request';
       const isDeflect  = result?.type === 'out_of_scope';

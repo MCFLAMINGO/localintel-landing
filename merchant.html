@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merchant Dashboard — LocalIntel</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --bg-card: #F9FAFB;
+      --text: #111827;
+      --text-2: #6B7280;
+      --text-3: #9CA3AF;
+      --accent: #16A34A;
+      --accent-hover: #15803D;
+      --accent-light: #DCFCE7;
+      --accent-text: #166534;
+      --border: #E5E7EB;
+      --error: #DC2626;
+      --error-light: #FEF2F2;
+      --warn: #D97706;
+      --warn-light: #FEF3C7;
+      --radius-sm: 6px;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 16px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --nav-h: 64px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+    body {
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background: #F3F4F6;
+      min-height: 100dvh;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    nav.topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      height: var(--nav-h);
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1080px; margin: 0 auto;
+      padding: 0 24px; height: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; letter-spacing: -0.4px; }
+    .logo-dot { width: 22px; height: 22px; background: var(--accent); border-radius: 50%; position: relative; }
+    .logo-dot::after {
+      content: ''; position: absolute;
+      width: 8px; height: 8px; background: #fff; border-radius: 50%;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+    }
+
+    .page-wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: calc(var(--nav-h) + 32px) 24px 80px;
+    }
+
+    .header-row {
+      display: flex; flex-wrap: wrap; align-items: baseline;
+      gap: 12px; margin-bottom: 8px;
+    }
+    .biz-name { font-size: 30px; font-weight: 800; letter-spacing: -0.6px; color: var(--text); }
+    .biz-meta { font-size: 14px; color: var(--text-2); margin-bottom: 28px; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 999px;
+      font-size: 12px; font-weight: 600;
+      background: var(--accent-light); color: var(--accent-text);
+    }
+    .badge.warn { background: var(--warn-light); color: var(--warn); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-label { font-size: 12px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 30px; font-weight: 800; color: var(--text); margin-top: 4px; letter-spacing: -0.5px; }
+    .stat-sub   { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+
+    .panel {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 22px;
+    }
+    .panel h3 { font-size: 16px; font-weight: 700; margin-bottom: 14px; color: var(--text); }
+
+    .query-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .query-row:last-child { border-bottom: none; }
+    .query-text { font-size: 14px; color: var(--text); }
+    .query-cnt {
+      font-size: 12px; color: var(--text-2); font-weight: 600;
+      background: var(--bg-card); padding: 3px 9px; border-radius: 999px;
+    }
+
+    .wallet-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+    }
+    .wallet-status { font-size: 14px; color: var(--text-2); }
+    .wallet-addr {
+      font-family: ui-monospace, SF Mono, Menlo, monospace;
+      font-size: 13px;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    .cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: #fff;
+      padding: 11px 18px; border-radius: var(--radius);
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      border: none;
+    }
+    .cta:hover { background: var(--accent-hover); }
+    .cta.outline { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+    .empty {
+      color: var(--text-3); font-size: 14px; padding: 8px 0;
+    }
+
+    .loading {
+      padding: 80px 24px; text-align: center; color: var(--text-2);
+      font-size: 14px;
+    }
+    .err-box {
+      background: var(--error-light); color: var(--error);
+      padding: 14px 18px; border-radius: var(--radius);
+      font-size: 14px; margin-bottom: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .biz-name { font-size: 24px; }
+      .stat-value { font-size: 24px; }
+      .panel, .stat-card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="LocalIntel home">
+        <span class="logo-dot"></span>
+        LocalIntel
+      </a>
+      <a href="/claim" style="font-size:14px;color:var(--text-2);">Need a new link?</a>
+    </div>
+  </nav>
+
+  <div class="page-wrap">
+    <div id="loadingState" class="loading">Loading dashboard…</div>
+    <div id="errorState"   style="display:none;"></div>
+    <div id="dashContent"  style="display:none;">
+
+      <div class="header-row">
+        <h1 id="bizName" class="biz-name">—</h1>
+        <span id="claimedBadge" class="badge" style="display:none;">Claimed</span>
+        <span id="unclaimedBadge" class="badge warn" style="display:none;">Unclaimed</span>
+      </div>
+      <p id="bizMeta" class="biz-meta">—</p>
+
+      <!-- Stats -->
+      <div class="grid">
+        <div class="stat-card">
+          <div class="stat-label">Routed To You</div>
+          <div class="stat-value" id="statRouted">—</div>
+          <div class="stat-sub" id="statRoutedSub">all-time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">This Month</div>
+          <div class="stat-value" id="statMonth">—</div>
+          <div class="stat-sub">last 30 days</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">RFQ Bids</div>
+          <div class="stat-value" id="statRfqSent">—</div>
+          <div class="stat-sub">requests sent your way</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">RFQ Matches</div>
+          <div class="stat-value" id="statRfqMatched">—</div>
+          <div class="stat-sub">jobs you accepted</div>
+        </div>
+      </div>
+
+      <!-- Top queries -->
+      <div class="panel">
+        <h3>Top queries that found you</h3>
+        <div id="topQueries"></div>
+      </div>
+
+      <!-- Wallet -->
+      <div class="panel">
+        <h3>Wallet</h3>
+        <div class="wallet-row">
+          <div>
+            <div class="wallet-status" id="walletStatus">—</div>
+            <div class="wallet-addr" id="walletAddr"></div>
+          </div>
+          <a id="walletCta" class="cta" style="display:none;" href="#">Connect wallet →</a>
+        </div>
+      </div>
+
+      <!-- Visibility CTA (only when not claimed) -->
+      <div id="claimCta" class="panel" style="display:none;text-align:center;">
+        <h3 style="margin-bottom:8px;">Get more visibility</h3>
+        <p style="color:var(--text-2);font-size:14px;margin-bottom:14px;">
+          Claim your listing to appear in answers, accept RFQs, and get paid in stable USD when shoppers route through LocalIntel.
+        </p>
+        <a class="cta" href="/claim">Claim my listing →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://gsb-swarm-production.up.railway.app/api/merchant';
+
+    function getToken() {
+      const url = new URL(window.location.href);
+      return url.searchParams.get('token');
+    }
+    function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+    function showError(msg, withClaimLink) {
+      document.getElementById('loadingState').style.display = 'none';
+      const el = document.getElementById('errorState');
+      el.style.display = 'block';
+      el.innerHTML = `
+        <div class="err-box">${esc(msg)}</div>
+        ${withClaimLink ? `<p style="font-size:14px;color:var(--text-2);">Request a new link at <a href="/claim" style="color:var(--accent);font-weight:600;">thelocalintel.com/claim</a>.</p>` : ''}
+      `;
+    }
+
+    async function load() {
+      const token = getToken();
+      if (!token) { showError('No token in URL — open this page from your dashboard email link.', true); return; }
+      try {
+        const res = await fetch(`${API_BASE}/dashboard/${encodeURIComponent(token)}`);
+        if (res.status === 401) {
+          const j = await res.json().catch(() => ({}));
+          showError(j.message || 'This link has expired.', true);
+          return;
+        }
+        if (!res.ok) { showError(`Dashboard load failed (${res.status}).`, true); return; }
+        const data = await res.json();
+        render(data);
+      } catch (err) {
+        showError('Network error loading dashboard. Please try again.', true);
+      }
+    }
+
+    function render(data) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('dashContent').style.display = 'block';
+
+      const b = data.business || {};
+      const s = data.stats || {};
+      const queries = Array.isArray(data.top_queries) ? data.top_queries : [];
+
+      document.getElementById('bizName').textContent = b.name || 'Your business';
+      document.getElementById('bizMeta').textContent =
+        [b.address, b.zip, b.category].filter(Boolean).join(' · ') || 'No location info on file yet';
+
+      if (b.claimed) {
+        document.getElementById('claimedBadge').style.display = 'inline-flex';
+      } else {
+        document.getElementById('unclaimedBadge').style.display = 'inline-flex';
+        document.getElementById('claimCta').style.display = 'block';
+      }
+
+      document.getElementById('statRouted').textContent     = s.total_routed ?? 0;
+      document.getElementById('statMonth').textContent      = s.this_month   ?? 0;
+      document.getElementById('statRfqSent').textContent    = s.rfq_sent     ?? 0;
+      document.getElementById('statRfqMatched').textContent = s.rfq_matched  ?? 0;
+      document.getElementById('statRoutedSub').textContent  = `${s.resolved ?? 0} resolved`;
+
+      // Top queries
+      const tq = document.getElementById('topQueries');
+      if (queries.length === 0) {
+        tq.innerHTML = '<div class="empty">No routed queries yet — once shoppers ask for you, top searches will appear here.</div>';
+      } else {
+        tq.innerHTML = queries.map(q => `
+          <div class="query-row">
+            <div class="query-text">${esc(q.query)}</div>
+            <div class="query-cnt">${esc(q.cnt)} ${Number(q.cnt) === 1 ? 'time' : 'times'}</div>
+          </div>
+        `).join('');
+      }
+
+      // Wallet
+      const ws = document.getElementById('walletStatus');
+      const wa = document.getElementById('walletAddr');
+      const wcta = document.getElementById('walletCta');
+      if (data.wallet_connected && b.wallet) {
+        ws.textContent = 'Connected — payouts go to:';
+        wa.textContent = b.wallet;
+      } else {
+        ws.textContent = 'No wallet connected yet.';
+        wa.textContent = '';
+        wcta.style.display = 'inline-flex';
+        wcta.href = '/claim';
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

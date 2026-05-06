@@ -191,11 +191,9 @@
     <div class="map-wrap">
       <div id="zip-map"><div class="map-loading">Loading map…</div></div>
       <div class="map-legend">
-        <div class="map-legend-title">Gap Signal</div>
-        <div class="ml-row"><div class="ml-swatch" style="background:#fca5a5"></div><span>Significant Opportunity</span></div>
-        <div class="ml-row"><div class="ml-swatch" style="background:#fed7aa"></div><span>Moderate Opportunity</span></div>
-        <div class="ml-row"><div class="ml-swatch" style="background:#e5e7eb"></div><span>Balanced / Established</span></div>
-        <div class="ml-row"><div class="ml-swatch" style="background:#bbf7d0"></div><span>Competitive Market</span></div>
+        <div class="map-legend-title">Businesses</div>
+        <div class="ml-row"><div class="ml-swatch" style="background:#16a34a;border-radius:50%"></div><span>Claimed listing</span></div>
+        <div class="ml-row"><div class="ml-swatch" style="background:#6b7280;border-radius:50%"></div><span>Unclaimed</span></div>
       </div>
     </div>
   </div>
@@ -246,7 +244,7 @@ const TIER_COLORS = {
   saturated: { fill:'#bbf7d0', stroke:'#16a34a', opacity:0.30 },
 };
 
-async function initMap(topTier) {
+async function initMap() {
   // Lazy-load Leaflet from CDN
   if (!window.L) {
     await Promise.all([
@@ -264,32 +262,41 @@ async function initMap(topTier) {
 
   // OpenStreetMap tiles — free, no API key
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
+    maxZoom: 19,
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
 
-  // Fetch ZIP boundary from Census TIGER GeoJSON
-  const url = `https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer/2/query?where=ZCTA5%3D'${ZIP}'&outFields=ZCTA5&f=geojson&outSR=4326`;
-  try {
-    const res  = await fetch(url);
-    const geo  = await res.json();
-    if (!geo.features || !geo.features.length) throw new Error('no features');
+  // Set initial view centered on ZIP — pins will anchor it
+  map.setView([{{MAP_LAT}}, {{MAP_LON}}], {{MAP_ZOOM}});
 
-    const c = TIER_COLORS[topTier] || TIER_COLORS.balanced;
-    const layer = L.geoJSON(geo, {
-      style: {
-        fillColor:   c.fill,
-        fillOpacity: c.opacity,
-        color:       c.stroke,
-        weight:      2.5,
-      }
-    }).addTo(map);
-    map.fitBounds(layer.getBounds(), { padding: [24, 24] });
-    const TIER_LABELS = { high:'Significant Opportunity', medium:'Moderate Opportunity', low:'Slight Opportunity', balanced:'Balanced Market', saturated:'Competitive Market' };
+  // Fetch business pins from LocalIntel
+  try {
+    const res  = await fetch(`${RAILWAY}/api/local-intel/pins?zip=${ZIP}`);
+    const data = await res.json();
+    const pins = data.pins || [];
+
+    let claimedCount = 0;
+    pins.forEach(p => {
+      const color  = p.claimed ? '#16a34a' : '#6b7280';
+      const radius = p.claimed ? 7 : 5;
+      const marker = L.circleMarker([p.lat, p.lon], {
+        radius,
+        fillColor:   color,
+        color:       '#fff',
+        weight:      1.5,
+        fillOpacity: 0.85,
+      }).addTo(map);
+      marker.bindTooltip(
+        `<strong>${p.name}</strong><br><span style="color:#6b7280;font-size:11px">${p.category || p.group}</span>`,
+        { direction: 'top', offset: [0, -6] }
+      );
+      if (p.claimed) claimedCount++;
+    });
+
     document.getElementById('map-sub').textContent =
-      `ZIP ${ZIP} boundary — gap signal: ${ TIER_LABELS[topTier] || 'Balanced Market' }`;
+      `${pins.length} businesses mapped — ${claimedCount} claimed (green), ${pins.length - claimedCount} unclaimed (grey)`;
   } catch(e) {
-    el.innerHTML = '<div class="map-loading">Map boundary unavailable.</div>';
+    document.getElementById('map-sub').textContent = 'Business pins unavailable.';
   }
 }
 
@@ -399,7 +406,7 @@ async function loadStats() {
       renderGaps(gaps);
       // Init map colored by top gap tier
       const topTier = gaps.find(g => g.tier !== 'balanced')?.tier || 'balanced';
-      initMap(topTier);
+      initMap();
     } else {
       document.getElementById('gap-grid').innerHTML = '<p class="gap-loading">Sector data unavailable.</p>';
     }

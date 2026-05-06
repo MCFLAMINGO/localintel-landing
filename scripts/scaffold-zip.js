@@ -78,6 +78,9 @@ function buildPage(cfg) {
     '{{SEARCH_PLACEHOLDER}}':cfg.search_placeholder || 'dentist, contractor, restaurant, gym…',
     '{{QUICK_CHIPS}}':       chips,
     '{{NEARBY_ZIP_LINKS}}':  nearbyLinks,
+    '{{MAP_LAT}}':           String(cfg.map_lat  || 30.19),
+    '{{MAP_LON}}':           String(cfg.map_lon  || -81.38),
+    '{{MAP_ZOOM}}':          String(cfg.map_zoom || 13),
   };
 
   for (const [token, value] of Object.entries(tokens)) {
@@ -119,6 +122,9 @@ const ZIP_CONFIGS = {
     market_profile: 'Affluent',
     consumer_profile: 'Affluent Established',
     market_maturity: 'mature',
+    map_lat:  30.195,
+    map_lon:  -81.385,
+    map_zoom: 13,
     search_placeholder: 'dentist, contractor, wine bar, gym…',
     quick_chips: [
       {label:'Restaurants', query:'restaurants'},
@@ -151,6 +157,9 @@ const ZIP_CONFIGS = {
     market_profile: 'Affluent',
     consumer_profile: 'Affluent Growing',
     market_maturity: 'growth',
+    map_lat:  30.108,
+    map_lon:  -81.387,
+    map_zoom: 13,
     search_placeholder: 'plumber, dentist, restaurant, gym…',
     quick_chips: [
       {label:'Restaurants', query:'restaurants'},

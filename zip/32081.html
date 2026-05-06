@@ -364,14 +364,6 @@ function computeGaps(sb, pop, hhi, maturity) {
   }).sort((a,b) => b.gapPct - a.gapPct);
 }
 
-const TIER = {
-  high:      { cls:'urgent',   lbl:'Significant Opportunity', sub:'Undersupplied relative to market size' },
-  medium:    { cls:'moderate', lbl:'Moderate Opportunity',    sub:'Room for additional market entrants' },
-  low:       { cls:'slight',   lbl:'Slight Opportunity',      sub:'Marginally below expected density' },
-  balanced:  { cls:'balanced', lbl:'Balanced Market',         sub:'Supply meets demand expectations' },
-  saturated: { cls:'saturated',lbl:'Competitive Market',      sub:'Well-served — high competition' },
-};
-
 function renderGaps(gaps) {
   const grid = document.getElementById('gap-grid');
   const show = gaps.filter(g => g.tier !== 'balanced').slice(0, 8);

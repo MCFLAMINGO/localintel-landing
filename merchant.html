@@ -294,8 +294,19 @@
     <!-- Wallet -->
     <div class="panel">
       <div class="panel-title">Wallet &amp; payouts</div>
-      <div class="panel-sub">Your wallet receives pathUSD when agents route paid orders through your listing.</div>
-      <div id="walletBody">—</div>
+      <div class="panel-sub">Your wallet receives pathUSD when agents route paid orders through your listing. You can add or update this at any time.</div>
+      <div id="walletBody"></div>
+      <div style="margin-top:16px">
+        <div class="field-group">
+          <label class="field-label" for="walletInput">Wallet address</label>
+          <div class="field-hint">EVM-compatible address (0x…). Used for pathUSD payouts on Tempo mainnet.</div>
+          <div style="display:flex;gap:8px">
+            <input type="text" id="walletInput" placeholder="0x…" style="font-family:monospace;font-size:13px">
+            <button class="btn btn-green" onclick="saveWallet()">Save</button>
+          </div>
+          <span class="save-msg" id="walletSaveMsg" style="margin-top:4px"></span>
+        </div>
+      </div>
     </div>
 
   </div><!-- /dashContent -->
@@ -306,10 +317,12 @@ const RAILWAY  = 'https://gsb-swarm-production.up.railway.app';
 const LI_BASE  = RAILWAY + '/api/local-intel';
 const MERCH    = RAILWAY + '/api/merchant';
 
-let _token    = null;
-let _bizId    = null;
-let _dispToken = null;
-let _tags     = [];
+let _token      = null;
+let _bizId      = null;
+let _dispToken  = null;
+let _tags       = [];
+let _lastBiz    = null;
+let _lastSurgeMenu = null;
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c =>
@@ -462,7 +475,34 @@ async function saveMenuUrl() {
   }
 }
 
-// ── Menu status panel ─────────────────────────────────────────────────────────
+async function saveWallet() {
+  const addr = document.getElementById('walletInput').value.trim();
+  const msg  = document.getElementById('walletSaveMsg');
+  if (!addr) return;
+  msg.textContent = 'Saving…';
+  msg.className = 'save-msg';
+  try {
+    const res = await fetch(`${LI_BASE}/inbox/wallet`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: _dispToken, wallet: addr }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Save failed');
+    // Update display inline
+    document.getElementById('walletBody').innerHTML =
+      `<div style="font-size:14px;font-weight:600;color:var(--green)">✓ Connected</div><div class="wallet-addr">${esc(data.wallet)}</div><div style="font-size:12px;color:var(--text-3);margin-top:4px">pathUSD payouts go here.</div>`;
+    msg.textContent = '✓ Wallet saved';
+    msg.className = 'save-msg save-ok';
+    // Re-render completion bar
+    renderCompletion({ ...(_lastBiz || {}), wallet: data.wallet }, _lastSurgeMenu);
+  } catch(e) {
+    msg.textContent = '✗ ' + e.message;
+    msg.className = 'save-msg save-err';
+  }
+}
+
+// ── Menu status panel ───────────────────────────────────────────────
 function renderMenuStatus(b, surgeMenu) {
   const el = document.getElementById('menuStatusBody');
   if (surgeMenu?.connected) {
@@ -516,8 +556,10 @@ function render(data) {
   const s  = data.stats    || {};
   const sm = data.surge_menu;
 
-  _bizId     = b.id;
-  _dispToken = b.dispatch_token;
+  _bizId        = b.id;
+  _dispToken    = b.dispatch_token;
+  _lastBiz      = b;
+  _lastSurgeMenu = sm;
 
   // Header
   document.getElementById('bizName').textContent = b.name || 'Your Business';
@@ -561,12 +603,13 @@ function render(data) {
     ? queries.map(q => `<div class="query-row"><div class="query-text">${esc(q.query)}</div><div class="query-cnt">${esc(q.cnt)}×</div></div>`).join('')
     : '<div class="empty">No routed queries yet — once agents search for businesses like yours, top searches will appear here.</div>';
 
-  // Wallet
+  // Wallet — always render, pre-fill input if address exists
   const wb = document.getElementById('walletBody');
   if (b.wallet) {
-    wb.innerHTML = `<div style="font-size:14px;font-weight:600;color:var(--green)">✓ Wallet connected</div><div class="wallet-addr">${esc(b.wallet)}</div><div style="font-size:12px;color:var(--text-3);margin-top:6px">pathUSD payouts sent here when agents route paid orders through your listing.</div>`;
+    wb.innerHTML = `<div style="font-size:14px;font-weight:600;color:var(--green)">✓ Connected</div><div class="wallet-addr">${esc(b.wallet)}</div><div style="font-size:12px;color:var(--text-3);margin-top:4px">pathUSD payouts go here. Update below if your address changes.</div>`;
+    document.getElementById('walletInput').value = b.wallet;
   } else {
-    wb.innerHTML = `<div style="font-size:14px;color:var(--text-2)">No wallet connected.</div><div style="font-size:12px;color:var(--text-3);margin-top:4px">Connect a wallet to receive pathUSD payouts from agent-routed orders.</div><a href="/claim.html" style="display:inline-block;margin-top:12px;padding:8px 16px;background:var(--green);color:#fff;border-radius:var(--r);font-size:13px;font-weight:600;text-decoration:none;">Connect wallet →</a>`;
+    wb.innerHTML = `<div style="font-size:14px;color:var(--text-2)">No wallet connected yet.</div><div style="font-size:12px;color:var(--text-3);margin-top:2px">Add your address below to receive payouts.</div>`;
   }
 }
 

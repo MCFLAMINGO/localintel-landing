@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ponte Vedra Beach (32082) Business Intelligence — LocalIntel</title>
-  <meta name="description" content="Live business intelligence for Ponte Vedra Beach, FL 32082. 674 businesses tracked across all industries. Population 28,697. See market gaps, sector signals, and commercial opportunities.">
+  <meta name="description" content="Live business intelligence for Ponte Vedra Beach, FL 32082. 675 businesses tracked across all industries. Population 28,697. See market gaps, sector signals, and commercial opportunities.">
   <meta property="og:title" content="Ponte Vedra Beach (32082) — Local Business Intelligence">
   <meta property="og:url" content="https://www.thelocalintel.com/zip/32082">
   <link rel="canonical" href="https://www.thelocalintel.com/zip/32082">
@@ -145,7 +145,7 @@
     <h1>Ponte Vedra Beach, FL<br>Business Intelligence</h1>
     <p class="hsub">Live business intelligence for one of Northeast Florida's most affluent coastal communities. Market gaps, sector signals, and commercial data updated continuously.</p>
     <div class="hstats">
-      <div class="stat"><span class="snum" id="s-biz">674</span><span class="slbl">Businesses Tracked</span></div>
+      <div class="stat"><span class="snum" id="s-biz">675</span><span class="slbl">Businesses Tracked</span></div>
       <div class="stat"><span class="snum" id="s-pop">28,697</span><span class="slbl">Residents</span></div>
       <div class="stat"><span class="snum" id="s-hhi">$121k</span><span class="slbl">Median HH Income</span></div>
       <div class="stat"><span class="snum" id="s-profile">Affluent</span><span class="slbl">Market Profile</span></div>
@@ -171,7 +171,7 @@
     <div class="dc"><div class="dv" id="d-pop">28,697</div><div class="dk">Population</div></div>
     <div class="dc"><div class="dv" id="d-hh">—</div><div class="dk">Households</div></div>
     <div class="dc"><div class="dv" id="d-hhi">$121,484</div><div class="dk">Median HH Income</div></div>
-    <div class="dc"><div class="dv" id="d-biz">674</div><div class="dk">Businesses Indexed</div></div>
+    <div class="dc"><div class="dv" id="d-biz">675</div><div class="dk">Businesses Indexed</div></div>
     <div class="dc"><div class="dv" id="d-dom">—</div><div class="dk">Dominant Sector</div></div>
     <div class="dc"><div class="dv" id="d-profile">Affluent Established</div><div class="dk">Consumer Profile</div></div>
   </div>
@@ -240,11 +240,11 @@ const BENCHMARKS = [
 ];
 
 const TIER = {
-  high:     {lbl:'Significant Opportunity', sub:'Meaningfully undersupplied relative to market size.',      cls:'urgent'   },
+  high:     {lbl:'Significant Opportunity', sub:'Meaningfully undersupplied relative to market size.',       cls:'urgent'   },
   medium:   {lbl:'Moderate Opportunity',    sub:'Room for new concepts — moderate competition expected.',    cls:'moderate' },
-  low:      {lbl:'Slight Opportunity',      sub:'Minor gap — niche or specialty concepts may find footing.',cls:'slight'   },
-  balanced: {lbl:'Balanced Market',         sub:'Supply roughly matches demand for this sector.',            cls:'balanced' },
-  saturated:{lbl:'Competitive Market',      sub:'Well-supplied — existing operators face pricing pressure.', cls:'saturated'},
+  low:      {lbl:'Slight Opportunity',      sub:'Minor gap — niche or specialty concepts may find footing.', cls:'slight'   },
+  balanced: {lbl:'Balanced Market',         sub:'Supply roughly matches demand for this sector.',             cls:'balanced' },
+  saturated:{lbl:'Competitive Market',      sub:'Well-supplied — existing operators face pricing pressure.',  cls:'saturated'},
 };
 
 // Maturity-adjusted thresholds — mature markets need larger gaps to signal opportunity
@@ -262,9 +262,9 @@ function computeGaps(sb, pop, hhi, maturity) {
     const actual   = sb[s.key] || 0;
     const expected = Math.max(1, Math.round(s.base * (aff ? s.inc : 1.0) * p10));
     const gapPct   = (expected - actual) / expected;
-    const tier     = gapPct >= T.high     ? 'high'
-                   : gapPct >= T.medium   ? 'medium'
-                   : gapPct >= T.low      ? 'low'
+    const tier     = gapPct >= T.high      ? 'high'
+                   : gapPct >= T.medium    ? 'medium'
+                   : gapPct >= T.low       ? 'low'
                    : gapPct <= T.saturated ? 'saturated'
                    : 'balanced';
     return {...s, actual, expected, gapPct, tier};
@@ -276,7 +276,7 @@ function renderGaps(gaps) {
   const show = gaps.filter(g => g.tier !== 'balanced').slice(0, 8);
   if (!show.length) { grid.innerHTML = '<p class="gap-loading">Sector data loading…</p>'; return; }
   document.getElementById('gap-sub').textContent =
-    show.filter(g=>g.gapPct>0).length + ' undersupplied sectors detected across ' + show.length + ' industries analyzed. Full breakdown available to verified business owners.';
+    show.filter(g => g.gapPct > 0).length + ' undersupplied sectors detected across ' + show.length + ' industries analyzed. Full breakdown available to verified business owners.';
   grid.innerHTML = show.map(g => {
     const t = TIER[g.tier];
     return `<div class="gc ${t.cls}">
@@ -301,12 +301,12 @@ async function loadStats() {
     const mi   = data?.market_intelligence || {};
     const biz  = data?.data_sources?.businesses_indexed;
 
-    if (biz)       { document.getElementById('s-biz').textContent = biz.toLocaleString(); document.getElementById('d-biz').textContent = biz.toLocaleString(); }
+    if (biz)                          { document.getElementById('s-biz').textContent = biz.toLocaleString(); document.getElementById('d-biz').textContent = biz.toLocaleString(); }
     if (dem.population)               { document.getElementById('s-pop').textContent = dem.population.toLocaleString(); document.getElementById('d-pop').textContent = dem.population.toLocaleString(); }
     if (dem.median_household_income)  { document.getElementById('s-hhi').textContent = '$' + Math.round(dem.median_household_income/1000) + 'k'; document.getElementById('d-hhi').textContent = '$' + dem.median_household_income.toLocaleString(); }
     if (dem.total_households)         document.getElementById('d-hh').textContent = dem.total_households.toLocaleString();
-    if (dem.consumer_profile)         { const p = dem.consumer_profile.replace(/_/g,' ').replace(/\w/g,c=>c.toUpperCase()); document.getElementById('s-profile').textContent = p.split(' ')[0]; document.getElementById('d-profile').textContent = p; }
-    if (mi.dominant_sector)           document.getElementById('d-dom').textContent = mi.dominant_sector.replace(/_/g,' ').replace(/\w/g,c=>c.toUpperCase());
+    if (dem.consumer_profile)         { const p = dem.consumer_profile.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()); document.getElementById('s-profile').textContent = p.split(' ')[0]; document.getElementById('d-profile').textContent = p; }
+    if (mi.dominant_sector)           document.getElementById('d-dom').textContent = mi.dominant_sector.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
 
     if (mi.sector_breakdown) {
       const maturity = data.market_maturity || 'established';

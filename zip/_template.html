@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nocatee (32081) Business Intelligence — LocalIntel</title>
-  <meta name="description" content="Live business intelligence for Nocatee, FL 32081. 1,153 businesses tracked across all industries. Population 24,368. See market gaps, sector signals, and commercial opportunities.">
-  <meta property="og:title" content="Nocatee (32081) — Local Business Intelligence">
-  <meta property="og:url" content="https://www.thelocalintel.com/zip/32081">
-  <link rel="canonical" href="https://www.thelocalintel.com/zip/32081">
+  <title>{{CITY_NAME}} ({{ZIP}}) Business Intelligence — LocalIntel</title>
+  <meta name="description" content="Live business intelligence for {{CITY_NAME}}, FL {{ZIP}}. {{BIZ_COUNT}} businesses tracked across all industries. Population {{POPULATION}}. See market gaps, sector signals, and commercial opportunities.">
+  <meta property="og:title" content="{{CITY_NAME}} ({{ZIP}}) — Local Business Intelligence">
+  <meta property="og:url" content="https://www.thelocalintel.com/zip/{{ZIP}}">
+  <link rel="canonical" href="https://www.thelocalintel.com/zip/{{ZIP}}">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -137,23 +137,23 @@
 
 <section class="hero">
   <div class="hi">
-    <div class="bc"><a href="/">LocalIntel</a> › <a href="/">Northeast Florida</a> › Nocatee</div>
+    <div class="bc"><a href="/">LocalIntel</a> › <a href="/">{{REGION}}</a> › {{CITY_NAME}}</div>
     <div class="zbadge">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      ZIP 32081
+      ZIP {{ZIP}}
     </div>
-    <h1>Nocatee, FL<br>Business Intelligence</h1>
-    <p class="hsub">Live business intelligence for Nocatee — one of the fastest-growing master-planned communities in the US. Market gaps, sector signals, and commercial data updated continuously.</p>
+    <h1>{{CITY_NAME}}, FL<br>Business Intelligence</h1>
+    <p class="hsub">{{CITY_BLURB}}</p>
     <div class="hstats">
-      <div class="stat"><span class="snum" id="s-biz">1,153</span><span class="slbl">Businesses Tracked</span></div>
-      <div class="stat"><span class="snum" id="s-pop">24,368</span><span class="slbl">Residents</span></div>
-      <div class="stat"><span class="snum" id="s-hhi">$130k</span><span class="slbl">Median HH Income</span></div>
-      <div class="stat"><span class="snum" id="s-profile">Affluent</span><span class="slbl">Market Profile</span></div>
+      <div class="stat"><span class="snum" id="s-biz">{{BIZ_COUNT}}</span><span class="slbl">Businesses Tracked</span></div>
+      <div class="stat"><span class="snum" id="s-pop">{{POPULATION}}</span><span class="slbl">Residents</span></div>
+      <div class="stat"><span class="snum" id="s-hhi">{{HHI_SHORT}}</span><span class="slbl">Median HH Income</span></div>
+      <div class="stat"><span class="snum" id="s-profile">{{MARKET_PROFILE}}</span><span class="slbl">Market Profile</span></div>
     </div>
     <div class="hctas">
-      <a href="/search.html?zip=32081" class="btn btn-p">
+      <a href="/search.html?zip={{ZIP}}" class="btn btn-p">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        Search Nocatee Businesses
+        Search {{CITY_NAME}} Businesses
       </a>
       <a href="/claim.html" class="btn btn-s">Claim Your Listing</a>
     </div>
@@ -162,47 +162,39 @@
 
 <main class="main">
 
-  <h2 class="sec-title">Sector Signals — <span>32081</span></h2>
+  <h2 class="sec-title">Sector Signals — <span>{{ZIP}}</span></h2>
   <p class="sec-sub" id="gap-sub">Live market signals across all industries. Full analysis available to verified business owners.</p>
   <div class="gap-grid" id="gap-grid"><p class="gap-loading">Loading sector data…</p></div>
 
-  <h2 class="sec-title">Demographics — <span>Nocatee</span></h2>
+  <h2 class="sec-title">Demographics — <span>{{CITY_NAME}}</span></h2>
   <div class="demo-grid" style="margin-top:16px">
-    <div class="dc"><div class="dv" id="d-pop">24,368</div><div class="dk">Population</div></div>
+    <div class="dc"><div class="dv" id="d-pop">{{POPULATION}}</div><div class="dk">Population</div></div>
     <div class="dc"><div class="dv" id="d-hh">—</div><div class="dk">Households</div></div>
-    <div class="dc"><div class="dv" id="d-hhi">$129,875</div><div class="dk">Median HH Income</div></div>
-    <div class="dc"><div class="dv" id="d-biz">1,153</div><div class="dk">Businesses Indexed</div></div>
+    <div class="dc"><div class="dv" id="d-hhi">{{HHI_FULL}}</div><div class="dk">Median HH Income</div></div>
+    <div class="dc"><div class="dv" id="d-biz">{{BIZ_COUNT}}</div><div class="dk">Businesses Indexed</div></div>
     <div class="dc"><div class="dv" id="d-dom">—</div><div class="dk">Dominant Sector</div></div>
-    <div class="dc"><div class="dv" id="d-profile">Affluent Growing</div><div class="dk">Consumer Profile</div></div>
+    <div class="dc"><div class="dv" id="d-profile">{{CONSUMER_PROFILE}}</div><div class="dk">Consumer Profile</div></div>
   </div>
 
   <div class="search-sec" style="margin-top:52px">
-    <h2 class="sec-title" style="margin-bottom:6px">Search <span>Nocatee</span> Businesses</h2>
-    <p style="font-size:14px;color:var(--text-2)">All industries — live data from 32081</p>
+    <h2 class="sec-title" style="margin-bottom:6px">Search <span>{{CITY_NAME}}</span> Businesses</h2>
+    <p style="font-size:14px;color:var(--text-2)">All industries — live data from {{ZIP}}</p>
     <div class="search-row">
-      <input type="text" class="sinput" id="sinput" placeholder="plumber, dentist, restaurant, gym…">
+      <input type="text" class="sinput" id="sinput" placeholder="{{SEARCH_PLACEHOLDER}}">
       <button class="sbtn" onclick="doSearch()">Search</button>
     </div>
-    <div class="chips"><button class="chip" onclick="quickSearch('restaurants')">Restaurants</button>
-      <button class="chip" onclick="quickSearch('healthcare')">Healthcare</button>
-      <button class="chip" onclick="quickSearch('contractors')">Contractors</button>
-      <button class="chip" onclick="quickSearch('retail')">Retail</button>
-      <button class="chip" onclick="quickSearch('fitness')">Fitness</button>
-      <button class="chip" onclick="quickSearch('schools')">Schools</button></div>
+    <div class="chips">{{QUICK_CHIPS}}</div>
     <div id="results"></div>
   </div>
 
   <div class="cta-band">
-    <h2>Is your business listed in Nocatee?</h2>
+    <h2>Is your business listed in {{CITY_NAME}}?</h2>
     <p>Claim your free listing to appear in agent searches, receive job alerts, and see your full sector report.</p>
     <a href="/claim.html" class="btn btn-w">Claim Your Free Listing →</a>
   </div>
 
-  <h2 class="sec-title">More <span>Northeast Florida</span> Markets</h2>
-  <div class="zip-links"><a href="/zip/32082" class="zl">32082 — Ponte Vedra Beach</a>
-    <a href="/zip/32092" class="zl">32092 — World Golf Village</a>
-    <a href="/zip/32259" class="zl">32259 — St. Johns</a>
-    <a href="/zip/32084" class="zl">32084 — St. Augustine</a></div>
+  <h2 class="sec-title">More <span>{{REGION}}</span> Markets</h2>
+  <div class="zip-links">{{NEARBY_ZIP_LINKS}}</div>
 
 </main>
 
@@ -219,7 +211,7 @@
 
 <script>
 const RAILWAY = 'https://gsb-swarm-production.up.railway.app';
-const ZIP = '32081';
+const ZIP = '{{ZIP}}';
 
 // ── Sector gap engine ─────────────────────────────────────────────────────────
 // Hybrid benchmarks: DB suburban median for food/hospitality/health/construction/services
@@ -309,7 +301,7 @@ async function loadStats() {
 
     if (mi.sector_breakdown) {
       const maturity = data.market_maturity || 'established';
-      const gaps = computeGaps(mi.sector_breakdown, dem.population || 24368, dem.median_household_income || 129875, maturity);
+      const gaps = computeGaps(mi.sector_breakdown, dem.population || {{POP_FALLBACK}}, dem.median_household_income || {{HHI_FALLBACK}}, maturity);
       renderGaps(gaps);
     } else {
       document.getElementById('gap-grid').innerHTML = '<p class="gap-loading">Sector data unavailable.</p>';

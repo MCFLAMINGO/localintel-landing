@@ -247,16 +247,25 @@ const TIER = {
   saturated:{lbl:'Competitive Market',      sub:'Well-supplied — existing operators face pricing pressure.', cls:'saturated'},
 };
 
-function computeGaps(sb, pop, hhi) {
+// Maturity-adjusted thresholds — mature markets need larger gaps to signal opportunity
+// (limited commercial space = structural cap, not just demand gap)
+const MATURITY_THRESHOLDS = {
+  growth:      { high: 0.30, medium: 0.15, low: 0.05, saturated: -0.20 },
+  established: { high: 0.40, medium: 0.20, low: 0.08, saturated: -0.25 },
+  mature:      { high: 0.50, medium: 0.25, low: 0.10, saturated: -0.30 },
+};
+
+function computeGaps(sb, pop, hhi, maturity) {
   const p10 = pop / 10000, aff = hhi > 100000;
+  const T = MATURITY_THRESHOLDS[maturity] || MATURITY_THRESHOLDS.established;
   return BENCHMARKS.map(s => {
     const actual   = sb[s.key] || 0;
     const expected = Math.max(1, Math.round(s.base * (aff ? s.inc : 1.0) * p10));
     const gapPct   = (expected - actual) / expected;
-    const tier     = gapPct >= 0.30 ? 'high'
-                   : gapPct >= 0.15 ? 'medium'
-                   : gapPct >= 0.05 ? 'low'
-                   : gapPct <= -0.20 ? 'saturated'
+    const tier     = gapPct >= T.high     ? 'high'
+                   : gapPct >= T.medium   ? 'medium'
+                   : gapPct >= T.low      ? 'low'
+                   : gapPct <= T.saturated ? 'saturated'
                    : 'balanced';
     return {...s, actual, expected, gapPct, tier};
   }).sort((a,b) => b.gapPct - a.gapPct);
@@ -300,7 +309,8 @@ async function loadStats() {
     if (mi.dominant_sector)           document.getElementById('d-dom').textContent = mi.dominant_sector.replace(/_/g,' ').replace(/\w/g,c=>c.toUpperCase());
 
     if (mi.sector_breakdown) {
-      const gaps = computeGaps(mi.sector_breakdown, dem.population || 28697, dem.median_household_income || 121484);
+      const maturity = data.market_maturity || 'established';
+      const gaps = computeGaps(mi.sector_breakdown, dem.population || 28697, dem.median_household_income || 121484, maturity);
       renderGaps(gaps);
     } else {
       document.getElementById('gap-grid').innerHTML = '<p class="gap-loading">Sector data unavailable.</p>';

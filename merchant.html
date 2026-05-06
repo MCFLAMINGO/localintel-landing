@@ -294,7 +294,38 @@
     <!-- Wallet -->
     <div class="panel">
       <div class="panel-title">Wallet &amp; payouts</div>
-      <div class="panel-sub">Your wallet receives pathUSD when agents route paid orders through your listing. You can add or update this at any time.</div>
+      <div class="panel-sub">Where your money goes when AI agents route orders or jobs through your listing.</div>
+
+      <!-- Explainer -->
+      <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:20px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:16px">
+          <div>
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">What is a wallet?</div>
+            <div style="font-size:13px;color:var(--text-2);line-height:1.5">A free digital address — like a bank account number — that receives payments automatically. No bank required. You create one once and keep it forever.</div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">What is pathUSD?</div>
+            <div style="font-size:13px;color:var(--text-2);line-height:1.5">pathUSD is a stable digital dollar — always worth $1.00 USD. When an agent routes an order to you, payment settles in pathUSD instantly. You can convert it to regular dollars anytime.</div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">Do I need to fund it?</div>
+            <div style="font-size:13px;color:var(--text-2);line-height:1.5">No upfront funding required to receive payments. You only need a small amount of gas (a few cents) to move funds out. LocalIntel covers routing fees for confirmed transactions.</div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:14px">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:8px">How to get a free wallet in 60 seconds</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:13px;color:var(--text-2)"><span style="font-weight:700;color:var(--text)">1.</span> Go to <a href="https://metamask.io" target="_blank" style="color:var(--green);font-weight:600">metamask.io</a> or download the MetaMask app on your phone.</div>
+            <div style="font-size:13px;color:var(--text-2)"><span style="font-weight:700;color:var(--text)">2.</span> Create a new wallet — write down your 12-word backup phrase and store it safely. This is your only recovery option.</div>
+            <div style="font-size:13px;color:var(--text-2)"><span style="font-weight:700;color:var(--text)">3.</span> Copy your wallet address — it starts with <code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:12px">0x</code> and is 42 characters long.</div>
+            <div style="font-size:13px;color:var(--text-2)"><span style="font-weight:700;color:var(--text)">4.</span> Paste it in the field below and hit Save. That's it — you're ready to receive payments.</div>
+          </div>
+        </div>
+        <div style="background:var(--green-l);border:1px solid #bbf7d0;border-radius:var(--r);padding:10px 14px;margin-top:12px;font-size:12px;color:#166534">
+          <strong>Payment flow:</strong> Customer places order via AI agent → Surge processes payment → pathUSD sent instantly to your wallet → you convert to dollars via any exchange (Coinbase, Kraken, etc.) or spend directly where accepted.
+        </div>
+      </div>
+
       <div id="walletBody"></div>
       <div style="margin-top:16px">
         <div class="field-group">

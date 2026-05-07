@@ -660,6 +660,20 @@
             </div>
           </div>`;
       }
+      // ── ORDER_ITEM_PARTIAL: item known, need restaurant name ──────────────────
+      if (result?.intent === 'ORDER_ITEM_PARTIAL') {
+        return `
+          <div class="bubble-agent">
+            <div class="agent-avatar"></div>
+            <div class="bubble-agent-body">
+              <div class="agent-narrative" style="border-color:#86EFAC;">
+                <div class="label"><span class="label-dot"></span> LocalIntel</div>
+                <div>${esc(result.message || `Which restaurant would you like that from?`)}</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--text-3);">Type the restaurant name to continue your order.</div>
+              </div>
+            </div>
+          </div>`;
+      }
 
       let narrativeHtml = '';
       let cardsHtml     = '';

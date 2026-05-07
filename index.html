@@ -732,6 +732,56 @@
       .btn-ask { font-size: 14px; padding: 12px 20px; }
     }
   </style>
+
+  <!-- Structured data: Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "LocalIntel",
+    "alternateName": "The Local Intel",
+    "url": "https://www.thelocalintel.com",
+    "description": "Local business intelligence and AI agent routing platform for Northeast Florida. Connects AI assistants with local businesses across restaurants, home services, healthcare, and more.",
+    "areaServed": {
+      "@type": "State",
+      "name": "Northeast Florida",
+      "containsPlace": [
+        { "@type": "City", "name": "Ponte Vedra Beach" },
+        { "@type": "City", "name": "Jacksonville Beach" },
+        { "@type": "City", "name": "Atlantic Beach" },
+        { "@type": "City", "name": "Neptune Beach" },
+        { "@type": "City", "name": "St. Augustine" },
+        { "@type": "City", "name": "Nocatee" },
+        { "@type": "City", "name": "Mandarin" }
+      ]
+    },
+    "serviceType": [
+      "Local Business Discovery",
+      "AI Agent Routing",
+      "Business Intelligence",
+      "Request for Quote Matching"
+    ]
+  }
+  </script>
+
+  <!-- Structured data: WebSite (enables sitelinks search box in Google) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "LocalIntel",
+    "url": "https://www.thelocalintel.com",
+    "description": "Find local businesses in Northeast Florida — AI-powered search for restaurants, contractors, healthcare, and more.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://www.thelocalintel.com/search.html?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
 </head>
 <body>
 

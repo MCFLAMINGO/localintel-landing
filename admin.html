@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>LocalIntel Admin</title>
+<style>
+  :root {
+    --bg:#0f1117; --surface:#1a1d27; --surface2:#22263a; --border:#2e3348;
+    --text:#f0f2f8; --text-2:#9aa3c2; --text-3:#5b6488;
+    --accent:#16a34a; --accent-l:#bbf7d0; --accent-d:#14532d;
+    --red:#ef4444; --red-l:#fee2e2; --yellow:#eab308; --yellow-l:#fef9c3;
+    --blue:#3b82f6; --blue-l:#dbeafe;
+    --r:8px; --r-sm:5px;
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+
+  /* LOGIN */
+  #loginWrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
+  .login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:36px 32px;width:100%;max-width:380px;}
+  .login-logo{font-size:18px;font-weight:700;color:var(--accent);margin-bottom:4px;}
+  .login-sub{font-size:13px;color:var(--text-3);margin-bottom:24px;}
+  .login-card input{width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-size:14px;outline:none;margin-bottom:12px;}
+  .login-card input:focus{border-color:var(--accent);}
+  .btn{padding:10px 18px;border-radius:var(--r-sm);font-weight:600;font-size:14px;cursor:pointer;border:none;transition:opacity .15s;}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{opacity:.88;}
+  .btn-ghost{background:var(--surface2);color:var(--text-2);border:1px solid var(--border);}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--text);}
+  .btn-sm{padding:6px 12px;font-size:12px;}
+  .btn-danger{background:var(--red);color:#fff;}
+  #loginErr{color:var(--red);font-size:13px;margin-top:8px;display:none;}
+
+  /* LAYOUT */
+  #appWrap{display:none;flex-direction:column;min-height:100vh;}
+  .top-bar{display:flex;align-items:center;gap:12px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+  .top-bar .logo{font-weight:700;color:var(--accent);font-size:15px;margin-right:8px;}
+  .role-badge{padding:3px 8px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+  .role-badge.admin{background:#14532d;color:#bbf7d0;}
+  .role-badge.sales{background:#1e3a5f;color:#bfdbfe;}
+  .top-bar .spacer{flex:1;}
+  .top-bar .biz-search{padding:7px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-size:13px;width:240px;outline:none;}
+  .top-bar .biz-search:focus{border-color:var(--accent);}
+
+  /* STATS BAR */
+  .stats-bar{display:flex;gap:0;border-bottom:1px solid var(--border);overflow-x:auto;}
+  .stat-cell{padding:14px 24px;border-right:1px solid var(--border);min-width:120px;}
+  .stat-cell .label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);margin-bottom:4px;}
+  .stat-cell .val{font-size:22px;font-weight:700;color:var(--text);}
+  .stat-cell .sub{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+  /* FILTERS */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--surface);}
+  .filters select,.filters input{padding:7px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-size:13px;outline:none;}
+  .filters select:focus,.filters input:focus{border-color:var(--accent);}
+  .filter-spacer{flex:1;}
+
+  /* TABLE */
+  .table-wrap{flex:1;overflow:auto;padding:0 0 80px;}
+  table{width:100%;border-collapse:collapse;}
+  th{position:sticky;top:0;background:var(--surface);padding:10px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);border-bottom:1px solid var(--border);white-space:nowrap;}
+  td{padding:10px 16px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  tr:hover td{background:rgba(255,255,255,.02);cursor:pointer;}
+  .pill{display:inline-block;padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600;}
+  .pill-green{background:#14532d;color:#bbf7d0;}
+  .pill-grey{background:var(--surface2);color:var(--text-3);}
+  .pill-blue{background:#1e3a5f;color:#bfdbfe;}
+  .pill-yellow{background:#422006;color:#fef08a;}
+  .score-bar{display:flex;align-items:center;gap:6px;}
+  .score-track{width:60px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+  .score-fill{height:100%;border-radius:3px;transition:width .3s;}
+  .pager{display:flex;align-items:center;gap:8px;padding:14px 20px;border-top:1px solid var(--border);background:var(--surface);position:sticky;bottom:0;}
+  .pager .info{font-size:13px;color:var(--text-2);flex:1;}
+
+  /* PANEL */
+  .panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:none;}
+  .panel{position:fixed;top:0;right:0;bottom:0;width:min(600px,100vw);background:var(--surface);border-left:1px solid var(--border);z-index:101;display:flex;flex-direction:column;overflow:hidden;}
+  .panel-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+  .panel-header .pname{font-size:16px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .panel-body{flex:1;overflow-y:auto;padding:20px;}
+  .section{margin-bottom:24px;}
+  .section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .field-row{display:grid;grid-template-columns:110px 1fr;gap:8px;align-items:start;margin-bottom:8px;}
+  .field-label{font-size:12px;color:var(--text-3);padding-top:6px;}
+  .field-val{font-size:13px;color:var(--text);}
+  .field-edit{width:100%;padding:6px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-size:13px;outline:none;resize:vertical;}
+  .field-edit:focus{border-color:var(--accent);}
+  .completeness-bar{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-bottom:6px;}
+  .completeness-fill{height:100%;border-radius:4px;}
+  .missing-pills{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+  .missing-pill{padding:2px 7px;border-radius:99px;font-size:11px;background:var(--red);color:#fff;opacity:.85;}
+  .done-pill{padding:2px 7px;border-radius:99px;font-size:11px;background:#14532d;color:#bbf7d0;}
+  .coverage-pills{display:flex;flex-wrap:wrap;gap:4px;}
+  .coverage-pill{padding:3px 9px;border-radius:99px;font-size:12px;font-weight:600;background:var(--surface2);border:1px solid var(--border);color:var(--text-2);}
+  .save-row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+  .rfq-row,.fee-row{padding:8px 10px;background:var(--surface2);border-radius:var(--r-sm);margin-bottom:6px;font-size:12px;}
+  .rfq-row .meta,.fee-row .meta{color:var(--text-3);margin-top:2px;}
+  .link-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .ext-link{font-size:12px;padding:5px 10px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface2);color:var(--accent);text-decoration:none;font-weight:600;}
+  .ext-link:hover{border-color:var(--accent);}
+  #panelSaveMsg{font-size:12px;color:var(--accent);margin-top:6px;display:none;}
+  #claimMsg{font-size:12px;margin-top:6px;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo">LocalIntel</div>
+    <div class="login-sub">Admin Portal — enter your access token</div>
+    <input type="password" id="tokenInput" placeholder="Access token" autocomplete="off"/>
+    <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Sign in</button>
+    <div id="loginErr">Invalid token. Try again.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appWrap">
+  <div class="top-bar">
+    <span class="logo">LocalIntel Admin</span>
+    <span class="role-badge" id="roleBadge"></span>
+    <div class="spacer"></div>
+    <input class="biz-search" id="globalSearch" placeholder="Search by name…" oninput="debounceSearch()"/>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()">Sign out</button>
+  </div>
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-cell"><div class="label">Total</div><div class="val" id="sTot">—</div></div>
+    <div class="stat-cell"><div class="label">Claimed</div><div class="val" id="sClaimed">—</div></div>
+    <div class="stat-cell"><div class="label">Wallets</div><div class="val" id="sWallet">—</div></div>
+    <div class="stat-cell"><div class="label">Has Skills</div><div class="val" id="sSkills">—</div></div>
+    <div class="stat-cell"><div class="label">Has Menu</div><div class="val" id="sMenu">—</div></div>
+  </div>
+
+  <div class="filters">
+    <select id="fZip" onchange="loadPage(1)">
+      <option value="">All ZIPs</option>
+      <option>32082</option><option>32081</option><option>32250</option>
+      <option>32266</option><option>32233</option><option>32206</option>
+      <option>32080</option><option>32084</option><option>32086</option>
+      <option>32092</option><option>32095</option><option>32259</option>
+      <option>32258</option><option>32223</option>
+    </select>
+    <select id="fCat" onchange="loadPage(1)">
+      <option value="">All Categories</option>
+      <option value="restaurant">Restaurant</option>
+      <option value="hvac">HVAC</option>
+      <option value="plumber">Plumber</option>
+      <option value="electrician">Electrician</option>
+      <option value="contractor">Contractor</option>
+      <option value="healthcare">Healthcare</option>
+      <option value="retail">Retail</option>
+      <option value="cleaning">Cleaning</option>
+      <option value="landscaping">Landscaping</option>
+      <option value="real_estate">Real Estate</option>
+      <option value="automotive">Automotive</option>
+    </select>
+    <select id="fClaimed" onchange="loadPage(1)">
+      <option value="">Any Status</option>
+      <option value="true">Claimed</option>
+      <option value="false">Unclaimed</option>
+    </select>
+    <select id="fWallet" onchange="loadPage(1)">
+      <option value="">Any Wallet</option>
+      <option value="true">Has Wallet</option>
+      <option value="false">No Wallet</option>
+    </select>
+    <span class="filter-spacer"></span>
+    <span id="pageInfo" style="font-size:13px;color:var(--text-3);align-self:center;"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Business</th>
+          <th>ZIP</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th>Wallet</th>
+          <th>Profile</th>
+        </tr>
+      </thead>
+      <tbody id="bizTable"></tbody>
+    </table>
+  </div>
+
+  <div class="pager">
+    <span class="info" id="pagerInfo"></span>
+    <button class="btn btn-ghost btn-sm" id="prevBtn" onclick="loadPage(currentPage-1)">← Prev</button>
+    <button class="btn btn-ghost btn-sm" id="nextBtn" onclick="loadPage(currentPage+1)">Next →</button>
+  </div>
+</div>
+
+<!-- PROFILE PANEL -->
+<div class="panel-overlay" id="overlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <div class="panel-header">
+    <span class="pname" id="panelName">—</span>
+    <button class="btn btn-ghost btn-sm" onclick="closePanel()">✕</button>
+  </div>
+  <div class="panel-body" id="panelBody">Loading…</div>
+</div>
+
+<script>
+const API = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+let token = '', role = '', currentPage = 1, totalPages = 1, currentBizId = null;
+let searchTimer = null;
+
+// ── AUTH ─────────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const t = document.getElementById('tokenInput').value.trim();
+  if (!t) return;
+  // Test token against /admin/stats
+  try {
+    const r = await fetch(`${API}/admin/stats`, { headers: { Authorization: `Bearer ${t}` } });
+    if (!r.ok) throw new Error('bad token');
+    const data = await r.json();
+    token = t;
+    role  = data.role;
+    sessionStorage.setItem('li_admin_token', token);
+    sessionStorage.setItem('li_admin_role',  role);
+    bootApp(data);
+  } catch {
+    document.getElementById('loginErr').style.display = 'block';
+  }
+}
+
+document.getElementById('tokenInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogout() {
+  sessionStorage.removeItem('li_admin_token');
+  sessionStorage.removeItem('li_admin_role');
+  token = ''; role = '';
+  document.getElementById('appWrap').style.display = 'none';
+  document.getElementById('loginWrap').style.display = 'flex';
+  document.getElementById('tokenInput').value = '';
+}
+
+// Resume session
+window.addEventListener('DOMContentLoaded', async () => {
+  const saved = sessionStorage.getItem('li_admin_token');
+  if (saved) {
+    try {
+      const r = await fetch(`${API}/admin/stats`, { headers: { Authorization: `Bearer ${saved}` } });
+      if (r.ok) {
+        const data = await r.json();
+        token = saved;
+        role  = sessionStorage.getItem('li_admin_role') || data.role;
+        bootApp(data);
+        return;
+      }
+    } catch {}
+  }
+});
+
+// ── BOOT ─────────────────────────────────────────────────────────────────────
+function bootApp(statsData) {
+  document.getElementById('loginWrap').style.display  = 'none';
+  document.getElementById('appWrap').style.display    = 'flex';
+  document.getElementById('roleBadge').textContent    = role.toUpperCase();
+  document.getElementById('roleBadge').className      = `role-badge ${role}`;
+
+  const c = statsData.counts || {};
+  document.getElementById('sTot').textContent    = fmt(c.total);
+  document.getElementById('sClaimed').textContent = fmt(c.claimed);
+  document.getElementById('sWallet').textContent  = fmt(c.has_wallet);
+  document.getElementById('sSkills').textContent  = fmt(c.has_skills);
+  document.getElementById('sMenu').textContent    = fmt(c.has_menu);
+
+  loadPage(1);
+}
+
+function fmt(n) { return n != null ? Number(n).toLocaleString() : '—'; }
+
+// ── TABLE ─────────────────────────────────────────────────────────────────────
+function debounceSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => loadPage(1), 350);
+}
+
+async function loadPage(page) {
+  page = Math.max(1, Math.min(page, totalPages || 1));
+  currentPage = page;
+  const params = new URLSearchParams({ page, limit: 50 });
+  const zip  = document.getElementById('fZip').value;
+  const cat  = document.getElementById('fCat').value;
+  const clm  = document.getElementById('fClaimed').value;
+  const wal  = document.getElementById('fWallet').value;
+  const q    = document.getElementById('globalSearch').value.trim();
+  if (zip) params.set('zip',     zip);
+  if (cat) params.set('category',cat);
+  if (clm) params.set('claimed', clm);
+  if (wal) params.set('wallet',  wal);
+  if (q)   params.set('q',       q);
+
+  const tbody = document.getElementById('bizTable');
+  tbody.innerHTML = '<tr><td colspan="6" style="color:var(--text-3);padding:20px 16px;">Loading…</td></tr>';
+
+  try {
+    const r    = await fetch(`${API}/admin/businesses?${params}`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error);
+
+    totalPages = data.pages || 1;
+    document.getElementById('pagerInfo').textContent =
+      `${fmt(data.total)} businesses · page ${data.page} of ${data.pages}`;
+    document.getElementById('pageInfo').textContent =
+      data.total ? `${fmt(data.total)} results` : '';
+    document.getElementById('prevBtn').disabled = page <= 1;
+    document.getElementById('nextBtn').disabled = page >= totalPages;
+
+    tbody.innerHTML = data.businesses.map(b => {
+      const score = completenessScore(b);
+      const scoreColor = score >= 75 ? '#16a34a' : score >= 40 ? '#eab308' : '#ef4444';
+      return `<tr onclick="openPanel('${b.business_id}')">
+        <td>
+          <div style="font-weight:600;">${esc(b.name)}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:2px;">${esc(b.address || b.zip || '')}</div>
+        </td>
+        <td>${esc(b.zip || '—')}</td>
+        <td>${esc(b.category || '—')}</td>
+        <td>${b.claimed
+          ? '<span class="pill pill-green">✓ Claimed</span>'
+          : '<span class="pill pill-grey">Unclaimed</span>'}</td>
+        <td>${b.has_wallet
+          ? '<span class="pill pill-blue">Funded</span>'
+          : '<span class="pill pill-grey">None</span>'}</td>
+        <td>
+          <div class="score-bar">
+            <div class="score-track"><div class="score-fill" style="width:${score}%;background:${scoreColor}"></div></div>
+            <span style="font-size:12px;color:var(--text-2)">${score}%</span>
+          </div>
+        </td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="6" style="color:var(--text-3);padding:20px 16px;">No results</td></tr>';
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="6" style="color:var(--red);padding:20px 16px;">Error: ${esc(e.message)}</td></tr>`;
+  }
+}
+
+function completenessScore(b) {
+  const checks = [b.name, b.phone, b.address, b.hours, b.description,
+                  b.category, b.lat && b.lon, b.claimed, b.has_wallet, b.has_skills];
+  return Math.round(checks.filter(Boolean).length / checks.length * 100);
+}
+
+// ── PANEL ─────────────────────────────────────────────────────────────────────
+async function openPanel(bizId) {
+  currentBizId = bizId;
+  document.getElementById('panelName').textContent = 'Loading…';
+  document.getElementById('panelBody').innerHTML   = '<div style="color:var(--text-3);padding:20px 0;">Fetching profile…</div>';
+  document.getElementById('overlay').style.display = 'block';
+  document.getElementById('panel').style.display   = 'flex';
+
+  try {
+    const r    = await fetch(`${API}/admin/business/${bizId}`, { headers: { Authorization: `Bearer ${token}` } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error);
+    renderPanel(data);
+  } catch (e) {
+    document.getElementById('panelBody').innerHTML = `<div style="color:var(--red)">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+function closePanel() {
+  document.getElementById('overlay').style.display = 'none';
+  document.getElementById('panel').style.display   = 'none';
+  currentBizId = null;
+}
+
+function renderPanel(data) {
+  const b   = data.business;
+  const cmp = data.completeness;
+  const isAdmin = role === 'admin';
+  document.getElementById('panelName').textContent = b.name || 'Unknown';
+
+  const scoreColor = cmp.score >= 75 ? '#16a34a' : cmp.score >= 40 ? '#eab308' : '#ef4444';
+
+  const editableFields = isAdmin
+    ? ['name','phone','address','website','description','hours','category']
+    : ['name','phone','description','hours','category'];
+
+  const fieldRows = editableFields.map(f => `
+    <div class="field-row">
+      <div class="field-label">${f.charAt(0).toUpperCase()+f.slice(1)}</div>
+      <div>
+        <${f === 'description' ? 'textarea rows="3"' : 'input type="text"'} class="field-edit" id="fe_${f}"
+          value="${f !== 'description' ? esc(b[f] || '') : ''}"
+          ${f === 'description' ? '' : ''}
+        >${f === 'description' ? esc(b[f] || '') : ''}</${f === 'description' ? 'textarea' : 'input'}>
+      </div>
+    </div>`).join('');
+
+  const tagsVal = Array.isArray(b.tags) ? b.tags.join(', ') : (b.tags || '');
+
+  const feeHtml = data.fee_events.length
+    ? data.fee_events.map(f => `
+      <div class="fee-row">
+        <div>${esc(f.event_type)} — <strong>$${Number(f.amount_usd||0).toFixed(2)}</strong> <span class="pill pill-${f.status==='charged'?'green':f.status==='no_wallet'?'yellow':'grey'}">${esc(f.status)}</span></div>
+        <div class="meta">${new Date(f.created_at).toLocaleString()}</div>
+      </div>`).join('')
+    : '<div style="color:var(--text-3);font-size:12px;">No fee events yet</div>';
+
+  const rfqHtml = data.rfqs.length
+    ? data.rfqs.map(r => `
+      <div class="rfq-row">
+        <div>${esc(r.intent_summary || r.id)} — <span class="pill pill-${r.status==='booked'?'green':'grey'}">${esc(r.status||'pending')}</span>
+          ${r.quote_usd ? `<span style="margin-left:6px;font-weight:700;">$${Number(r.quote_usd).toFixed(0)}</span>` : ''}</div>
+        <div class="meta">${new Date(r.created_at).toLocaleString()}</div>
+      </div>`).join('')
+    : '<div style="color:var(--text-3);font-size:12px;">No RFQ activity yet</div>';
+
+  const coveragePills = (data.search_coverage||[]).map(c =>
+    `<span class="coverage-pill">${esc(c)}</span>`).join('');
+
+  const claimSection = isAdmin ? `
+    <div class="section">
+      <div class="section-title">Claim & Merchant Access</div>
+      ${b.claimed_at
+        ? `<div style="font-size:12px;color:var(--text-2);margin-bottom:8px;">Claimed ${new Date(b.claimed_at).toLocaleDateString()}</div>`
+        : `<div style="font-size:12px;color:var(--text-3);margin-bottom:8px;">Not yet claimed — generate a merchant token to set up on their behalf.</div>`}
+      <div class="link-row">
+        ${data.merchant_url ? `<a href="${data.merchant_url}" target="_blank" class="ext-link">Open Merchant Dashboard ↗</a>` : ''}
+        ${data.zip_page_url ? `<a href="${data.zip_page_url}#${encodeURIComponent(b.business_id)}" target="_blank" class="ext-link">View on ZIP Page ↗</a>` : ''}
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-primary btn-sm" onclick="claimBusiness()">
+          ${b.claimed_at ? 'Copy Merchant Link' : '🔑 Generate Merchant Token'}
+        </button>
+        <div id="claimMsg" style="font-size:12px;margin-top:6px;color:var(--accent);"></div>
+      </div>
+    </div>` : `
+    <div class="section">
+      <div class="section-title">Merchant Access</div>
+      <div class="link-row">
+        ${data.merchant_url ? `<a href="${data.merchant_url}" target="_blank" class="ext-link">Open Merchant Dashboard ↗</a>` : '<div style="font-size:12px;color:var(--text-3);">Not yet claimed</div>'}
+        ${data.zip_page_url ? `<a href="${data.zip_page_url}" target="_blank" class="ext-link">View on ZIP Page ↗</a>` : ''}
+      </div>
+    </div>`;
+
+  document.getElementById('panelBody').innerHTML = `
+
+    <div class="section">
+      <div class="section-title">Profile Completeness</div>
+      <div class="completeness-bar">
+        <div class="completeness-fill" style="width:${cmp.score}%;background:${scoreColor}"></div>
+      </div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:6px;">${cmp.score}% complete</div>
+      <div class="missing-pills">
+        ${cmp.missing.map(m => `<span class="missing-pill">✗ ${m}</span>`).join('')}
+        ${Object.entries(cmp.fields).filter(([,v])=>v).map(([k])=>`<span class="done-pill">✓ ${k}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Edit Profile</div>
+      ${fieldRows}
+      <div class="field-row">
+        <div class="field-label">Tags</div>
+        <div><input type="text" class="field-edit" id="fe_tags" value="${esc(tagsVal)}" placeholder="hvac, plumber, electrician"/></div>
+      </div>
+      ${isAdmin ? `
+      <div class="field-row">
+        <div class="field-label">Wallet</div>
+        <div><input type="text" class="field-edit" id="fe_wallet" value="${esc(b.wallet||'')}" placeholder="0x…"/></div>
+      </div>` : ''}
+      <div class="save-row">
+        <button class="btn btn-primary btn-sm" onclick="saveEdits()">Save Changes</button>
+        <div id="panelSaveMsg"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Search Coverage</div>
+      <div class="coverage-pills">${coveragePills || '<span style="color:var(--text-3);font-size:12px;">No category assigned</span>'}</div>
+    </div>
+
+    ${claimSection}
+
+    <div class="section">
+      <div class="section-title">Fee Events</div>
+      ${feeHtml}
+    </div>
+
+    <div class="section">
+      <div class="section-title">RFQ Activity</div>
+      ${rfqHtml}
+    </div>
+
+    <div class="section">
+      <div class="section-title">Raw Info</div>
+      <div class="field-row"><div class="field-label">Business ID</div><div class="field-val" style="font-size:11px;word-break:break-all;">${esc(b.business_id)}</div></div>
+      <div class="field-row"><div class="field-label">ZIP</div><div class="field-val">${esc(b.zip||'—')}</div></div>
+      <div class="field-row"><div class="field-label">Lat/Lon</div><div class="field-val">${b.lat ? `${b.lat}, ${b.lon}` : 'No pin'}</div></div>
+      <div class="field-row"><div class="field-label">Confidence</div><div class="field-val">${b.confidence_score || '—'}</div></div>
+      ${b.phone ? `<div class="field-row"><div class="field-label">Phone</div><div class="field-val"><a href="tel:${esc(b.phone)}" style="color:var(--accent)">${esc(b.phone)}</a></div></div>` : ''}
+    </div>
+  `;
+}
+
+async function saveEdits() {
+  if (!currentBizId) return;
+  const msg = document.getElementById('panelSaveMsg');
+  msg.style.display = 'block';
+  msg.style.color   = 'var(--text-3)';
+  msg.textContent   = 'Saving…';
+
+  const body = {};
+  const editable = ['name','phone','address','website','description','hours','category'];
+  editable.forEach(f => {
+    const el = document.getElementById(`fe_${f}`);
+    if (el) body[f] = el.value;
+  });
+  const tagsEl = document.getElementById('fe_tags');
+  if (tagsEl) body.tags = tagsEl.value.split(',').map(t=>t.trim()).filter(Boolean);
+  const walletEl = document.getElementById('fe_wallet');
+  if (walletEl && role === 'admin') body.wallet = walletEl.value.trim() || null;
+
+  try {
+    const r = await fetch(`${API}/admin/business/${currentBizId}`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error);
+    msg.style.color = 'var(--accent)';
+    msg.textContent = `Saved: ${data.updated.join(', ')}`;
+    setTimeout(() => { msg.style.display='none'; }, 3000);
+    loadPage(currentPage); // refresh table row
+  } catch (e) {
+    msg.style.color = 'var(--red)';
+    msg.textContent = `Error: ${e.message}`;
+  }
+}
+
+async function claimBusiness() {
+  if (!currentBizId || role !== 'admin') return;
+  const msg = document.getElementById('claimMsg');
+  msg.textContent = 'Generating token…';
+
+  try {
+    const r = await fetch(`${API}/admin/business/${currentBizId}/claim`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error);
+    msg.style.color = 'var(--accent)';
+    const url = data.merchant_url;
+    msg.innerHTML = `${data.already_claimed ? 'Already claimed. ' : 'Claimed! '}<a href="${url}" target="_blank" style="color:var(--accent);word-break:break-all;">${url}</a>`;
+    // Refresh panel
+    openPanel(currentBizId);
+  } catch (e) {
+    msg.style.color = 'var(--red)';
+    msg.textContent = `Error: ${e.message}`;
+  }
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

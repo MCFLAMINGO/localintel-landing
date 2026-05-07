@@ -94,6 +94,10 @@
   .done-pill{padding:2px 7px;border-radius:99px;font-size:11px;background:#14532d;color:#bbf7d0;}
   .coverage-pills{display:flex;flex-wrap:wrap;gap:4px;}
   .coverage-pill{padding:3px 9px;border-radius:99px;font-size:12px;font-weight:600;background:var(--surface2);border:1px solid var(--border);color:var(--text-2);}
+  .tag-picker{display:flex;flex-wrap:wrap;gap:5px;}
+  .tag-pill{padding:4px 10px;border-radius:99px;font-size:12px;font-weight:500;background:var(--surface2);border:1px solid var(--border);color:var(--text-3);cursor:pointer;transition:all .15s;user-select:none;}
+  .tag-pill:hover{border-color:var(--accent);color:var(--text);}
+  .tag-pill.tag-active{background:#14532d;border-color:#16a34a;color:#bbf7d0;}
   .save-row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
   .rfq-row,.fee-row{padding:8px 10px;background:var(--surface2);border-radius:var(--r-sm);margin-bottom:6px;font-size:12px;}
   .rfq-row .meta,.fee-row .meta{color:var(--text-3);margin-top:2px;}
@@ -381,8 +385,27 @@ function renderPanel(data) {
   const scoreColor = cmp.score >= 75 ? '#16a34a' : cmp.score >= 40 ? '#eab308' : '#ef4444';
 
   const editableFields = isAdmin
-    ? ['name','phone','address','website','description','hours','category']
-    : ['name','phone','description','hours','category'];
+    ? ['name','phone','address','website','description','hours']
+    : ['name','phone','description','hours'];
+
+  const ALL_CATS = [
+    'restaurant','hvac','plumber','electrician','contractor','healthcare',
+    'retail','cleaning','landscaping','real_estate','automotive',
+    'beauty_wellness','education','financial_services','professional_services',
+  ];
+  const ALL_TAGS = [
+    'restaurant','hvac','plumber','electrician','contractor','healthcare',
+    'retail','cleaning','landscaping','real_estate','automotive',
+    'beauty_wellness','education','financial_services','professional_services',
+    'seafood','pizza','coffee','bar','fast_food','italian','mexican',
+    'catering','gym','yoga','spa','hair','nail','pet_care',
+    'childcare','tutoring','insurance','accounting','law','marketing',
+    'photography','events','moving','pool','roofing','painting',
+    'flooring','pest_control','security','electrician',
+  ];
+
+  const currentCat  = b.category || '';
+  const currentTags = Array.isArray(b.tags) ? b.tags : (b.tags ? String(b.tags).split(',').map(t=>t.trim()).filter(Boolean) : []);
 
   const fieldRows = editableFields.map(f => `
     <div class="field-row">
@@ -390,12 +413,20 @@ function renderPanel(data) {
       <div>
         <${f === 'description' ? 'textarea rows="3"' : 'input type="text"'} class="field-edit" id="fe_${f}"
           value="${f !== 'description' ? esc(b[f] || '') : ''}"
-          ${f === 'description' ? '' : ''}
         >${f === 'description' ? esc(b[f] || '') : ''}</${f === 'description' ? 'textarea' : 'input'}>
       </div>
     </div>`).join('');
 
-  const tagsVal = Array.isArray(b.tags) ? b.tags.join(', ') : (b.tags || '');
+  const catOptions = ['', ...ALL_CATS].map(c =>
+    `<option value="${c}" ${c === currentCat ? 'selected' : ''}>${c ? c.replace(/_/g,' ') : '— select category —'}</option>`
+  ).join('');
+
+  const tagPills = [...new Set([...ALL_TAGS, ...currentTags])].map(t => {
+    const active = currentTags.includes(t);
+    return `<span class="tag-pill ${active ? 'tag-active' : ''}" onclick="toggleTag('${t}')" data-tag="${t}">${t.replace(/_/g,' ')}</span>`;
+  }).join('');
+
+  const tagsVal = currentTags.join(', ');
 
   const feeHtml = data.fee_events.length
     ? data.fee_events.map(f => `
@@ -460,8 +491,15 @@ function renderPanel(data) {
       <div class="section-title">Edit Profile</div>
       ${fieldRows}
       <div class="field-row">
-        <div class="field-label">Tags</div>
-        <div><input type="text" class="field-edit" id="fe_tags" value="${esc(tagsVal)}" placeholder="hvac, plumber, electrician"/></div>
+        <div class="field-label">Category</div>
+        <div><select class="field-edit" id="fe_category">${catOptions}</select></div>
+      </div>
+      <div class="field-row" style="align-items:start">
+        <div class="field-label" style="padding-top:6px;">Tags</div>
+        <div>
+          <div class="tag-picker" id="fe_tags_picker">${tagPills}</div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:5px;">Click to toggle. Selected tags appear in agent searches.</div>
+        </div>
       </div>
       ${isAdmin ? `
       <div class="field-row">
@@ -521,6 +559,12 @@ function renderPanel(data) {
   `;
 }
 
+function toggleTag(tag) {
+  const pill = document.querySelector(`.tag-pill[data-tag="${tag}"]`);
+  if (!pill) return;
+  pill.classList.toggle('tag-active');
+}
+
 async function saveEdits() {
   if (!currentBizId) return;
   const msg = document.getElementById('panelSaveMsg');
@@ -529,13 +573,17 @@ async function saveEdits() {
   msg.textContent   = 'Saving…';
 
   const body = {};
-  const editable = ['name','phone','address','website','description','hours','category'];
+  const editable = ['name','phone','address','website','description','hours'];
   editable.forEach(f => {
     const el = document.getElementById(`fe_${f}`);
     if (el) body[f] = el.value;
   });
-  const tagsEl = document.getElementById('fe_tags');
-  if (tagsEl) body.tags = tagsEl.value.split(',').map(t=>t.trim()).filter(Boolean);
+  // Category from dropdown
+  const catEl = document.getElementById('fe_category');
+  if (catEl && catEl.value) body.category = catEl.value;
+  // Tags from pill picker
+  const activePills = document.querySelectorAll('.tag-pill.tag-active');
+  if (activePills.length) body.tags = Array.from(activePills).map(p => p.dataset.tag);
   const walletEl = document.getElementById('fe_wallet');
   if (walletEl && role === 'admin') body.wallet = walletEl.value.trim() || null;
 

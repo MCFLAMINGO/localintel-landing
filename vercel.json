@@ -7,6 +7,7 @@
     { "source": "/claim", "destination": "/claim.html", "permanent": false },
     { "source": "/inbox", "destination": "/inbox.html", "permanent": false },
     { "source": "/login", "destination": "/login.html", "permanent": false },
-    { "source": "/merchant", "destination": "/merchant.html", "permanent": false }
+    { "source": "/merchant", "destination": "/merchant.html", "permanent": false },
+    { "source": "/admin", "destination": "/admin.html", "permanent": false }
   ]
 }

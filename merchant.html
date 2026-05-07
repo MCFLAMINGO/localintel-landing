@@ -266,21 +266,41 @@
 
     <!-- Menu / ordering status -->
     <div class="panel" id="menuPanel">
-      <div class="panel-title">Menu &amp; ordering</div>
-      <div class="panel-sub">Connect your menu so agents can show items and accept orders on your behalf.</div>
-      <div id="menuStatusBody">
-        <div class="empty">Checking menu status…</div>
-      </div>
-      <div style="margin-top:20px">
-        <div class="field-group">
-          <label class="field-label" for="menuUrl">Menu URL (optional override)</label>
-          <div class="field-hint">Link to your online menu, ordering page, or Surge catalog. Leave blank if using Surge wallet connection.</div>
-          <div style="display:flex;gap:8px">
-            <input type="text" id="menuUrl" placeholder="https://…">
-            <button class="btn btn-ghost" onclick="saveMenuUrl()">Save</button>
+      <div class="panel-title">How customers order from you</div>
+      <div class="panel-sub">Both tracks work simultaneously — agents use Surge, your existing customers use your traditional ordering link.</div>
+
+      <!-- Agentic ordering track -->
+      <div style="border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span style="font-size:18px">🤖</span>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text)">Agent ordering <span style="font-size:11px;font-weight:600;background:#dcfce7;color:#166534;padding:2px 7px;border-radius:20px;margin-left:6px">AGENTIC</span></div>
+            <div style="font-size:12px;color:var(--text-3);margin-top:1px">AI assistants route orders, show your menu, and accept payment on your behalf.</div>
           </div>
-          <span class="save-msg" id="menuSaveMsg" style="margin-top:4px"></span>
         </div>
+        <div id="menuStatusBody"><div class="empty">Checking Surge status…</div></div>
+      </div>
+
+      <!-- Legacy ordering track -->
+      <div id="legacyOrderPanel" style="border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:20px;display:none">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          <span style="font-size:18px">🔗</span>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text)">Traditional ordering <span style="font-size:11px;font-weight:600;background:#f3f4f6;color:#374151;padding:2px 7px;border-radius:20px;margin-left:6px">HUMAN ONLY</span></div>
+            <div style="font-size:12px;color:var(--text-3);margin-top:1px">Your existing customers can still order the way they always have. This link is not agent-accessible.</div>
+          </div>
+        </div>
+        <div id="legacyOrderLink"></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="menuUrl">Override ordering URL <span style="font-weight:400;color:var(--text-3)">(optional)</span></label>
+        <div class="field-hint">Replaces the default ordering link shown to customers. Leave blank to use your connected POS.</div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="menuUrl" placeholder="https://…">
+          <button class="btn btn-ghost" onclick="saveMenuUrl()">Save</button>
+        </div>
+        <span class="save-msg" id="menuSaveMsg" style="margin-top:4px"></span>
       </div>
     </div>
 
@@ -294,43 +314,35 @@
     <!-- Wallet -->
     <div class="panel">
       <div class="panel-title">Wallet &amp; payouts</div>
-      <div class="panel-sub">Where your money goes when AI agents route orders or jobs through your listing.</div>
+      <div class="panel-sub">Your wallet is where LocalIntel sends revenue and deducts fees on confirmed jobs. It also signals to agents that you’re active in the routing pool.</div>
 
-      <!-- Explainer -->
-      <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:20px">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:16px">
+      <!-- Dynamic wallet state block -->
+      <div id="walletStateBlock" style="margin-bottom:20px"></div>
+
+      <!-- What is pathUSD -->
+      <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;margin-bottom:20px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px">
           <div>
-            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">What is a wallet?</div>
-            <div style="font-size:13px;color:var(--text-2);line-height:1.5">A free digital address — like a bank account number — that receives payments automatically. No bank required. You create one once and keep it forever.</div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">What is a wallet?</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.5">A digital address — like a bank account number — that receives payments automatically. You keep it forever, across any business.</div>
           </div>
           <div>
-            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">What is pathUSD?</div>
-            <div style="font-size:13px;color:var(--text-2);line-height:1.5">pathUSD is a stable digital dollar — always worth $1.00 USD. When an agent routes an order to you, payment settles in pathUSD instantly. You can convert it to regular dollars anytime.</div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">What is pathUSD?</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.5">pathUSD is a stable digital dollar — always worth $1.00. Fees are deducted in pathUSD. Revenue lands here instantly on confirmed jobs.</div>
           </div>
           <div>
-            <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">Do I need to fund it?</div>
-            <div style="font-size:13px;color:var(--text-2);line-height:1.5">Your wallet needs a small pathUSD balance to stay in the routing pool. LocalIntel charges <strong style="color:var(--text)">$0.25 + 1.5% of job value</strong> only when a confirmed job is delivered to you &#8212; never on searches or unbooked quotes. A few dollars covers dozens of confirmed jobs.</div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">Fee model</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.5"><strong style="color:var(--text)">$0.25 + 1.5% of job value</strong> on confirmed jobs only. Never on searches or unbooked quotes.</div>
           </div>
-        </div>
-        <div style="border-top:1px solid var(--border);padding-top:14px">
-          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:8px">How to get a free wallet in 60 seconds</div>
-          <div style="display:flex;flex-direction:column;gap:6px">
-            <div style="font-size:13px;color:var(--text-2)"><span style="font-weight:700;color:var(--text)">1.</span> Go to <a href="https://metamask.io" target="_blank" style="color:var(--green);font-weight:600">metamask.io</a> or download the MetaMask app on your phone.</div>
-            <div style="font-size:13px;color:var(--text-2)"><span style="font-weight:700;color:var(--text)">2.</span> Create a new wallet — write down your 12-word backup phrase and store it safely. This is your only recovery option.</div>
-            <div style="font-size:13px;color:var(--text-2)"><span style="font-weight:700;color:var(--text)">3.</span> Copy your wallet address — it starts with <code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:12px">0x</code> and is 42 characters long.</div>
-            <div style="font-size:13px;color:var(--text-2)"><span style="font-weight:700;color:var(--text)">4.</span> Paste it in the field below and hit Save. That's it — you're ready to receive payments.</div>
-          </div>
-        </div>
-        <div style="background:var(--green-l);border:1px solid #bbf7d0;border-radius:var(--r);padding:10px 14px;margin-top:12px;font-size:12px;color:#166534">
-          <strong>Payment flow:</strong> Customer places order via AI agent &#8594; job confirmed &#8594; LocalIntel deducts $0.25 + 1.5% of job value from your wallet &#8594; remainder settles to you in pathUSD instantly &#8594; convert to dollars via any exchange (Coinbase, Kraken, etc.) or spend directly where accepted.
         </div>
       </div>
 
+      <!-- wallet connected state -->
       <div id="walletBody"></div>
       <div style="margin-top:16px">
         <div class="field-group">
           <label class="field-label" for="walletInput">Wallet address</label>
-          <div class="field-hint">EVM-compatible address (0x…). Used for pathUSD payouts on Tempo mainnet.</div>
+          <div class="field-hint">EVM-compatible address (0x…) on Tempo mainnet. Fees deducted here, revenue lands here.</div>
           <div style="display:flex;gap:8px">
             <input type="text" id="walletInput" placeholder="0x…" style="font-family:monospace;font-size:13px">
             <button class="btn btn-green" onclick="saveWallet()">Save</button>
@@ -520,13 +532,12 @@ async function saveWallet() {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Save failed');
-    // Update display inline
-    document.getElementById('walletBody').innerHTML =
-      `<div style="font-size:14px;font-weight:600;color:var(--green)">✓ Connected</div><div class="wallet-addr">${esc(data.wallet)}</div><div style="font-size:12px;color:var(--text-3);margin-top:4px">pathUSD payouts go here.</div>`;
     msg.textContent = '✓ Wallet saved';
     msg.className = 'save-msg save-ok';
-    // Re-render completion bar
-    renderCompletion({ ...(_lastBiz || {}), wallet: data.wallet }, _lastSurgeMenu);
+    // Update last biz state and re-render wallet + completion
+    _lastBiz = { ...(_lastBiz || {}), wallet: data.wallet };
+    renderWalletState(_lastBiz, false, 0); // funded=false until balance confirmed
+    renderCompletion(_lastBiz, _lastSurgeMenu);
   } catch(e) {
     msg.textContent = '✗ ' + e.message;
     msg.className = 'save-msg save-err';
@@ -536,6 +547,8 @@ async function saveWallet() {
 // ── Menu status panel ───────────────────────────────────────────────
 function renderMenuStatus(b, surgeMenu) {
   const el = document.getElementById('menuStatusBody');
+
+  // ── Agentic track (Surge) ──
   if (surgeMenu?.connected) {
     const orderable = surgeMenu.orderable_items;
     const total     = surgeMenu.total_items;
@@ -546,39 +559,106 @@ function renderMenuStatus(b, surgeMenu) {
         <div>
           <strong>Surge connected</strong> — ${total} items in catalog
           ${orderable < total
-            ? `<div class="warn-box" style="margin-top:8px">⚠ ${total - orderable} of ${total} items have online ordering disabled in Surge. Enable them in your Surge admin to accept agent orders.</div>`
+            ? `<div class="warn-box" style="margin-top:8px">⚠ ${total - orderable} of ${total} items have online ordering disabled in Surge. Enable them in your Surge admin so agents can place orders.<br><a href="https://surge.basalthq.com" target="_blank" style="color:var(--green);font-weight:600;font-size:12px">Open Surge Admin →</a></div>`
             : `<div style="color:var(--green);font-size:13px;margin-top:4px">✓ All ${orderable} items are orderable by agents</div>`
           }
         </div>
       </div>
       ${cats.length ? `<div class="menu-cats">${cats.map(c => `<span class="menu-cat">${esc(c)}</span>`).join('')}</div>` : ''}
     `;
-    if (b.menu_url) document.getElementById('menuUrl').value = b.menu_url;
-  } else if (b.menu_url) {
+  } else if (b.wallet) {
     el.innerHTML = `
       <div class="menu-status">
         <div class="menu-dot dot-amber"></div>
-        <div>
-          <strong>Menu URL set</strong> — <a href="${esc(b.menu_url)}" target="_blank" style="color:var(--green)">${esc(b.menu_url)}</a>
-          ${b.menu_fetch_error
-            ? `<div class="warn-box" style="margin-top:8px">Could not auto-fetch items: ${esc(b.menu_fetch_error)}. Agents will link to your menu page but can't list individual items.</div>`
-            : '<div style="font-size:13px;color:var(--text-2);margin-top:4px">Agents will link customers to your menu.</div>'
-          }
+        <div style="font-size:13px;color:var(--text-2)">
+          Wallet connected but no Surge catalog found. Make sure your Surge account uses this wallet address.
+          <br><a href="https://surge.basalthq.com" target="_blank" style="color:var(--green);font-weight:600;font-size:12px">Open Surge →</a>
         </div>
       </div>
     `;
-    document.getElementById('menuUrl').value = b.menu_url;
   } else {
     el.innerHTML = `
       <div class="menu-status">
         <div class="menu-dot dot-grey"></div>
-        <div style="font-size:14px;color:var(--text-2)">No menu connected. Add a URL below or connect your wallet to enable Surge ordering.</div>
+        <div style="font-size:13px;color:var(--text-2)">
+          No agent ordering connected. Connect a Surge wallet below to enable AI-powered ordering.
+          <br><a href="https://surge.basalthq.com" target="_blank" style="color:var(--green);font-weight:600;font-size:12px">Create a free Surge account →</a>
+        </div>
       </div>
     `;
+  }
+
+  // ── Legacy track (any traditional POS order URL) ──
+  const legacyUrl = b.legacy_order_url || b.menu_url || null;
+  const legacyPanel = document.getElementById('legacyOrderPanel');
+  const legacyLink  = document.getElementById('legacyOrderLink');
+  if (legacyUrl) {
+    legacyPanel.style.display = 'block';
+    legacyLink.innerHTML = `<a href="${esc(legacyUrl)}" target="_blank" style="font-size:13px;color:var(--green);font-weight:600;word-break:break-all">${esc(legacyUrl)} →</a><div style="font-size:12px;color:var(--text-3);margin-top:4px">Visible to human customers. Not used by AI agents.</div>`;
+    document.getElementById('menuUrl').value = legacyUrl;
+  } else {
+    legacyPanel.style.display = 'none';
   }
 }
 
 // ── Main render ───────────────────────────────────────────────────────────────
+
+// ── Wallet state renderer ──────────────────────────────────────────────────────
+function renderWalletState(b, funded, balanceMicro) {
+  const wb    = document.getElementById('walletBody');
+  const state = document.getElementById('walletStateBlock');
+  if (!state || !wb) return;
+
+  if (b.wallet && funded) {
+    // State 1: Connected + funded — in routing pool
+    state.innerHTML = `
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--r);padding:14px 18px">
+        <div style="font-size:13px;font-weight:700;color:#166534;margin-bottom:4px">✓ Active in routing pool</div>
+        <div style="font-size:12px;color:#166534;line-height:1.5">Your wallet is funded. Agents are routing confirmed jobs to you and fees are collected automatically.</div>
+      </div>`;
+    wb.innerHTML = `
+      <div style="font-size:14px;font-weight:600;color:var(--green)">✓ Connected</div>
+      <div class="wallet-addr">${esc(b.wallet)}</div>
+      <div style="font-size:12px;color:var(--text-3);margin-top:4px">This is your Surge wallet. Fees are deducted here. Revenue lands here on confirmed jobs.</div>`;
+    document.getElementById('walletInput').value = b.wallet;
+
+  } else if (b.wallet && !funded) {
+    // State 2: Connected but not funded — not yet in routing pool
+    state.innerHTML = `
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r);padding:14px 18px">
+        <div style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:4px">⚠ Wallet connected — add funds to enter routing pool</div>
+        <div style="font-size:12px;color:#92400e;line-height:1.5">Your wallet needs a small pathUSD balance. Fund it through your Surge account and agents will start routing confirmed jobs to you.</div>
+        <a href="https://surge.basalthq.com" target="_blank" style="display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:#92400e;text-decoration:underline">Fund via Surge →</a>
+      </div>`;
+    wb.innerHTML = `
+      <div style="font-size:14px;font-weight:600;color:var(--text)">✓ Connected</div>
+      <div class="wallet-addr">${esc(b.wallet)}</div>
+      <div style="font-size:12px;color:var(--text-3);margin-top:4px">Fees deducted here, revenue lands here. Fund your Surge account to enter the routing pool.</div>`;
+    document.getElementById('walletInput').value = b.wallet;
+
+  } else {
+    // State 3: No wallet — not in routing pool
+    state.innerHTML = `
+      <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">No wallet connected</div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:10px">A wallet is required to enter the agent routing pool and receive payments. The easiest way is through Surge — your Surge merchant account includes a wallet on Tempo mainnet, ready for pathUSD.</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12px;color:var(--text-2)">
+            <strong style="color:var(--text)">Option 1 — Surge (recommended):</strong>
+            Create a free business account at
+            <a href="https://surge.basalthq.com" target="_blank" style="color:var(--green);font-weight:600">surge.basalthq.com</a>.
+            Your wallet is included. Copy it from your Surge dashboard and paste it below.
+          </div>
+          <div style="font-size:12px;color:var(--text-2)">
+            <strong style="color:var(--text)">Option 2 — Your own wallet:</strong>
+            Any EVM wallet (MetaMask, Coinbase Wallet) works. Create one, fund it with pathUSD on Tempo mainnet, and paste the address below.
+          </div>
+        </div>
+      </div>`;
+    wb.innerHTML = `<div style="font-size:13px;color:var(--text-3)">No wallet connected yet. Add your address below.</div>`;
+  }
+}
+
 function render(data) {
   document.getElementById('loadingState').style.display = 'none';
   document.getElementById('dashContent').style.display  = 'block';
@@ -634,14 +714,8 @@ function render(data) {
     ? queries.map(q => `<div class="query-row"><div class="query-text">${esc(q.query)}</div><div class="query-cnt">${esc(q.cnt)}×</div></div>`).join('')
     : '<div class="empty">No routed queries yet — once agents search for businesses like yours, top searches will appear here.</div>';
 
-  // Wallet — always render, pre-fill input if address exists
-  const wb = document.getElementById('walletBody');
-  if (b.wallet) {
-    wb.innerHTML = `<div style="font-size:14px;font-weight:600;color:var(--green)">✓ Connected</div><div class="wallet-addr">${esc(b.wallet)}</div><div style="font-size:12px;color:var(--text-3);margin-top:4px">pathUSD payouts go here. Update below if your address changes.</div>`;
-    document.getElementById('walletInput').value = b.wallet;
-  } else {
-    wb.innerHTML = `<div style="font-size:14px;color:var(--text-2)">No wallet connected yet.</div><div style="font-size:12px;color:var(--text-3);margin-top:2px">Add your address below to receive payouts.</div>`;
-  }
+  // Wallet — three states: funded / connected-not-funded / not connected
+  renderWalletState(b, data.wallet_funded, data.balance_usd_micro);
 }
 
 // ── Bootstrap ─────────────────────────────────────────────────────────────────

@@ -468,10 +468,29 @@ function renderPanel(data) {
         <div class="field-label">Wallet</div>
         <div><input type="text" class="field-edit" id="fe_wallet" value="${esc(b.wallet||'')}" placeholder="0x…"/></div>
       </div>` : ''}
-      <div class="save-row">
+        <div class="save-row">
         <button class="btn btn-primary btn-sm" onclick="saveEdits()">Save Changes</button>
         <div id="panelSaveMsg"></div>
       </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Skills (Agent Services)</div>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:10px;">Skills tell agents what this business can do. Edit them on the merchant dashboard, or open it directly below.</div>
+      ${data.business.services_json
+        ? `<div style="background:var(--surface2);border-radius:var(--r-sm);padding:10px 12px;font-size:12px;color:var(--text-2);margin-bottom:8px;">${Array.isArray(data.business.services_json) ? data.business.services_json.map(s => `<span style="margin-right:8px;">• ${esc(s.name||s)}</span>`).join('') : esc(JSON.stringify(data.business.services_json).slice(0,200))}</div>`
+        : `<div style="font-size:12px;color:var(--text-3);margin-bottom:8px;">No skills set yet.</div>`
+      }
+      ${data.merchant_url ? `<a href="${data.merchant_url}" target="_blank" class="ext-link">Set Skills in Merchant Dashboard ↗</a>` : ''}
+    </div>
+
+    <div class="section">
+      <div class="section-title">Menu / Surge Catalog</div>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:10px;">Menu is pulled from Surge using the business wallet. Requires wallet to be set and the business to have a Surge shop.</div>
+      ${data.business.menu_fetched_at
+        ? `<div style="font-size:12px;color:var(--accent);">✓ Menu cached — last fetched ${new Date(data.business.menu_fetched_at).toLocaleString()}</div>`
+        : `<div style="font-size:12px;color:var(--text-3);">No menu cached yet. Set wallet address first, then menu auto-populates when a customer orders.</div>`
+      }
     </div>
 
     <div class="section">

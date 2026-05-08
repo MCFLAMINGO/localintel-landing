@@ -988,19 +988,36 @@
         <p class="section-sub">Select any market to see live business data, sector gaps, permits, and income signals.</p>
 
         <style>
-          .explore-counties { display: flex; flex-direction: column; gap: 32px; margin-top: 32px; }
-          .explore-county-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 12px; }
-          .explore-zip-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-          .zip-card { display: flex; flex-direction: column; gap: 4px; padding: 14px 18px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; color: var(--text); transition: border-color .15s, box-shadow .15s, transform .1s; min-width: 160px; }
+          .explore-counties { display: flex; flex-direction: column; gap: 8px; margin-top: 32px; }
+          .county-accordion { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+          .county-accordion summary { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; cursor: pointer; user-select: none; list-style: none; gap: 12px; }
+          .county-accordion summary::-webkit-details-marker { display: none; }
+          .county-accordion summary:hover { background: rgba(255,255,255,.03); }
+          .county-accordion[open] summary { border-bottom: 1px solid var(--border); }
+          .county-acc-left { display: flex; align-items: center; gap: 12px; }
+          .county-acc-name { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); }
+          .county-acc-count { font-size: 11px; font-weight: 600; color: #16a34a; background: rgba(22,163,74,.1); border-radius: 20px; padding: 2px 8px; }
+          .county-acc-chevron { font-size: 12px; color: var(--text-muted); transition: transform .2s; }
+          .county-accordion[open] .county-acc-chevron { transform: rotate(180deg); }
+          .explore-zip-grid { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 20px; }
+          .zip-card { display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; color: var(--text); transition: border-color .15s, box-shadow .15s, transform .1s; min-width: 150px; }
           .zip-card:hover { border-color: #22c55e; box-shadow: 0 2px 12px rgba(34,197,94,.12); transform: translateY(-1px); }
-          .zip-card-code { font-size: 13px; font-weight: 800; color: #16a34a; }
-          .zip-card-name { font-size: 14px; font-weight: 600; }
+          .zip-card-code { font-size: 12px; font-weight: 800; color: #16a34a; }
+          .zip-card-name { font-size: 13px; font-weight: 600; }
           .zip-card-arrow { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
         </style>
 
         <div class="explore-counties">
-          <div>
-            <div class="explore-county-name">St. Johns County</div>
+
+          <!-- St. Johns — open by default (home market) -->
+          <details class="county-accordion" open>
+            <summary>
+              <span class="county-acc-left">
+                <span class="county-acc-name">St. Johns County</span>
+                <span class="county-acc-count">8 markets</span>
+              </span>
+              <span class="county-acc-chevron">▾</span>
+            </summary>
             <div class="explore-zip-grid">
               <a href="/zip/32081" class="zip-card"><span class="zip-card-code">32081</span><span class="zip-card-name">Nocatee</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32082" class="zip-card"><span class="zip-card-code">32082</span><span class="zip-card-name">Ponte Vedra Beach</span><span class="zip-card-arrow">View market →</span></a>
@@ -1011,9 +1028,17 @@
               <a href="/zip/32080" class="zip-card"><span class="zip-card-code">32080</span><span class="zip-card-name">St. Augustine Beach</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32259" class="zip-card"><span class="zip-card-code">32259</span><span class="zip-card-name">Fruit Cove</span><span class="zip-card-arrow">View market →</span></a>
             </div>
-          </div>
-          <div>
-            <div class="explore-county-name">Duval County</div>
+          </details>
+
+          <!-- Duval County -->
+          <details class="county-accordion">
+            <summary>
+              <span class="county-acc-left">
+                <span class="county-acc-name">Duval County</span>
+                <span class="county-acc-count">19 markets</span>
+              </span>
+              <span class="county-acc-chevron">▾</span>
+            </summary>
             <div class="explore-zip-grid">
               <a href="/zip/32250" class="zip-card"><span class="zip-card-code">32250</span><span class="zip-card-name">Jacksonville Beach</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32266" class="zip-card"><span class="zip-card-code">32266</span><span class="zip-card-name">Neptune Beach</span><span class="zip-card-arrow">View market →</span></a>
@@ -1035,47 +1060,88 @@
               <a href="/zip/32218" class="zip-card"><span class="zip-card-code">32218</span><span class="zip-card-name">NW Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32244" class="zip-card"><span class="zip-card-code">32244</span><span class="zip-card-name">Westside</span><span class="zip-card-arrow">View market →</span></a>
             </div>
-          </div>
-          <div>
-            <div class="explore-county-name">Clay County</div>
+          </details>
+
+          <!-- Clay County -->
+          <details class="county-accordion">
+            <summary>
+              <span class="county-acc-left">
+                <span class="county-acc-name">Clay County</span>
+                <span class="county-acc-count">4 markets</span>
+              </span>
+              <span class="county-acc-chevron">▾</span>
+            </summary>
             <div class="explore-zip-grid">
               <a href="/zip/32003" class="zip-card"><span class="zip-card-code">32003</span><span class="zip-card-name">Fleming Island</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32065" class="zip-card"><span class="zip-card-code">32065</span><span class="zip-card-name">Orange Park / Oakleaf</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32073" class="zip-card"><span class="zip-card-code">32073</span><span class="zip-card-name">Orange Park</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32043" class="zip-card"><span class="zip-card-code">32043</span><span class="zip-card-name">Green Cove Springs</span><span class="zip-card-arrow">View market →</span></a>
             </div>
-          </div>
-          <div>
-            <div class="explore-county-name">Nassau County</div>
+          </details>
+
+          <!-- Nassau County -->
+          <details class="county-accordion">
+            <summary>
+              <span class="county-acc-left">
+                <span class="county-acc-name">Nassau County</span>
+                <span class="county-acc-count">2 markets</span>
+              </span>
+              <span class="county-acc-chevron">▾</span>
+            </summary>
             <div class="explore-zip-grid">
               <a href="/zip/32034" class="zip-card"><span class="zip-card-code">32034</span><span class="zip-card-name">Fernandina Beach</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32097" class="zip-card"><span class="zip-card-code">32097</span><span class="zip-card-name">Yulee</span><span class="zip-card-arrow">View market →</span></a>
             </div>
-          </div>
-          <div>
-            <div class="explore-county-name">Volusia County</div>
+          </details>
+
+          <!-- Volusia County -->
+          <details class="county-accordion">
+            <summary>
+              <span class="county-acc-left">
+                <span class="county-acc-name">Volusia County</span>
+                <span class="county-acc-count">4 markets</span>
+              </span>
+              <span class="county-acc-chevron">▾</span>
+            </summary>
             <div class="explore-zip-grid">
               <a href="/zip/32168" class="zip-card"><span class="zip-card-code">32168</span><span class="zip-card-name">New Smyrna Beach</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32174" class="zip-card"><span class="zip-card-code">32174</span><span class="zip-card-name">Ormond Beach</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32117" class="zip-card"><span class="zip-card-code">32117</span><span class="zip-card-name">Daytona Beach North</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32118" class="zip-card"><span class="zip-card-code">32118</span><span class="zip-card-name">Daytona Beach</span><span class="zip-card-arrow">View market →</span></a>
             </div>
-          </div>
-          <div>
-            <div class="explore-county-name">Flagler County</div>
+          </details>
+
+          <!-- Flagler County -->
+          <details class="county-accordion">
+            <summary>
+              <span class="county-acc-left">
+                <span class="county-acc-name">Flagler County</span>
+                <span class="county-acc-count">2 markets</span>
+              </span>
+              <span class="county-acc-chevron">▾</span>
+            </summary>
             <div class="explore-zip-grid">
               <a href="/zip/32136" class="zip-card"><span class="zip-card-code">32136</span><span class="zip-card-name">Flagler Beach</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32137" class="zip-card"><span class="zip-card-code">32137</span><span class="zip-card-name">Palm Coast</span><span class="zip-card-arrow">View market →</span></a>
             </div>
-          </div>
-          <div>
-            <div class="explore-county-name">Putnam &amp; Alachua Counties</div>
+          </details>
+
+          <!-- Putnam & Alachua -->
+          <details class="county-accordion">
+            <summary>
+              <span class="county-acc-left">
+                <span class="county-acc-name">Putnam &amp; Alachua Counties</span>
+                <span class="county-acc-count">3 markets</span>
+              </span>
+              <span class="county-acc-chevron">▾</span>
+            </summary>
             <div class="explore-zip-grid">
               <a href="/zip/32177" class="zip-card"><span class="zip-card-code">32177</span><span class="zip-card-name">Palatka</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32608" class="zip-card"><span class="zip-card-code">32608</span><span class="zip-card-name">Gainesville West</span><span class="zip-card-arrow">View market →</span></a>
               <a href="/zip/32601" class="zip-card"><span class="zip-card-code">32601</span><span class="zip-card-name">Gainesville</span><span class="zip-card-arrow">View market →</span></a>
             </div>
-          </div>
+          </details>
+
         </div>
       </div>
     </section>

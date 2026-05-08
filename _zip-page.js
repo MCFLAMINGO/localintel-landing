@@ -251,6 +251,9 @@
         <a href="/claim.html" class="btn btn-w">Claim Your Free Listing →</a>
       </div>
 
+      <h2 class="sec-title">Neighborhoods in <span>${NAME}</span></h2>
+      <div class="zip-links" id="hood-links"><p class="loading-msg">Loading…</p></div>
+
       <h2 class="sec-title">More <span>${COUNTY} County</span> Markets</h2>
       <div class="zip-links" id="related-zips"><p class="loading-msg">Loading…</p></div>
 
@@ -258,7 +261,7 @@
 
     <footer>
       <div class="fi">
-        <div class="fc">© 2026 LocalIntel — Northeast Florida Business Intelligence</div>
+        <div class="fc">© 2026 LocalIntel — Florida Business Intelligence</div>
         <div class="fl">
           <a href="/">Home</a>
           <a href="/search.html">Search</a>
@@ -295,6 +298,18 @@
   document.getElementById('related-zips').innerHTML = related.length
     ? related.map(z => `<a href="/zip/${z.zip}" class="zl">${z.zip} — ${z.name}</a>`).join('')
     : '<a href="/" class="zl">← All Markets</a>';
+
+  // ── Neighborhood links for this ZIP ───────────────────────────────────
+  const hoodEl = document.getElementById('hood-links');
+  fetch(`${RAILWAY}/api/local-intel/zip-neighborhoods?zip=${ZIP}`)
+    .then(r => r.json())
+    .then(d => {
+      const hoods = d.neighborhoods || [];
+      hoodEl.innerHTML = hoods.length
+        ? hoods.map(h => `<a href="/neighborhood/${h.slug}" class="zl">${h.name}</a>`).join('')
+        : '<span style="color:var(--text-muted);font-size:13px">Neighborhood data coming soon.</span>';
+    })
+    .catch(() => { hoodEl.innerHTML = ''; hoodEl.closest('*').style.display='none'; });
 
   // ── Gap engine ──────────────────────────────────────────────────────────────
   const BENCHMARKS = [

@@ -1,97 +1,135 @@
 #!/usr/bin/env node
 /**
- * generate-zip-pages.js
+ * generate-zip-pages.js — LocalIntel ZIP stub generator
  * ─────────────────────────────────────────────────────────────────────────────
- * Generates 41 ZIP stub pages. Each page is ~20 lines — just SEO meta tags
- * + window.ZIP_CONFIG. All rendering lives in /_zip-page.js (shared).
+ * Fetches all FL ZIPs from Railway (/api/local-intel/zips-all), generates a
+ * tiny stub HTML file for each one under zip/XXXXX.html.
+ *
+ * Each stub is ~20 lines: SEO metadata + window.ZIP_CONFIG. The shared engine
+ * _zip-page.js does all rendering. Edit _zip-page.js to update all pages.
  *
  * Run: node generate-zip-pages.js
- * To update ALL pages: edit _zip-page.js and deploy — no need to re-run this.
+ * Re-run when: adding new ZIPs (data flows in automatically via Railway)
+ *
+ * Falls back to local flZipSeed.json if Railway is unreachable.
  */
+
 'use strict';
 
 const fs   = require('fs');
 const path = require('path');
-const OUT  = path.join(__dirname, 'zip');
+const https = require('https');
 
-const ALL_ZIPS = [
-  { zip:'32081', name:'Nocatee',                  county:'St. Johns', lat:30.1113, lon:-81.3967 },
-  { zip:'32082', name:'Ponte Vedra Beach',         county:'St. Johns', lat:30.1960, lon:-81.3845 },
-  { zip:'32092', name:'World Golf Village',        county:'St. Johns', lat:29.9902, lon:-81.4768 },
-  { zip:'32084', name:'St. Augustine',             county:'St. Johns', lat:29.8947, lon:-81.3145 },
-  { zip:'32086', name:'St. Augustine South',       county:'St. Johns', lat:29.8200, lon:-81.3100 },
-  { zip:'32095', name:'Palm Valley',               county:'St. Johns', lat:30.1500, lon:-81.4000 },
-  { zip:'32080', name:'St. Augustine Beach',       county:'St. Johns', lat:29.8566, lon:-81.2648 },
-  { zip:'32259', name:'Fruit Cove',                county:'St. Johns', lat:30.0797, lon:-81.5650 },
-  { zip:'32250', name:'Jacksonville Beach',        county:'Duval',     lat:30.2852, lon:-81.3993 },
-  { zip:'32266', name:'Neptune Beach',             county:'Duval',     lat:30.3127, lon:-81.4020 },
-  { zip:'32258', name:'Bartram Park',              county:'Duval',     lat:30.0750, lon:-81.5500 },
-  { zip:'32226', name:'North Jacksonville',        county:'Duval',     lat:30.4500, lon:-81.5200 },
-  { zip:'32256', name:'Baymeadows',                county:'Duval',     lat:30.2150, lon:-81.5500 },
-  { zip:'32257', name:'Mandarin South',            county:'Duval',     lat:30.1500, lon:-81.6000 },
-  { zip:'32224', name:'Jacksonville Intracoastal', county:'Duval',     lat:30.2800, lon:-81.4500 },
-  { zip:'32225', name:'Jacksonville Arlington',    county:'Duval',     lat:30.3200, lon:-81.5000 },
-  { zip:'32246', name:'Jacksonville Regency',      county:'Duval',     lat:30.2900, lon:-81.5300 },
-  { zip:'32233', name:'Atlantic Beach',            county:'Duval',     lat:30.3336, lon:-81.3993 },
-  { zip:'32211', name:'Jacksonville East',         county:'Duval',     lat:30.3300, lon:-81.5800 },
-  { zip:'32216', name:'Southside Blvd',            county:'Duval',     lat:30.2600, lon:-81.5400 },
-  { zip:'32217', name:'San Jose',                  county:'Duval',     lat:30.2100, lon:-81.6200 },
-  { zip:'32207', name:'Jacksonville Southbank',    county:'Duval',     lat:30.3000, lon:-81.6500 },
-  { zip:'32223', name:'Mandarin',                  county:'Duval',     lat:30.1700, lon:-81.6300 },
-  { zip:'32206', name:'Jacksonville North',        county:'Duval',     lat:30.3500, lon:-81.6500 },
-  { zip:'32205', name:'Avondale / Riverside',      county:'Duval',     lat:30.3100, lon:-81.6900 },
-  { zip:'32210', name:'Wesconnett',                county:'Duval',     lat:30.2800, lon:-81.7100 },
-  { zip:'32218', name:'Jacksonville Northwest',    county:'Duval',     lat:30.4000, lon:-81.6500 },
-  { zip:'32244', name:'Jacksonville Westside',     county:'Duval',     lat:30.2500, lon:-81.7100 },
-  { zip:'32003', name:'Fleming Island',            county:'Clay',      lat:30.1000, lon:-81.7200 },
-  { zip:'32065', name:'Orange Park / Oakleaf',     county:'Clay',      lat:30.1700, lon:-81.7800 },
-  { zip:'32073', name:'Orange Park',               county:'Clay',      lat:30.1700, lon:-81.7100 },
-  { zip:'32043', name:'Green Cove Springs',        county:'Clay',      lat:29.9900, lon:-81.6800 },
-  { zip:'32034', name:'Fernandina Beach',          county:'Nassau',    lat:30.6696, lon:-81.4626 },
-  { zip:'32097', name:'Yulee',                     county:'Nassau',    lat:30.6335, lon:-81.5979 },
-  { zip:'32168', name:'New Smyrna Beach',          county:'Volusia',   lat:29.0258, lon:-80.9270 },
-  { zip:'32174', name:'Ormond Beach',              county:'Volusia',   lat:29.2858, lon:-81.0559 },
-  { zip:'32117', name:'Daytona Beach North',       county:'Volusia',   lat:29.2274, lon:-81.0228 },
-  { zip:'32118', name:'Daytona Beach',             county:'Volusia',   lat:29.2108, lon:-81.0228 },
-  { zip:'32136', name:'Flagler Beach',             county:'Flagler',   lat:29.4733, lon:-81.1290 },
-  { zip:'32137', name:'Palm Coast',                county:'Flagler',   lat:29.5844, lon:-81.2079 },
-  { zip:'32177', name:'Palatka',                   county:'Putnam',    lat:29.6486, lon:-81.6376 },
-  { zip:'32608', name:'Gainesville West',          county:'Alachua',   lat:29.6516, lon:-82.4244 },
-  { zip:'32601', name:'Gainesville',               county:'Alachua',   lat:29.6516, lon:-82.3248 },
-];
+const RAILWAY = 'https://gsb-swarm-production.up.railway.app';
+const ZIP_DIR = path.join(__dirname, 'zip');
+const SEED_PATH = path.join(__dirname, 'flZipSeed.json');
 
-function stub(z) {
-  const metaDesc = `Live business intelligence for ${z.name}, FL ${z.zip}. Market gaps, sector signals, permits, and income data for ${z.county} County.`;
+// ── Fetch helper ──────────────────────────────────────────────────────────────
+function fetchJSON(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, res => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try { resolve(JSON.parse(data)); }
+        catch (e) { reject(new Error(`JSON parse failed: ${e.message}`)); }
+      });
+    }).on('error', reject);
+  });
+}
+
+// ── Stub template ─────────────────────────────────────────────────────────────
+function stubHTML(z) {
+  const title  = `${z.city} (${z.zip}) Business Intelligence — LocalIntel`;
+  const desc   = `Live business intelligence for ${z.city}, FL ${z.zip}. Market gaps, sector signals, permits, and income data for ${z.county} County.`;
+  const ogDesc = `Live business intelligence for ${z.city}, FL ${z.zip}. Market gaps, sector signals, permits, and income data for ${z.county} County.`;
+  const url    = `https://www.thelocalintel.com/zip/${z.zip}`;
+  const schema = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": `${z.city} (${z.zip}) Business Intelligence`,
+    "description": desc,
+    "url": url,
+    "provider": { "@type": "Organization", "name": "LocalIntel" },
+    "spatialCoverage": { "@type": "Place", "name": `${z.city}, ${z.county} County, FL ${z.zip}` }
+  });
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${z.name} (${z.zip}) Business Intelligence — LocalIntel</title>
-  <meta name="description" content="${metaDesc}">
-  <meta property="og:title" content="${z.name} (${z.zip}) — Local Business Intelligence">
-  <meta property="og:description" content="${metaDesc}">
-  <meta property="og:url" content="https://www.thelocalintel.com/zip/${z.zip}">
-  <link rel="canonical" href="https://www.thelocalintel.com/zip/${z.zip}">
+  <title>${title}</title>
+  <meta name="description" content="${desc}">
+  <meta property="og:title" content="${z.city} (${z.zip}) — Local Business Intelligence">
+  <meta property="og:description" content="${ogDesc}">
+  <meta property="og:url" content="${url}">
+  <link rel="canonical" href="${url}">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"${z.name} (${z.zip}) Business Intelligence","description":"${metaDesc}","url":"https://www.thelocalintel.com/zip/${z.zip}","provider":{"@type":"Organization","name":"LocalIntel"},"spatialCoverage":{"@type":"Place","name":"${z.name}, ${z.county} County, FL ${z.zip}"}}</script>
+  <script type="application/ld+json">${schema}</script>
 </head>
 <body>
   <script>
-    window.ZIP_CONFIG = { zip:'${z.zip}', name:'${z.name}', county:'${z.county}', lat:${z.lat}, lon:${z.lon} };
+    window.ZIP_CONFIG = { zip:'${z.zip}', name:${JSON.stringify(z.city)}, county:${JSON.stringify(z.county)}, lat:${z.lat || 27.6648}, lon:${z.lon || -81.5158} };
   </script>
   <script src="/_zip-page.js"></script>
 </body>
 </html>`;
 }
 
-if (!fs.existsSync(OUT)) fs.mkdirSync(OUT, { recursive: true });
+// ── Main ──────────────────────────────────────────────────────────────────────
+async function main() {
+  console.log('[generate-zip-pages] Fetching ZIP list from Railway...');
 
-let count = 0;
-for (const z of ALL_ZIPS) {
-  fs.writeFileSync(path.join(OUT, `${z.zip}.html`), stub(z), 'utf8');
-  console.log(`  ✓ ${z.zip} — ${z.name}`);
-  count++;
+  let zips;
+  try {
+    const data = await fetchJSON(`${RAILWAY}/api/local-intel/zips-all`);
+    zips = data.zips || [];
+    console.log(`[generate-zip-pages] Railway returned ${zips.length} ZIPs (source: ${data.source})`);
+  } catch (e) {
+    console.warn(`[generate-zip-pages] Railway fetch failed (${e.message}), falling back to local seed`);
+    try {
+      zips = JSON.parse(fs.readFileSync(SEED_PATH, 'utf8'));
+      console.log(`[generate-zip-pages] Local seed: ${zips.length} ZIPs`);
+    } catch (e2) {
+      console.error('[generate-zip-pages] No seed file found. Run from localintel-landing directory.');
+      process.exit(1);
+    }
+  }
+
+  // Filter: must have zip + city + county
+  const valid = zips.filter(z => z.zip && z.city && z.county);
+  console.log(`[generate-zip-pages] Generating stubs for ${valid.length} valid ZIPs...`);
+
+  if (!fs.existsSync(ZIP_DIR)) fs.mkdirSync(ZIP_DIR);
+
+  let written = 0, skipped = 0;
+  for (const z of valid) {
+    const filePath = path.join(ZIP_DIR, `${z.zip}.html`);
+    const html = stubHTML(z);
+    fs.writeFileSync(filePath, html, 'utf8');
+    written++;
+  }
+
+  console.log(`[generate-zip-pages] Done. Written: ${written}, Skipped: ${skipped}`);
+  console.log(`[generate-zip-pages] ZIP pages live at: zip/*.html`);
+
+  // Also write a counties summary for index.html Explore Markets
+  const byCounty = {};
+  for (const z of valid) {
+    if (!byCounty[z.county]) byCounty[z.county] = [];
+    byCounty[z.county].push(z);
+  }
+  const summary = Object.entries(byCounty)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([county, zs]) => ({ county, count: zs.length, zips: zs.sort((a,b) => a.zip.localeCompare(b.zip)) }));
+
+  fs.writeFileSync(
+    path.join(__dirname, 'zip-county-index.json'),
+    JSON.stringify(summary, null, 2),
+    'utf8'
+  );
+  console.log(`[generate-zip-pages] County index written: ${summary.length} counties → zip-county-index.json`);
 }
-console.log(`\nGenerated ${count} ZIP stubs → zip/`);
-console.log('All pages share /_zip-page.js — edit that file to update all 41 at once.');
+
+main().catch(e => { console.error(e); process.exit(1); });

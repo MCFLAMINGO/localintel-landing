@@ -129,6 +129,18 @@
     .fl a:hover{color:var(--green)}
     .loading-msg{color:var(--text-3);font-size:14px;padding:12px 0}
     @media(max-width:640px){.hero{padding:44px 18px 40px}.main{padding:36px 18px}.nav-links a:not(.cta){display:none}}
+
+    /* Industry breakdown */
+    .industry-sec{margin-bottom:52px}
+    .industry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:16px}
+    .ic{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px}
+    .ic-label{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+    .ic-estab{font-size:22px;font-weight:800;color:var(--green)}
+    .ic-sub{font-size:11px;color:var(--text-3);margin-top:2px}
+    .permit-band{background:var(--green-l);border:1px solid #bbf7d0;border-radius:var(--r);padding:14px 18px;margin-top:14px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+    .pb-label{font-size:12px;font-weight:700;color:var(--green-t);text-transform:uppercase;letter-spacing:.05em;margin-right:4px}
+    .pb-item{font-size:13px;color:var(--text)}
+    .industry-loading{font-size:14px;color:var(--text-3);padding:12px 0}
   </style>
 </head>
 <body>
@@ -207,6 +219,17 @@
     </div>
     <div class="chips">{{QUICK_CHIPS}}</div>
     <div id="results"></div>
+  </div>
+
+  
+  <div class="industry-sec">
+    <h2 class="sec-title">Industry Breakdown — <span id="iz-zip"></span></h2>
+    <p class="sec-sub">County-level establishment counts by sector (Census data). Reflects the broader market your ZIP operates within.</p>
+    <div class="industry-grid" id="industry-grid"><p class="industry-loading">Loading industry data…</p></div>
+    <div id="permit-band" style="display:none" class="permit-band">
+      <span class="pb-label">Active Permits (6mo)</span>
+      <span id="permit-items" class="pb-item"></span>
+    </div>
   </div>
 
   <div class="cta-band">
@@ -435,6 +458,51 @@ document.getElementById('sinput').addEventListener('keydown', e => { if(e.key===
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 loadStats();
+
+// ── Industry breakdown ────────────────────────────────────────────────────────
+async function loadIndustryData() {
+  document.getElementById('iz-zip').textContent = ZIP;
+  try {
+    const res  = await fetch(`${RAILWAY}/api/local-intel/census?zip=${ZIP}`);
+    const data = await res.json();
+    const grid = document.getElementById('industry-grid');
+
+    if (!data.available || !data.county_industry_breakdown?.length) {
+      grid.innerHTML = '<p class="industry-loading">Industry data not yet available for this ZIP.</p>';
+      return;
+    }
+
+    const sectors = data.county_industry_breakdown.slice(0, 9);
+    grid.innerHTML = sectors.map(s => `
+      <div class="ic">
+        <div class="ic-label">${s.label}</div>
+        <div class="ic-estab">${s.establishments.toLocaleString()}</div>
+        <div class="ic-sub">establishments · ${s.county_emp_share_pct}% county employment</div>
+      </div>`).join('');
+
+    // Permit signals
+    if (data.permit_signals_6mo) {
+      const band = document.getElementById('permit-band');
+      const items = Object.entries(data.permit_signals_6mo)
+        .map(([type, cnt]) => `<strong>${cnt}</strong> ${type}`).join(' · ');
+      document.getElementById('permit-items').innerHTML = items;
+      band.style.display = 'flex';
+    }
+
+    // IRS income data → update demographics
+    if (data.income?.median_agi) {
+      const agiEl = document.getElementById('d-hhi');
+      if (agiEl && data.income.median_agi > 0) {
+        agiEl.textContent = '
+</html>
+ + data.income.median_agi.toLocaleString() + ' AGI';
+      }
+    }
+  } catch(e) {
+    document.getElementById('industry-grid').innerHTML = '<p class="industry-loading">Industry data unavailable.</p>';
+  }
+}
+loadIndustryData();
 </script>
 </body>
 </html>

@@ -1,210 +1,335 @@
 /**
- * _neighborhood-page.js — LocalIntel Neighborhood Page Engine
+ * _neighborhood-page.js — LocalIntel Neighborhood/Region Page Engine
  * ─────────────────────────────────────────────────────────────────────────────
- * Shared engine for all neighborhood pages. Works identically to _zip-page.js.
- * Each neighborhood stub sets window.NEIGHBORHOOD_CONFIG and loads this script.
+ * Shared engine for all /neighborhood/SLUG pages.
+ * Fetches boundary + aggregate stats from Railway, renders:
+ *   1. Leaflet map — merged ZIP polygons with individual outlines
+ *   2. Stats card  — population, income, businesses, top sectors
+ *   3. Intelligence paragraph — deterministic template from census data
+ *   4. ZIP cards   — each links to /zip/XXXXX
  *
- * Fetches from: /api/local-intel/neighborhood?slug=
+ * Called by each neighborhood stub via:
+ *   <script>const HOOD_SLUG='downtown-jacksonville-jacksonville';</script>
+ *   <script src="/_neighborhood-page.js"></script>
  */
 
 (function () {
   'use strict';
 
-  const C = window.NEIGHBORHOOD_CONFIG || {};
   const RAILWAY = 'https://gsb-swarm-production.up.railway.app';
+  const slug    = (window.NEIGHBORHOOD_CONFIG && window.NEIGHBORHOOD_CONFIG.slug)
+                || window.HOOD_SLUG
+                || location.pathname.replace('/neighborhood/', '').replace(/\/$/, '');
 
-  // ── Styles ────────────────────────────────────────────────────────────────
-  const style = document.createElement('style');
-  style.textContent = `
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0a0a0a; --bg-card: #111; --border: #1e1e1e;
-      --text: #e8e8e8; --text-muted: #666; --green: #16a34a; --green-light: #22c55e;
+  // ── Leaflet CSS + JS lazy-load ───────────────────────────────────────────
+  function loadLeaflet(cb) {
+    if (window.L) { cb(); return; }
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(css);
+    const js = document.createElement('script');
+    js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    js.onload = cb;
+    document.head.appendChild(js);
+  }
+
+  // ── Utilities ────────────────────────────────────────────────────────────
+  const fmtNum  = n => n >= 1000000 ? (n/1000000).toFixed(1)+'M'
+                     : n >= 1000    ? (n/1000).toFixed(1)+'K'
+                     : String(n);
+  const fmtDollar = n => n ? '$' + Number(n).toLocaleString() : '—';
+  const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+
+  // ── Inject page CSS ─────────────────────────────────────────────────────
+  function injectCSS() {
+    if (document.getElementById('hood-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'hood-styles';
+    style.textContent = `
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{background:#0a0a0a;color:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+      a{color:inherit;}
+      .hood-loading{padding:80px 20px;text-align:center;color:#6b7280;font-size:15px}
+      .hood-error{padding:80px 20px;text-align:center;color:#ef4444;font-size:15px}
+
+      /* Nav */
+      .hood-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #1f2937;position:sticky;top:0;background:#0a0a0aee;backdrop-filter:blur(8px);z-index:100}
+      .hood-nav-logo{font-weight:700;font-size:16px;color:#00e676;text-decoration:none}
+      .hood-nav-cta{background:#00e676;color:#000;padding:7px 16px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none}
+
+      /* Header */
+      .hood-header{max-width:900px;margin:0 auto;padding:40px 20px 24px}
+      .hood-breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:#6b7280;margin-bottom:14px;flex-wrap:wrap}
+      .hood-breadcrumb a{color:#6b7280;text-decoration:none}.hood-breadcrumb a:hover{color:#00e676}
+      .bc-sep{color:#374151}.bc-current{color:#d1d5db}
+      .hood-title{font-size:clamp(26px,5vw,40px);font-weight:700;color:#f9fafb;margin-bottom:12px}
+      .hood-meta-row{display:flex;flex-wrap:wrap;gap:8px}
+      .hood-badge{background:#1f2937;border:1px solid #374151;border-radius:20px;padding:4px 12px;font-size:12px;color:#9ca3af}
+
+      /* Map */
+      .hood-map-wrap{position:relative;max-width:900px;margin:0 auto 8px;padding:0 20px}
+      #hood-map{width:100%;height:400px;border-radius:12px;border:1px solid #1f2937;background:#111;z-index:1}
+      .hood-map-legend{position:absolute;bottom:20px;right:32px;z-index:1000;background:rgba(10,10,10,.9);border:1px solid #1f2937;border-radius:8px;padding:8px 12px;font-size:12px;color:#9ca3af}
+      .legend-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+      .map-zip-label{background:#0a0a0acc;border:1px solid #374151;border-radius:4px;padding:2px 5px;font-size:10px;color:#9ca3af;white-space:nowrap}
+
+      /* Stats */
+      .hood-stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;max-width:900px;margin:24px auto;padding:0 20px}
+      .stat-card{background:#111;border:1px solid #1f2937;border-radius:10px;padding:16px 14px;text-align:center}
+      .stat-val{font-size:22px;font-weight:700;color:#f9fafb;line-height:1.1}
+      .stat-unit{font-size:13px;color:#6b7280;font-weight:400}
+      .stat-lbl{font-size:11px;color:#6b7280;margin-top:4px;text-transform:uppercase;letter-spacing:.05em}
+
+      /* Sectors */
+      .hood-sectors{max-width:900px;margin:0 auto 24px;padding:0 20px}
+      .hood-section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;margin-bottom:12px}
+      .sector-bar-wrap{display:flex;flex-direction:column;gap:8px}
+      .sector-row{display:grid;grid-template-columns:100px 1fr 50px;align-items:center;gap:10px}
+      .sector-name{font-size:13px;color:#d1d5db;text-transform:capitalize}
+      .sector-bar{height:8px;background:#1f2937;border-radius:4px;overflow:hidden}
+      .sector-fill{height:100%;background:#00e676;border-radius:4px;transition:width .6s ease}
+      .sector-count{font-size:12px;color:#6b7280;text-align:right}
+
+      /* Intel */
+      .hood-intel{max-width:900px;margin:0 auto 24px;padding:0 20px}
+      .hood-intel-text{font-size:15px;line-height:1.7;color:#d1d5db;background:#111;border:1px solid #1f2937;border-radius:10px;padding:20px;margin-bottom:12px}
+      .hood-intel-signals{display:flex;flex-wrap:wrap;gap:8px}
+      .signal-chip{background:#1f2937;border:1px solid #374151;border-radius:20px;padding:4px 12px;font-size:12px;color:#9ca3af}
+
+      /* ZIP grid */
+      .hood-zips{max-width:900px;margin:0 auto 24px;padding:0 20px}
+      .hood-zip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:0}
+      .hood-zip-card{display:flex;align-items:center;justify-content:space-between;background:#111;border:1px solid #1f2937;border-radius:10px;padding:14px 16px;text-decoration:none;transition:border-color .15s,background .15s}
+      .hood-zip-card:hover{border-color:#00e676;background:#0d1f16}
+      .zip-card-code{font-size:15px;font-weight:700;color:#f9fafb}
+      .zip-card-name{font-size:12px;color:#6b7280;margin-left:8px;flex:1}
+      .zip-card-arrow{font-size:12px;color:#00e676;white-space:nowrap}
+
+      /* CTA */
+      .hood-cta{max-width:900px;margin:0 auto 60px;padding:0 20px}
+      .hood-cta{background:#111;border:1px solid #1f2937;border-radius:12px;padding:28px 24px;text-align:center}
+      .hood-cta-text{font-size:16px;color:#d1d5db;margin-bottom:14px}
+      .hood-cta-btn{display:inline-block;background:#00e676;color:#000;padding:10px 24px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none}
+
+      @media(max-width:600px){
+        #hood-map{height:260px}
+        .hood-stats-grid{grid-template-columns:repeat(2,1fr)}
+        .sector-row{grid-template-columns:80px 1fr 40px}
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Inject nav if not present
+    if (!document.querySelector('.hood-nav')) {
+      const nav = document.createElement('nav');
+      nav.className = 'hood-nav';
+      nav.innerHTML = `<a href="/" class="hood-nav-logo">LocalIntel</a><a href="/claim" class="hood-nav-cta">Claim Your Listing</a>`;
+      document.body.insertBefore(nav, document.body.firstChild);
     }
-    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; }
-    a { color: var(--green-light); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+  }
 
-    .nb-nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border); }
-    .nb-nav-brand { font-size: 15px; font-weight: 800; color: var(--text); letter-spacing: -.02em; }
-    .nb-nav-links { display: flex; gap: 20px; font-size: 13px; }
-    .nb-breadcrumb { font-size: 12px; color: var(--text-muted); padding: 12px 24px; border-bottom: 1px solid var(--border); }
-    .nb-breadcrumb a { color: var(--text-muted); }
-    .nb-breadcrumb span { color: var(--text-muted); margin: 0 6px; }
+  // ── Render ───────────────────────────────────────────────────────────────
+  async function render() {
+    injectCSS();
+    // Ensure mount point exists
+    let app = document.getElementById('hood-app');
+    if (!app) {
+      app = document.createElement('div');
+      app.id = 'hood-app';
+      document.body.appendChild(app);
+    }
 
-    .nb-hero { padding: 40px 24px 32px; border-bottom: 1px solid var(--border); max-width: 960px; margin: 0 auto; }
-    .nb-hero-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--green); margin-bottom: 8px; }
-    .nb-hero-title { font-size: 32px; font-weight: 800; letter-spacing: -.03em; margin-bottom: 6px; }
-    .nb-hero-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
-    .nb-hero-meta { display: flex; gap: 16px; flex-wrap: wrap; }
-    .nb-meta-pill { font-size: 11px; font-weight: 600; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; color: var(--text-muted); }
-    .nb-meta-pill strong { color: var(--text); }
+    app.innerHTML = '<div class="hood-loading">Loading neighborhood data…</div>';
 
-    .nb-kpi-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); overflow-x: auto; }
-    .nb-kpi { flex: 1; min-width: 120px; padding: 20px 24px; border-right: 1px solid var(--border); }
-    .nb-kpi:last-child { border-right: none; }
-    .nb-kpi-val { font-size: 22px; font-weight: 800; letter-spacing: -.03em; color: var(--text); }
-    .nb-kpi-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; letter-spacing: .06em; }
-
-    .nb-main { max-width: 960px; margin: 0 auto; padding: 32px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    @media (max-width: 700px) { .nb-main { grid-template-columns: 1fr; } }
-
-    .nb-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-    .nb-panel-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 16px; }
-    .nb-biz-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-    .nb-biz-row:last-child { border-bottom: none; }
-    .nb-biz-name { font-weight: 600; }
-    .nb-biz-cat { font-size: 11px; color: var(--text-muted); }
-    .nb-biz-claimed { font-size: 10px; font-weight: 700; color: var(--green); background: rgba(22,163,74,.1); border-radius: 20px; padding: 2px 8px; }
-
-    .nb-sector-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 13px; }
-    .nb-sector-bar { height: 4px; background: var(--green); border-radius: 2px; min-width: 4px; }
-    .nb-sector-name { flex: 1; }
-    .nb-sector-count { color: var(--text-muted); font-size: 12px; }
-
-    .nb-zip-links { display: flex; flex-wrap: wrap; gap: 8px; }
-    .nb-zip-link { font-size: 12px; font-weight: 600; color: var(--green-light); background: rgba(34,197,94,.07); border: 1px solid rgba(34,197,94,.2); border-radius: 8px; padding: 4px 12px; }
-
-    .nb-cta { background: linear-gradient(135deg, rgba(22,163,74,.12), rgba(34,197,94,.06)); border: 1px solid rgba(34,197,94,.2); border-radius: 12px; padding: 24px; text-align: center; margin: 0 24px 32px; max-width: 960px; margin-left: auto; margin-right: auto; }
-    .nb-cta h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
-    .nb-cta p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
-    .nb-cta-btn { display: inline-block; background: var(--green); color: white; font-size: 13px; font-weight: 700; padding: 10px 24px; border-radius: 8px; }
-    .nb-cta-btn:hover { background: var(--green-light); text-decoration: none; }
-
-    .nb-loading { text-align: center; padding: 80px 24px; color: var(--text-muted); font-size: 14px; }
-    .nb-footer { border-top: 1px solid var(--border); padding: 20px 24px; text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 40px; }
-  `;
-  document.head.appendChild(style);
-  document.title = `${C.name}, ${C.city} — Local Business Intelligence | LocalIntel`;
-
-  // ── Shell ─────────────────────────────────────────────────────────────────
-  document.body.innerHTML = `
-    <nav class="nb-nav">
-      <a href="/" class="nb-nav-brand">LocalIntel</a>
-      <div class="nb-nav-links">
-        <a href="/">Home</a>
-        <a href="/search.html">Search</a>
-        <a href="/claim.html">Claim Listing</a>
-      </div>
-    </nav>
-    <div class="nb-breadcrumb">
-      <a href="/">LocalIntel</a><span>›</span>
-      <a href="/#explore">Florida</a><span>›</span>
-      <a href="/zip/${(C.zips||[])[0] || ''}">${C.city}</a><span>›</span>
-      ${C.name}
-    </div>
-    <div id="nb-content"><div class="nb-loading">Loading ${C.name} market data...</div></div>
-    <div class="nb-footer">© 2026 LocalIntel — Florida Business Intelligence</div>
-  `;
-
-  // ── Fetch + Render ────────────────────────────────────────────────────────
-  async function load() {
     let data;
     try {
-      const r = await fetch(`${RAILWAY}/api/local-intel/neighborhood?slug=${C.slug}`);
-      data = await r.json();
+      const res = await fetch(`${RAILWAY}/api/local-intel/neighborhood-boundary?slug=${encodeURIComponent(slug)}`);
+      if (!res.ok) throw new Error(`${res.status}`);
+      data = await res.json();
     } catch (e) {
-      document.getElementById('nb-content').innerHTML =
-        `<div class="nb-loading">Unable to load market data. <a href="/">← Back to LocalIntel</a></div>`;
+      app.innerHTML = `<div class="hood-error">Could not load neighborhood data. <a href="/">← Back</a></div>`;
       return;
     }
 
-    if (!data.available || data.error) {
-      document.getElementById('nb-content').innerHTML =
-        `<div class="nb-loading">Data not yet available for ${C.name}. <a href="/claim.html">Claim your listing →</a></div>`;
-      return;
-    }
+    const { neighborhood: hood, stats, intel_paragraph, zip_boundaries } = data;
+    const zips = hood.zip_codes || [];
 
-    const hood = data.neighborhood;
-    const bizzes = data.businesses || [];
-    const sectors = data.sectors || [];
-    const maxSector = sectors[0] ? parseInt(sectors[0].count) : 1;
+    // ── Document meta ──────────────────────────────────────────────────────
+    document.title = `${hood.name} — ${hood.city} | LocalIntel`;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.content = intel_paragraph.slice(0, 160);
 
-    // KPI bar
-    const kpis = [
-      { val: hood.business_count || bizzes.length, label: 'Businesses' },
-      { val: bizzes.filter(b => b.claimed).length || '—', label: 'Claimed' },
-      { val: sectors[0] ? sectors[0].category : '—', label: 'Top Sector' },
-      { val: hood.region || '—', label: 'Region' },
-    ];
-
-    // Businesses panel (top 8)
-    const bizRows = bizzes.slice(0, 8).map(b => `
-      <div class="nb-biz-row">
-        <div>
-          <div class="nb-biz-name">${esc(b.name)}</div>
-          <div class="nb-biz-cat">${esc(b.category || '')}</div>
+    // ── Build page HTML ────────────────────────────────────────────────────
+    app.innerHTML = `
+      <div class="hood-header">
+        <div class="hood-breadcrumb">
+          <a href="/">Florida</a>
+          <span class="bc-sep">›</span>
+          <span>${hood.county} County</span>
+          <span class="bc-sep">›</span>
+          <span>${hood.city}</span>
+          <span class="bc-sep">›</span>
+          <span class="bc-current">${hood.name}</span>
         </div>
-        ${b.claimed ? '<span class="nb-biz-claimed">Claimed</span>' : ''}
-      </div>
-    `).join('') || '<div style="color:var(--text-muted);font-size:13px">No businesses indexed yet.</div>';
-
-    // Sector panel
-    const sectorRows = sectors.slice(0, 8).map(s => `
-      <div class="nb-sector-row">
-        <div class="nb-sector-bar" style="width:${Math.max(4, Math.round(parseInt(s.count)/maxSector*80))}px"></div>
-        <span class="nb-sector-name">${esc(s.category)}</span>
-        <span class="nb-sector-count">${s.count}</span>
-      </div>
-    `).join('') || '<div style="color:var(--text-muted);font-size:13px">Sector data loading.</div>';
-
-    // ZIP links
-    const zipLinks = (hood.zip_codes || []).map(z =>
-      `<a href="/zip/${z}" class="nb-zip-link">${z}</a>`
-    ).join('');
-
-    document.getElementById('nb-content').innerHTML = `
-      <div class="nb-hero">
-        <div class="nb-hero-label">${esc(hood.region || hood.county + ' County')} · ${esc(hood.city)}, FL</div>
-        <h1 class="nb-hero-title">${esc(hood.name)}</h1>
-        <div class="nb-hero-sub">${esc(hood.description || '')}</div>
-        <div class="nb-hero-meta">
-          <span class="nb-meta-pill"><strong>${hood.business_count || 0}</strong> businesses tracked</span>
-          <span class="nb-meta-pill">ZIP ${(hood.zip_codes||[]).join(', ')}</span>
-          <span class="nb-meta-pill">${esc(hood.county)} County</span>
+        <h1 class="hood-title">${hood.name}</h1>
+        <div class="hood-meta-row">
+          <span class="hood-badge">${hood.region || hood.city}</span>
+          <span class="hood-badge">${zips.length} ZIP code${zips.length !== 1 ? 's' : ''}</span>
+          ${stats.total_businesses ? `<span class="hood-badge">${fmtNum(stats.total_businesses)} businesses</span>` : ''}
         </div>
       </div>
 
-      <div class="nb-kpi-bar">
-        ${kpis.map(k => `
-          <div class="nb-kpi">
-            <div class="nb-kpi-val">${k.val}</div>
-            <div class="nb-kpi-label">${k.label}</div>
-          </div>
-        `).join('')}
-      </div>
-
-      <div class="nb-main">
-        <div class="nb-panel">
-          <div class="nb-panel-title">Businesses in ${esc(hood.name)}</div>
-          ${bizRows}
-          ${bizzes.length > 8 ? `<div style="font-size:12px;color:var(--text-muted);margin-top:12px">${bizzes.length - 8} more · <a href="/search.html?neighborhood=${C.slug}">Search all →</a></div>` : ''}
-        </div>
-        <div class="nb-panel">
-          <div class="nb-panel-title">Sector Breakdown</div>
-          ${sectorRows}
-        </div>
-        <div class="nb-panel">
-          <div class="nb-panel-title">ZIP Codes in this Neighborhood</div>
-          <div class="nb-zip-links">${zipLinks || '—'}</div>
-        </div>
-        <div class="nb-panel">
-          <div class="nb-panel-title">Region</div>
-          <div style="font-size:14px;color:var(--text-muted)">${esc(hood.region || '—')} · ${esc(hood.city)}, FL</div>
+      <!-- MAP -->
+      <div class="hood-map-wrap">
+        <div id="hood-map"></div>
+        <div class="hood-map-legend">
+          <span class="legend-dot" style="background:#00e676"></span> ZIP boundary
         </div>
       </div>
 
-      <div class="nb-cta">
-        <h3>Is your business in ${esc(hood.name)}?</h3>
-        <p>Claim your listing to receive routed job requests from AI agents and local customers.</p>
-        <a href="/claim.html" class="nb-cta-btn">Claim Your Free Listing →</a>
+      <!-- STATS CARD -->
+      <div class="hood-stats-grid">
+        ${stats.total_population ? `<div class="stat-card"><div class="stat-val">${fmtNum(stats.total_population)}</div><div class="stat-lbl">Residents</div></div>` : ''}
+        ${stats.avg_median_income ? `<div class="stat-card"><div class="stat-val">${fmtDollar(stats.avg_median_income)}</div><div class="stat-lbl">Median Income</div></div>` : ''}
+        ${stats.total_businesses ? `<div class="stat-card"><div class="stat-val">${fmtNum(stats.total_businesses)}</div><div class="stat-lbl">Businesses</div></div>` : ''}
+        ${stats.avg_opp_score !== null ? `<div class="stat-card"><div class="stat-val">${stats.avg_opp_score}<span class="stat-unit">/100</span></div><div class="stat-lbl">Opportunity Score</div></div>` : ''}
+        ${stats.total_restaurants ? `<div class="stat-card"><div class="stat-val">${fmtNum(stats.total_restaurants)}</div><div class="stat-lbl">Restaurants</div></div>` : ''}
+        ${stats.avg_irs_agi ? `<div class="stat-card"><div class="stat-val">${fmtDollar(stats.avg_irs_agi)}</div><div class="stat-lbl">Avg AGI (IRS)</div></div>` : ''}
+      </div>
+
+      <!-- TOP SECTORS -->
+      ${stats.top_sectors && stats.top_sectors.length ? `
+      <div class="hood-sectors">
+        <div class="hood-section-label">Top Sectors</div>
+        <div class="sector-bar-wrap">
+          ${stats.top_sectors.map((s, i) => {
+            const pct = Math.round(s.count / stats.total_businesses * 100) || 0;
+            return `<div class="sector-row">
+              <span class="sector-name">${cap(s.name)}</span>
+              <div class="sector-bar"><div class="sector-fill" style="width:${Math.min(pct * 2, 100)}%;opacity:${1 - i * 0.15}"></div></div>
+              <span class="sector-count">${fmtNum(s.count)}</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>` : ''}
+
+      <!-- INTELLIGENCE PARAGRAPH -->
+      <div class="hood-intel">
+        <div class="hood-section-label">Market Intelligence</div>
+        <p class="hood-intel-text">${intel_paragraph}</p>
+        <div class="hood-intel-signals">
+          ${stats.saturation ? `<span class="signal-chip">${cap(stats.saturation)} market</span>` : ''}
+          ${stats.growth_state ? `<span class="signal-chip">${cap(stats.growth_state)} growth</span>` : ''}
+          ${stats.consumer_profile ? `<span class="signal-chip">${cap(stats.consumer_profile)} consumers</span>` : ''}
+        </div>
+      </div>
+
+      <!-- ZIP CARDS -->
+      <div class="hood-zips">
+        <div class="hood-section-label">ZIP Codes in ${hood.name}</div>
+        <div class="hood-zip-grid" id="hood-zip-grid">
+          ${zips.map(z => `
+            <a href="/zip/${z}" class="zip-card hood-zip-card" data-zip="${z}">
+              <span class="zip-card-code">${z}</span>
+              <span class="zip-card-name" id="zipname-${z}">${z}</span>
+              <span class="zip-card-arrow">View market →</span>
+            </a>`).join('')}
+        </div>
+      </div>
+
+      <!-- CLAIM CTA -->
+      <div class="hood-cta">
+        <div class="hood-cta-text">Is your business in ${hood.name}?</div>
+        <a href="/claim" class="hood-cta-btn">Claim Your Listing →</a>
       </div>
     `;
+
+    // Enrich ZIP card names from zip_boundaries data
+    for (const zb of zip_boundaries) {
+      const el = document.getElementById(`zipname-${zb.zip}`);
+      if (el && zb.city_name) el.textContent = zb.city_name;
+    }
+
+    // ── Render Leaflet map ─────────────────────────────────────────────────
+    loadLeaflet(() => initMap(zip_boundaries, hood));
   }
 
-  function esc(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  function initMap(zipBoundaries, hood) {
+    if (!zipBoundaries.length) return;
+
+    // Compute bounds from all polygons
+    let allLats = [], allLons = [];
+    for (const zb of zipBoundaries) {
+      if (!zb.boundary_geojson) continue;
+      const coords = zb.boundary_geojson.type === 'Polygon'
+        ? zb.boundary_geojson.coordinates[0]
+        : zb.boundary_geojson.coordinates.flat(2);
+      for (const [lon, lat] of coords) {
+        allLats.push(lat); allLons.push(lon);
+      }
+    }
+
+    const map = L.map('hood-map', { zoomControl: true, scrollWheelZoom: false });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap contributors © CARTO',
+      subdomains: 'abcd',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Draw each ZIP polygon
+    const layers = [];
+    for (const zb of zipBoundaries) {
+      if (!zb.boundary_geojson) continue;
+      const layer = L.geoJSON(zb.boundary_geojson, {
+        style: {
+          color:       '#00e676',
+          weight:      2,
+          opacity:     0.9,
+          fillColor:   '#00e676',
+          fillOpacity: 0.08,
+        },
+      }).addTo(map);
+
+      layer.on('mouseover', function(e) {
+        e.target.setStyle({ fillOpacity: 0.22, weight: 3 });
+      });
+      layer.on('mouseout', function(e) {
+        e.target.setStyle({ fillOpacity: 0.08, weight: 2 });
+      });
+      layer.on('click', function() {
+        window.location.href = `/zip/${zb.zip}`;
+      });
+
+      // ZIP label
+      if (zb.lat && zb.lon) {
+        L.marker([zb.lat, zb.lon], {
+          icon: L.divIcon({
+            className: '',
+            html: `<div class="map-zip-label">${zb.zip}</div>`,
+            iconSize: [48, 20],
+            iconAnchor: [24, 10],
+          }),
+        }).addTo(map);
+      }
+
+      layers.push(layer);
+    }
+
+    // Fit map to all polygons
+    if (allLats.length) {
+      map.fitBounds([
+        [Math.min(...allLats), Math.min(...allLons)],
+        [Math.max(...allLats), Math.max(...allLons)],
+      ], { padding: [24, 24] });
+    }
   }
 
-  load();
+  // ── Boot ─────────────────────────────────────────────────────────────────
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', render);
+  } else {
+    render();
+  }
 })();

@@ -403,21 +403,81 @@
     const el = document.getElementById('zip-map');
     el.innerHTML = '';
     _map = window.L.map('zip-map', {zoomControl:true, scrollWheelZoom:false});
-    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(_map);
+
+    // Dark CartoDB tiles — matches site theme
+    window.L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap contributors © CARTO',
+      subdomains: 'abcd', maxZoom: 19
+    }).addTo(_map);
+
     _map.setView([LAT, LON], 13);
+
+    // Fetch boundary data — ZIP polygon + sibling context + business dots
     try {
-      const data = await fetch(`${RAILWAY}/api/local-intel/pins?zip=${ZIP}`).then(r => r.json());
-      const pins = data.pins || [];
-      let claimed = 0;
-      pins.forEach(p => {
-        const color = p.claimed ? '#16a34a' : '#6b7280';
-        window.L.circleMarker([p.lat, p.lon], {radius: p.claimed?7:5, fillColor:color, color:'#fff', weight:1.5, fillOpacity:0.85})
-          .addTo(_map)
-          .bindTooltip(`<strong>${esc(p.name)}</strong><br><span style="color:#6b7280;font-size:11px">${esc(p.category||p.group||'')}</span>`, {direction:'top', offset:[0,-6]});
-        if (p.claimed) claimed++;
+      const bdata = await fetch(`${RAILWAY}/api/local-intel/zip-boundary?zip=${ZIP}`).then(r => r.json());
+
+      // 1. Draw sibling ZIP boundaries (faint context ring — neighbourhood outline)
+      const siblings = bdata.sibling_boundaries || [];
+      siblings.forEach(sb => {
+        if (!sb.boundary_geojson) return;
+        window.L.geoJSON(sb.boundary_geojson, {
+          style: { color:'#4a5568', weight:1, opacity:0.5, fillColor:'#4a5568', fillOpacity:0.03 }
+        }).addTo(_map);
       });
-      document.getElementById('map-sub').textContent = `${pins.length} businesses mapped — ${claimed} claimed (green), ${pins.length - claimed} unclaimed (grey)`;
-    } catch { document.getElementById('map-sub').textContent = 'Business pins unavailable.'; }
+
+      // 2. Draw primary ZIP boundary (bright outline)
+      if (bdata.zip_intelligence && bdata.zip_intelligence.boundary_geojson) {
+        const primary = window.L.geoJSON(bdata.zip_intelligence.boundary_geojson, {
+          style: { color:'#00e676', weight:2.5, opacity:1, fillColor:'#00e676', fillOpacity:0.07 }
+        }).addTo(_map);
+        // Fit map to this ZIP's polygon
+        _map.fitBounds(primary.getBounds(), {padding:[20,20]});
+      }
+
+      // 3. Business dots
+      const businesses = bdata.businesses || [];
+      let bizCount = 0;
+      businesses.forEach(b => {
+        if (!b.lat || !b.lon) return;
+        const claimed = !!b.website;
+        const color = claimed ? '#00e676' : '#6b7280';
+        window.L.circleMarker([parseFloat(b.lat), parseFloat(b.lon)], {
+          radius: claimed ? 6 : 4,
+          fillColor: color, color:'#111', weight:1, fillOpacity:0.85
+        }).addTo(_map)
+          .bindTooltip(
+            `<strong>${esc(b.name)}</strong><br><span style="color:#9ca3af;font-size:11px">${esc(b.category||'')}</span>`,
+            {direction:'top', offset:[0,-6]}
+          );
+        bizCount++;
+      });
+
+      // Neighbourhood context chips below map
+      const hoods = bdata.neighborhoods || [];
+      if (hoods.length) {
+        const hoodLinks = hoods.map(h =>
+          `<a href="/neighborhood/${h.slug}" style="color:#00e676;text-decoration:none">← ${h.name} (${h.region})</a>`
+        ).join(' &nbsp;·&nbsp; ');
+        document.getElementById('map-sub').innerHTML =
+          `${bizCount} businesses mapped · Part of: ${hoodLinks}`;
+      } else {
+        document.getElementById('map-sub').textContent = `${bizCount} businesses mapped`;
+      }
+
+    } catch(err) {
+      // Fallback: just show pins from old endpoint
+      try {
+        const data = await fetch(`${RAILWAY}/api/local-intel/pins?zip=${ZIP}`).then(r => r.json());
+        const pins = data.pins || [];
+        pins.forEach(p => {
+          const color = p.claimed ? '#00e676' : '#6b7280';
+          window.L.circleMarker([p.lat, p.lon], {radius:p.claimed?6:4, fillColor:color, color:'#111', weight:1, fillOpacity:0.85})
+            .addTo(_map)
+            .bindTooltip(`<strong>${esc(p.name)}</strong>`, {direction:'top'});
+        });
+        document.getElementById('map-sub').textContent = `${pins.length} businesses mapped`;
+      } catch { document.getElementById('map-sub').textContent = 'Map data unavailable.'; }
+    }
   }
 
   // ── Search ──────────────────────────────────────────────────────────────────

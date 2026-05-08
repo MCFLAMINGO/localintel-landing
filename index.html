@@ -980,6 +980,106 @@
       </div>
     </section>
 
+    <!-- EXPLORE MARKETS -->
+    <section class="section" id="explore" style="background: var(--bg); border-top: 1px solid var(--border);">
+      <div class="container">
+        <div class="section-label">Explore Markets</div>
+        <h2 class="section-heading">41 ZIP codes. One intelligence layer.</h2>
+        <p class="section-sub">Select any market to see live business data, sector gaps, permits, and income signals.</p>
+
+        <style>
+          .explore-counties { display: flex; flex-direction: column; gap: 32px; margin-top: 32px; }
+          .explore-county-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 12px; }
+          .explore-zip-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+          .zip-card { display: flex; flex-direction: column; gap: 4px; padding: 14px 18px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; color: var(--text); transition: border-color .15s, box-shadow .15s, transform .1s; min-width: 160px; }
+          .zip-card:hover { border-color: #22c55e; box-shadow: 0 2px 12px rgba(34,197,94,.12); transform: translateY(-1px); }
+          .zip-card-code { font-size: 13px; font-weight: 800; color: #16a34a; }
+          .zip-card-name { font-size: 14px; font-weight: 600; }
+          .zip-card-arrow { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        </style>
+
+        <div class="explore-counties">
+          <div>
+            <div class="explore-county-name">St. Johns County</div>
+            <div class="explore-zip-grid">
+              <a href="/zip/32081" class="zip-card"><span class="zip-card-code">32081</span><span class="zip-card-name">Nocatee</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32082" class="zip-card"><span class="zip-card-code">32082</span><span class="zip-card-name">Ponte Vedra Beach</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32092" class="zip-card"><span class="zip-card-code">32092</span><span class="zip-card-name">World Golf Village</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32084" class="zip-card"><span class="zip-card-code">32084</span><span class="zip-card-name">St. Augustine</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32086" class="zip-card"><span class="zip-card-code">32086</span><span class="zip-card-name">St. Augustine South</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32095" class="zip-card"><span class="zip-card-code">32095</span><span class="zip-card-name">Palm Valley</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32080" class="zip-card"><span class="zip-card-code">32080</span><span class="zip-card-name">St. Augustine Beach</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32259" class="zip-card"><span class="zip-card-code">32259</span><span class="zip-card-name">Fruit Cove</span><span class="zip-card-arrow">View market →</span></a>
+            </div>
+          </div>
+          <div>
+            <div class="explore-county-name">Duval County</div>
+            <div class="explore-zip-grid">
+              <a href="/zip/32250" class="zip-card"><span class="zip-card-code">32250</span><span class="zip-card-name">Jacksonville Beach</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32266" class="zip-card"><span class="zip-card-code">32266</span><span class="zip-card-name">Neptune Beach</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32233" class="zip-card"><span class="zip-card-code">32233</span><span class="zip-card-name">Atlantic Beach</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32258" class="zip-card"><span class="zip-card-code">32258</span><span class="zip-card-name">Bartram Park</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32256" class="zip-card"><span class="zip-card-code">32256</span><span class="zip-card-name">Baymeadows</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32257" class="zip-card"><span class="zip-card-code">32257</span><span class="zip-card-name">Mandarin South</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32223" class="zip-card"><span class="zip-card-code">32223</span><span class="zip-card-name">Mandarin</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32224" class="zip-card"><span class="zip-card-code">32224</span><span class="zip-card-name">Intracoastal</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32225" class="zip-card"><span class="zip-card-code">32225</span><span class="zip-card-name">Arlington</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32246" class="zip-card"><span class="zip-card-code">32246</span><span class="zip-card-name">Regency</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32226" class="zip-card"><span class="zip-card-code">32226</span><span class="zip-card-name">North Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32211" class="zip-card"><span class="zip-card-code">32211</span><span class="zip-card-name">Jacksonville East</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32216" class="zip-card"><span class="zip-card-code">32216</span><span class="zip-card-name">Southside Blvd</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32217" class="zip-card"><span class="zip-card-code">32217</span><span class="zip-card-name">San Jose</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32207" class="zip-card"><span class="zip-card-code">32207</span><span class="zip-card-name">Southbank</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32205" class="zip-card"><span class="zip-card-code">32205</span><span class="zip-card-name">Avondale / Riverside</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32210" class="zip-card"><span class="zip-card-code">32210</span><span class="zip-card-name">Wesconnett</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32218" class="zip-card"><span class="zip-card-code">32218</span><span class="zip-card-name">NW Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32244" class="zip-card"><span class="zip-card-code">32244</span><span class="zip-card-name">Westside</span><span class="zip-card-arrow">View market →</span></a>
+            </div>
+          </div>
+          <div>
+            <div class="explore-county-name">Clay County</div>
+            <div class="explore-zip-grid">
+              <a href="/zip/32003" class="zip-card"><span class="zip-card-code">32003</span><span class="zip-card-name">Fleming Island</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32065" class="zip-card"><span class="zip-card-code">32065</span><span class="zip-card-name">Orange Park / Oakleaf</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32073" class="zip-card"><span class="zip-card-code">32073</span><span class="zip-card-name">Orange Park</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32043" class="zip-card"><span class="zip-card-code">32043</span><span class="zip-card-name">Green Cove Springs</span><span class="zip-card-arrow">View market →</span></a>
+            </div>
+          </div>
+          <div>
+            <div class="explore-county-name">Nassau County</div>
+            <div class="explore-zip-grid">
+              <a href="/zip/32034" class="zip-card"><span class="zip-card-code">32034</span><span class="zip-card-name">Fernandina Beach</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32097" class="zip-card"><span class="zip-card-code">32097</span><span class="zip-card-name">Yulee</span><span class="zip-card-arrow">View market →</span></a>
+            </div>
+          </div>
+          <div>
+            <div class="explore-county-name">Volusia County</div>
+            <div class="explore-zip-grid">
+              <a href="/zip/32168" class="zip-card"><span class="zip-card-code">32168</span><span class="zip-card-name">New Smyrna Beach</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32174" class="zip-card"><span class="zip-card-code">32174</span><span class="zip-card-name">Ormond Beach</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32117" class="zip-card"><span class="zip-card-code">32117</span><span class="zip-card-name">Daytona Beach North</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32118" class="zip-card"><span class="zip-card-code">32118</span><span class="zip-card-name">Daytona Beach</span><span class="zip-card-arrow">View market →</span></a>
+            </div>
+          </div>
+          <div>
+            <div class="explore-county-name">Flagler County</div>
+            <div class="explore-zip-grid">
+              <a href="/zip/32136" class="zip-card"><span class="zip-card-code">32136</span><span class="zip-card-name">Flagler Beach</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32137" class="zip-card"><span class="zip-card-code">32137</span><span class="zip-card-name">Palm Coast</span><span class="zip-card-arrow">View market →</span></a>
+            </div>
+          </div>
+          <div>
+            <div class="explore-county-name">Putnam &amp; Alachua Counties</div>
+            <div class="explore-zip-grid">
+              <a href="/zip/32177" class="zip-card"><span class="zip-card-code">32177</span><span class="zip-card-name">Palatka</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32608" class="zip-card"><span class="zip-card-code">32608</span><span class="zip-card-name">Gainesville West</span><span class="zip-card-arrow">View market →</span></a>
+              <a href="/zip/32601" class="zip-card"><span class="zip-card-code">32601</span><span class="zip-card-name">Gainesville</span><span class="zip-card-arrow">View market →</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- PRICING -->
     <section class="section" id="pricing" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
       <div class="container">

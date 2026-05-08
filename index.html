@@ -999,6 +999,18 @@
           .county-acc-count { font-size: 11px; font-weight: 600; color: #16a34a; background: rgba(22,163,74,.1); border-radius: 20px; padding: 2px 8px; }
           .county-acc-chevron { font-size: 12px; color: var(--text-muted); transition: transform .2s; }
           .county-accordion[open] .county-acc-chevron { transform: rotate(180deg); }
+          .county-regions { padding: 8px 0; }
+          .region-accordion { border-top: 1px solid var(--border); }
+          .region-accordion summary { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; cursor: pointer; user-select: none; list-style: none; }
+          .region-accordion summary::-webkit-details-marker { display: none; }
+          .region-accordion summary:hover { background: rgba(255,255,255,.02); }
+          .region-accordion[open] summary { border-bottom: 1px solid var(--border); }
+          .region-acc-left { display: flex; align-items: center; gap: 10px; }
+          .region-acc-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text); }
+          .region-body { padding: 12px 20px 16px; }
+          .hood-links { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+          .hood-link { font-size: 11px; font-weight: 700; color: #16a34a; background: rgba(22,163,74,.08); border: 1px solid rgba(22,163,74,.2); border-radius: 20px; padding: 3px 10px; text-decoration: none; transition: background .15s; }
+          .hood-link:hover { background: rgba(22,163,74,.18); }
           .explore-zip-grid { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 20px; }
           .zip-card { display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; color: var(--text); transition: border-color .15s, box-shadow .15s, transform .1s; min-width: 150px; }
           .zip-card:hover { border-color: #22c55e; box-shadow: 0 2px 12px rgba(34,197,94,.12); transform: translateY(-1px); }
@@ -1491,66 +1503,208 @@
             </div>
           </details>
 
+                    <!-- Duval County — County → Region → Neighborhood links + ZIPs -->
           <details class="county-accordion">
             <summary>
               <span class="county-acc-left">
                 <span class="county-acc-name">Duval County</span>
-                <span class="county-acc-count">51 markets</span>
+                <span class="county-acc-count">Jacksonville · 51 markets</span>
               </span>
               <span class="county-acc-chevron">▾</span>
             </summary>
-            <div class="explore-zip-grid">
-              <a href="/zip/32099" class="zip-card"><span class="zip-card-code">32099</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32201" class="zip-card"><span class="zip-card-code">32201</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32202" class="zip-card"><span class="zip-card-code">32202</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32203" class="zip-card"><span class="zip-card-code">32203</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32204" class="zip-card"><span class="zip-card-code">32204</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32205" class="zip-card"><span class="zip-card-code">32205</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32206" class="zip-card"><span class="zip-card-code">32206</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32207" class="zip-card"><span class="zip-card-code">32207</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32208" class="zip-card"><span class="zip-card-code">32208</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32209" class="zip-card"><span class="zip-card-code">32209</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32210" class="zip-card"><span class="zip-card-code">32210</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32211" class="zip-card"><span class="zip-card-code">32211</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32212" class="zip-card"><span class="zip-card-code">32212</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32214" class="zip-card"><span class="zip-card-code">32214</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32216" class="zip-card"><span class="zip-card-code">32216</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32217" class="zip-card"><span class="zip-card-code">32217</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32218" class="zip-card"><span class="zip-card-code">32218</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32219" class="zip-card"><span class="zip-card-code">32219</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32220" class="zip-card"><span class="zip-card-code">32220</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32221" class="zip-card"><span class="zip-card-code">32221</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32222" class="zip-card"><span class="zip-card-code">32222</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32223" class="zip-card"><span class="zip-card-code">32223</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32224" class="zip-card"><span class="zip-card-code">32224</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32225" class="zip-card"><span class="zip-card-code">32225</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32226" class="zip-card"><span class="zip-card-code">32226</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32227" class="zip-card"><span class="zip-card-code">32227</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32228" class="zip-card"><span class="zip-card-code">32228</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32229" class="zip-card"><span class="zip-card-code">32229</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32231" class="zip-card"><span class="zip-card-code">32231</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32232" class="zip-card"><span class="zip-card-code">32232</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32233" class="zip-card"><span class="zip-card-code">32233</span><span class="zip-card-name">Atlantic Beach</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32234" class="zip-card"><span class="zip-card-code">32234</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32235" class="zip-card"><span class="zip-card-code">32235</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32236" class="zip-card"><span class="zip-card-code">32236</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32237" class="zip-card"><span class="zip-card-code">32237</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32238" class="zip-card"><span class="zip-card-code">32238</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32239" class="zip-card"><span class="zip-card-code">32239</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32240" class="zip-card"><span class="zip-card-code">32240</span><span class="zip-card-name">Jacksonville Beach</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32241" class="zip-card"><span class="zip-card-code">32241</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32244" class="zip-card"><span class="zip-card-code">32244</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32245" class="zip-card"><span class="zip-card-code">32245</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32246" class="zip-card"><span class="zip-card-code">32246</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32247" class="zip-card"><span class="zip-card-code">32247</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32250" class="zip-card"><span class="zip-card-code">32250</span><span class="zip-card-name">Jacksonville Beach</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32254" class="zip-card"><span class="zip-card-code">32254</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32255" class="zip-card"><span class="zip-card-code">32255</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32256" class="zip-card"><span class="zip-card-code">32256</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32257" class="zip-card"><span class="zip-card-code">32257</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32258" class="zip-card"><span class="zip-card-code">32258</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32266" class="zip-card"><span class="zip-card-code">32266</span><span class="zip-card-name">Neptune Beach</span><span class="zip-card-arrow">View market →</span></a>
-              <a href="/zip/32277" class="zip-card"><span class="zip-card-code">32277</span><span class="zip-card-name">Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
+            <div class="county-regions">
+              <details class="region-accordion">
+                <summary>
+                  <span class="region-acc-left">
+                    <span class="region-acc-name">Downtown</span>
+                    <span class="county-acc-count">6 ZIPs</span>
+                  </span>
+                  <span class="county-acc-chevron">▾</span>
+                </summary>
+                <div class="region-body">
+                  <div class="hood-links">
+                    <a href="/neighborhood/brooklyn-jacksonville" class="hood-link">Brooklyn</a>
+                    <a href="/neighborhood/downtown-jacksonville-jacksonville" class="hood-link">Downtown Jacksonville</a>
+                    <a href="/neighborhood/lavilla-jacksonville" class="hood-link">LaVilla</a>
+                    <a href="/neighborhood/southbank-jacksonville" class="hood-link">Southbank</a>
+                  </div>
+                  <div class="explore-zip-grid">
+                    <a href="/zip/32099" class="zip-card"><span class="zip-card-code">32099</span><span class="zip-card-name">Downtown Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32201" class="zip-card"><span class="zip-card-code">32201</span><span class="zip-card-name">Downtown Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32202" class="zip-card"><span class="zip-card-code">32202</span><span class="zip-card-name">Downtown Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32203" class="zip-card"><span class="zip-card-code">32203</span><span class="zip-card-name">Downtown Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32204" class="zip-card"><span class="zip-card-code">32204</span><span class="zip-card-name">Brooklyn</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32206" class="zip-card"><span class="zip-card-code">32206</span><span class="zip-card-name">Springfield</span><span class="zip-card-arrow">View market →</span></a>
+                  </div>
+                </div>
+              </details>
+              <details class="region-accordion">
+                <summary>
+                  <span class="region-acc-left">
+                    <span class="region-acc-name">Historic Core</span>
+                    <span class="county-acc-count">5 ZIPs</span>
+                  </span>
+                  <span class="county-acc-chevron">▾</span>
+                </summary>
+                <div class="region-body">
+                  <div class="hood-links">
+                    <a href="/neighborhood/avondale-jacksonville" class="hood-link">Avondale</a>
+                    <a href="/neighborhood/ortega-jacksonville" class="hood-link">Ortega</a>
+                    <a href="/neighborhood/riverside-jacksonville" class="hood-link">Riverside</a>
+                    <a href="/neighborhood/san-marco-jacksonville" class="hood-link">San Marco</a>
+                    <a href="/neighborhood/springfield-jacksonville" class="hood-link">Springfield</a>
+                  </div>
+                  <div class="explore-zip-grid">
+                    <a href="/zip/32205" class="zip-card"><span class="zip-card-code">32205</span><span class="zip-card-name">Riverside / Avondale</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32207" class="zip-card"><span class="zip-card-code">32207</span><span class="zip-card-name">San Marco / Southbank</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32210" class="zip-card"><span class="zip-card-code">32210</span><span class="zip-card-name">Ortega / Murray Hill</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32212" class="zip-card"><span class="zip-card-code">32212</span><span class="zip-card-name">Ortega</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32214" class="zip-card"><span class="zip-card-code">32214</span><span class="zip-card-name">Ortega</span><span class="zip-card-arrow">View market →</span></a>
+                  </div>
+                </div>
+              </details>
+              <details class="region-accordion">
+                <summary>
+                  <span class="region-acc-left">
+                    <span class="region-acc-name">Southside</span>
+                    <span class="county-acc-count">12 ZIPs</span>
+                  </span>
+                  <span class="county-acc-chevron">▾</span>
+                </summary>
+                <div class="region-body">
+                  <div class="hood-links">
+                    <a href="/neighborhood/bartram-park-jacksonville" class="hood-link">Bartram Park</a>
+                    <a href="/neighborhood/baymeadows-jacksonville" class="hood-link">Baymeadows</a>
+                    <a href="/neighborhood/deerwood-jacksonville" class="hood-link">Deerwood</a>
+                    <a href="/neighborhood/hodges-blvd-jacksonville" class="hood-link">Hodges Blvd</a>
+                    <a href="/neighborhood/intracoastal-west-jacksonville" class="hood-link">Intracoastal West</a>
+                    <a href="/neighborhood/kernan-jacksonville" class="hood-link">Kernan</a>
+                    <a href="/neighborhood/mandarin-jacksonville" class="hood-link">Mandarin</a>
+                    <a href="/neighborhood/nocatee-jacksonville" class="hood-link">Nocatee</a>
+                    <a href="/neighborhood/san-jose-jacksonville" class="hood-link">San Jose</a>
+                    <a href="/neighborhood/etown-jacksonville" class="hood-link">eTown</a>
+                  </div>
+                  <div class="explore-zip-grid">
+                    <a href="/zip/32216" class="zip-card"><span class="zip-card-code">32216</span><span class="zip-card-name">Southside Blvd</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32217" class="zip-card"><span class="zip-card-code">32217</span><span class="zip-card-name">San Jose</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32223" class="zip-card"><span class="zip-card-code">32223</span><span class="zip-card-name">Mandarin</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32224" class="zip-card"><span class="zip-card-code">32224</span><span class="zip-card-name">Intracoastal West</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32235" class="zip-card"><span class="zip-card-code">32235</span><span class="zip-card-name">Southside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32239" class="zip-card"><span class="zip-card-code">32239</span><span class="zip-card-name">Southside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32241" class="zip-card"><span class="zip-card-code">32241</span><span class="zip-card-name">Southside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32247" class="zip-card"><span class="zip-card-code">32247</span><span class="zip-card-name">Southside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32255" class="zip-card"><span class="zip-card-code">32255</span><span class="zip-card-name">Southside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32256" class="zip-card"><span class="zip-card-code">32256</span><span class="zip-card-name">Baymeadows</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32257" class="zip-card"><span class="zip-card-code">32257</span><span class="zip-card-name">Mandarin South</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32258" class="zip-card"><span class="zip-card-code">32258</span><span class="zip-card-name">Bartram Park</span><span class="zip-card-arrow">View market →</span></a>
+                  </div>
+                </div>
+              </details>
+              <details class="region-accordion">
+                <summary>
+                  <span class="region-acc-left">
+                    <span class="region-acc-name">Arlington</span>
+                    <span class="county-acc-count">8 ZIPs</span>
+                  </span>
+                  <span class="county-acc-chevron">▾</span>
+                </summary>
+                <div class="region-body">
+                  <div class="hood-links">
+                    <a href="/neighborhood/arlington-jacksonville" class="hood-link">Arlington</a>
+                    <a href="/neighborhood/fort-caroline-jacksonville" class="hood-link">Fort Caroline</a>
+                    <a href="/neighborhood/regency-jacksonville" class="hood-link">Regency</a>
+                    <a href="/neighborhood/sandalwood-jacksonville" class="hood-link">Sandalwood</a>
+                  </div>
+                  <div class="explore-zip-grid">
+                    <a href="/zip/32211" class="zip-card"><span class="zip-card-code">32211</span><span class="zip-card-name">Arlington</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32219" class="zip-card"><span class="zip-card-code">32219</span><span class="zip-card-name">Arlington West</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32220" class="zip-card"><span class="zip-card-code">32220</span><span class="zip-card-name">Baldwin / Westside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32221" class="zip-card"><span class="zip-card-code">32221</span><span class="zip-card-name">Westside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32225" class="zip-card"><span class="zip-card-code">32225</span><span class="zip-card-name">Fort Caroline / Arlington</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32231" class="zip-card"><span class="zip-card-code">32231</span><span class="zip-card-name">Arlington</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32232" class="zip-card"><span class="zip-card-code">32232</span><span class="zip-card-name">Arlington</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32246" class="zip-card"><span class="zip-card-code">32246</span><span class="zip-card-name">Regency / Southside Blvd</span><span class="zip-card-arrow">View market →</span></a>
+                  </div>
+                </div>
+              </details>
+              <details class="region-accordion">
+                <summary>
+                  <span class="region-acc-left">
+                    <span class="region-acc-name">Northside</span>
+                    <span class="county-acc-count">7 ZIPs</span>
+                  </span>
+                  <span class="county-acc-chevron">▾</span>
+                </summary>
+                <div class="region-body">
+                  <div class="hood-links">
+                    <a href="/neighborhood/new-berlin-jacksonville" class="hood-link">New Berlin</a>
+                    <a href="/neighborhood/northside-jacksonville" class="hood-link">Northside</a>
+                    <a href="/neighborhood/oceanway-jacksonville" class="hood-link">Oceanway</a>
+                  </div>
+                  <div class="explore-zip-grid">
+                    <a href="/zip/32208" class="zip-card"><span class="zip-card-code">32208</span><span class="zip-card-name">Northside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32209" class="zip-card"><span class="zip-card-code">32209</span><span class="zip-card-name">Northside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32218" class="zip-card"><span class="zip-card-code">32218</span><span class="zip-card-name">Oceanway / NW Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32226" class="zip-card"><span class="zip-card-code">32226</span><span class="zip-card-name">North Jacksonville</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32229" class="zip-card"><span class="zip-card-code">32229</span><span class="zip-card-name">Northside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32254" class="zip-card"><span class="zip-card-code">32254</span><span class="zip-card-name">Northside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32277" class="zip-card"><span class="zip-card-code">32277</span><span class="zip-card-name">Northside / Arlington</span><span class="zip-card-arrow">View market →</span></a>
+                  </div>
+                </div>
+              </details>
+              <details class="region-accordion">
+                <summary>
+                  <span class="region-acc-left">
+                    <span class="region-acc-name">Westside</span>
+                    <span class="county-acc-count">7 ZIPs</span>
+                  </span>
+                  <span class="county-acc-chevron">▾</span>
+                </summary>
+                <div class="region-body">
+                  <div class="hood-links">
+                    <a href="/neighborhood/argyle-forest-jacksonville" class="hood-link">Argyle Forest</a>
+                    <a href="/neighborhood/cedar-hills-jacksonville" class="hood-link">Cedar Hills</a>
+                    <a href="/neighborhood/lake-shore-jacksonville" class="hood-link">Lake Shore</a>
+                    <a href="/neighborhood/murray-hill-jacksonville" class="hood-link">Murray Hill</a>
+                    <a href="/neighborhood/oakleaf-plantation-jacksonville" class="hood-link">Oakleaf Plantation</a>
+                    <a href="/neighborhood/westside-jacksonville" class="hood-link">Westside</a>
+                  </div>
+                  <div class="explore-zip-grid">
+                    <a href="/zip/32222" class="zip-card"><span class="zip-card-code">32222</span><span class="zip-card-name">Argyle Forest</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32234" class="zip-card"><span class="zip-card-code">32234</span><span class="zip-card-name">Baldwin</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32236" class="zip-card"><span class="zip-card-code">32236</span><span class="zip-card-name">Westside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32237" class="zip-card"><span class="zip-card-code">32237</span><span class="zip-card-name">Westside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32238" class="zip-card"><span class="zip-card-code">32238</span><span class="zip-card-name">Westside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32244" class="zip-card"><span class="zip-card-code">32244</span><span class="zip-card-name">Westside</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32245" class="zip-card"><span class="zip-card-code">32245</span><span class="zip-card-name">Westside</span><span class="zip-card-arrow">View market →</span></a>
+                  </div>
+                </div>
+              </details>
+              <details class="region-accordion">
+                <summary>
+                  <span class="region-acc-left">
+                    <span class="region-acc-name">Beaches</span>
+                    <span class="county-acc-count">6 ZIPs</span>
+                  </span>
+                  <span class="county-acc-chevron">▾</span>
+                </summary>
+                <div class="region-body">
+                  <div class="hood-links">
+                    <a href="/neighborhood/atlantic-beach-jacksonville" class="hood-link">Atlantic Beach</a>
+                    <a href="/neighborhood/jacksonville-beach-jacksonville" class="hood-link">Jacksonville Beach</a>
+                    <a href="/neighborhood/mayport-jacksonville" class="hood-link">Mayport</a>
+                    <a href="/neighborhood/neptune-beach-jacksonville" class="hood-link">Neptune Beach</a>
+                  </div>
+                  <div class="explore-zip-grid">
+                    <a href="/zip/32227" class="zip-card"><span class="zip-card-code">32227</span><span class="zip-card-name">Jacksonville Beach South</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32228" class="zip-card"><span class="zip-card-code">32228</span><span class="zip-card-name">Mayport / NAS Jax</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32233" class="zip-card"><span class="zip-card-code">32233</span><span class="zip-card-name">Atlantic Beach</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32240" class="zip-card"><span class="zip-card-code">32240</span><span class="zip-card-name">Jacksonville Beach</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32250" class="zip-card"><span class="zip-card-code">32250</span><span class="zip-card-name">Jacksonville Beach</span><span class="zip-card-arrow">View market →</span></a>
+                    <a href="/zip/32266" class="zip-card"><span class="zip-card-code">32266</span><span class="zip-card-name">Neptune Beach</span><span class="zip-card-arrow">View market →</span></a>
+                  </div>
+                </div>
+              </details>
             </div>
           </details>
 

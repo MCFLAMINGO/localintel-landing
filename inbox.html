@@ -827,6 +827,38 @@
       .section-divider { margin: 0 16px; }
       .job-won-banner { margin: 0 16px 16px; }
     }
+    /* Industry tabs */
+    .ov-ind-tab { font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:all .15s; }
+    .ov-ind-tab:hover { color:var(--text); }
+    .ov-ind-tab.active { background:var(--accent);color:#fff;border-color:var(--accent); }
+    /* Settlement tiers */
+    .ov-tier-row { display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:border-color .15s; }
+    .ov-tier-row:has(input:checked) { border-color:var(--accent);background:rgba(99,102,241,.06); }
+    .ov-tier-row input[type=radio] { margin-top:3px;accent-color:var(--accent);flex-shrink:0; }
+    .ov-tier-body { flex:1; }
+    .ov-tier-title { font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap; }
+    .ov-tier-desc { font-size:12px;color:var(--text-2);line-height:1.5; }
+    .ov-tier-link { font-size:12px;color:var(--accent);text-decoration:none;margin-top:5px;display:inline-block; }
+    .ov-tier-badge { font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700; }
+    .ov-tier-best { background:rgba(22,163,74,.15);color:#16a34a; }
+    .ov-tier-good { background:rgba(99,102,241,.15);color:var(--accent); }
+    .ov-tier-neutral { background:rgba(107,114,128,.15);color:#6b7280; }
+    /* Confirmed job cards */
+    .cj-card { border:1px solid rgba(22,163,74,.3);border-radius:var(--radius);background:rgba(22,163,74,.04);padding:14px 16px;margin-bottom:10px; }
+    .cj-card-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+    .cj-source { font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:20px; }
+    .cj-surge { background:rgba(99,102,241,.15);color:var(--accent); }
+    .cj-rfq { background:rgba(22,163,74,.15);color:#16a34a; }
+    .cj-row { display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-bottom:8px; }
+    .cj-field { font-size:12px;color:var(--text-2); }
+    .cj-field strong { color:var(--text); }
+    .cj-actions { display:flex;gap:8px;margin-top:10px; }
+    .cj-btn { font-size:12px;padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer; }
+    .cj-btn-map { color:var(--accent);border-color:var(--accent); }
+    /* Service row inputs */
+    .svc-row { display:flex;gap:8px;margin-bottom:6px;align-items:center; }
+    .svc-row input { flex:1;font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text); }
+    .svc-row button { font-size:16px;background:none;border:none;color:var(--text-3);cursor:pointer; }
   </style>
 </head>
 <body>
@@ -1033,7 +1065,20 @@
 
       </div><!-- /profile-panel -->
 
+      <!-- Confirmed Jobs (Surge purchases + RFQ wins) -->
+      <div id="confirmed-jobs-section" style="margin-bottom:24px;display:none">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <h3 style="margin:0;font-size:15px;font-weight:700;color:var(--text)">Confirmed Jobs</h3>
+          <span style="font-size:11px;background:rgba(22,163,74,0.12);color:#16a34a;border-radius:20px;padding:2px 10px;font-weight:600">ACTIVE</span>
+        </div>
+        <div id="confirmed-jobs-list"></div>
+      </div>
+
       <!-- RFQ list -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px" id="rfq-list-header">
+        <h3 style="margin:0;font-size:15px;font-weight:700;color:var(--text)">Open Bids</h3>
+        <span style="font-size:11px;color:var(--text-3)">Jobs matching your ZIP + category</span>
+      </div>
       <div id="rfq-list" class="rfq-list">
         <div class="loading-row">
           <div class="spinner"></div>
@@ -1096,17 +1141,36 @@
         <!-- Agent skills -->
         <div class="ov-panel">
           <div class="ov-panel-title">Your agent skills</div>
-          <div class="ov-panel-sub">Fill this in so AI agents know exactly what you offer, your pricing, and when you’re available. The more complete this is, the more often you appear in results.</div>
+          <div class="ov-panel-sub">This is your agent-readable profile. Fill it in and LocalIntel generates the structured data that lets any AI agent find you, send you jobs, and route payments — no website or POS required. The more complete this is, the more often you appear in RFQ broadcasts.</div>
 
-          <div class="ov-field-group">
-            <label class="ov-field-label" for="ov-whatWeDo">What do you offer?</label>
-            <div class="ov-field-hint">One sentence describing your core service or product.</div>
-            <textarea class="ov-textarea" id="ov-whatWeDo" placeholder="e.g. Fresh American food — salads, sandwiches, and healthy bowls."></textarea>
+          <!-- Industry type tabs -->
+          <div style="margin-bottom:18px">
+            <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Business type</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap" id="ov-industryTabs">
+              <button class="ov-ind-tab active" data-type="restaurant" onclick="ovSetIndustry('restaurant',this)">Restaurant / Retail</button>
+              <button class="ov-ind-tab" data-type="service" onclick="ovSetIndustry('service',this)">Service Provider</button>
+              <button class="ov-ind-tab" data-type="professional" onclick="ovSetIndustry('professional',this)">Professional</button>
+              <button class="ov-ind-tab" data-type="other" onclick="ovSetIndustry('other',this)">Other</button>
+            </div>
           </div>
 
           <div class="ov-field-group">
-            <label class="ov-field-label">Specialties / service tags</label>
-            <div class="ov-field-hint">Press Enter or comma after each tag. Used for agent search matching.</div>
+            <label class="ov-field-label" for="ov-whatWeDo">What do you offer?</label>
+            <div class="ov-field-hint" id="ov-whatWeDoHint">One sentence describing your core service or product.</div>
+            <textarea class="ov-textarea" id="ov-whatWeDo" placeholder="e.g. Fresh American food — salads, sandwiches, and healthy bowls."></textarea>
+          </div>
+
+          <!-- Service list rows (visible for service + professional) -->
+          <div class="ov-field-group" id="ov-serviceListGroup" style="display:none">
+            <label class="ov-field-label">Services &amp; pricing</label>
+            <div class="ov-field-hint" id="ov-serviceListHint">Add each service with name, price, and any minimum. Agents use this to match and price jobs.</div>
+            <div id="ov-serviceRows"></div>
+            <button onclick="ovAddServiceRow()" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0;margin-top:4px">+ Add service</button>
+          </div>
+
+          <div class="ov-field-group">
+            <label class="ov-field-label">Specialties / search tags</label>
+            <div class="ov-field-hint">Press Enter or comma after each tag. Used for agent search matching and RFQ broadcasts.</div>
             <div class="ov-tag-wrap" id="ov-tagWrap" onclick="document.getElementById('ov-tagInput').focus()">
               <input class="ov-tag-ghost" id="ov-tagInput" placeholder="Add a tag…">
             </div>
@@ -1115,12 +1179,12 @@
           <div class="ov-grid-2">
             <div class="ov-field-group">
               <label class="ov-field-label" for="ov-priceRange">Starting price / price range</label>
-              <div class="ov-field-hint">e.g. "From $12" or "$10–$25 per person"</div>
-              <input type="text" class="ov-input" id="ov-priceRange" placeholder="e.g. $10–$25">
+              <div class="ov-field-hint">e.g. "From $12" or "$50–$150 per visit"</div>
+              <input type="text" class="ov-input" id="ov-priceRange" placeholder="e.g. $10–25">
             </div>
             <div class="ov-field-group">
               <label class="ov-field-label" for="ov-responseTime">Response / turnaround time</label>
-              <div class="ov-field-hint">e.g. "Same-day", "24 hours"</div>
+              <div class="ov-field-hint">e.g. "Same-day", "24 hours", "Next available appt"</div>
               <input type="text" class="ov-input" id="ov-responseTime" placeholder="e.g. Same-day">
             </div>
           </div>
@@ -1133,8 +1197,46 @@
             </div>
             <div class="ov-field-group">
               <label class="ov-field-label" for="ov-availability">Availability</label>
-              <div class="ov-field-hint">When agents can route to you</div>
+              <div class="ov-field-hint">When agents can route jobs to you</div>
               <input type="text" class="ov-input" id="ov-availability" placeholder="e.g. Mon–Sat 11am–8pm">
+            </div>
+          </div>
+
+          <!-- Settlement tier -->
+          <div class="ov-field-group" style="margin-top:4px">
+            <label class="ov-field-label">How do you want to get paid?</label>
+            <div class="ov-field-hint">The more autonomous your setup, the higher you rank in RFQ routing. All options work — upgrade anytime.</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px" id="ov-settlementTiers">
+              <label class="ov-tier-row" data-tier="surge_catalog">
+                <input type="radio" name="settlement_tier" value="surge_catalog" id="tier-surge">
+                <div class="ov-tier-body">
+                  <div class="ov-tier-title">Surge catalog <span class="ov-tier-badge ov-tier-best">Highest priority</span></div>
+                  <div class="ov-tier-desc">List your services in Surge as fixed-price items. Agents book and pay instantly — no bid window needed. e.g. "Lawn mow + edge — $50"</div>
+                  <a href="https://surge.basalthq.com" target="_blank" class="ov-tier-link">Set up Surge catalog →</a>
+                </div>
+              </label>
+              <label class="ov-tier-row" data-tier="acp_wallet">
+                <input type="radio" name="settlement_tier" value="acp_wallet" id="tier-acp">
+                <div class="ov-tier-body">
+                  <div class="ov-tier-title">Crypto wallet (pathUSD) <span class="ov-tier-badge ov-tier-good">Priority</span></div>
+                  <div class="ov-tier-desc">Win an RFQ bid and settlement happens on-chain automatically. Bring your own EVM hot wallet or create one via Surge.</div>
+                  <input type="text" class="ov-input" id="ov-acpWallet" placeholder="0x... EVM wallet address" style="margin-top:8px" onclick="event.stopPropagation()">
+                </div>
+              </label>
+              <label class="ov-tier-row" data-tier="stripe">
+                <input type="radio" name="settlement_tier" value="stripe" id="tier-stripe">
+                <div class="ov-tier-body">
+                  <div class="ov-tier-title">Stripe <span class="ov-tier-badge ov-tier-neutral">Standard</span></div>
+                  <div class="ov-tier-desc">Traditional card payments. Lowest setup friction — great starting point. Upgrade to crypto anytime.</div>
+                </div>
+              </label>
+              <label class="ov-tier-row" data-tier="none">
+                <input type="radio" name="settlement_tier" value="none" id="tier-none" checked>
+                <div class="ov-tier-body">
+                  <div class="ov-tier-title">Not set yet</div>
+                  <div class="ov-tier-desc">You’ll still receive RFQ SMS notifications — payment arranged manually. Set a method to enter the priority routing pool.</div>
+                </div>
+              </label>
             </div>
           </div>
 
@@ -1338,6 +1440,9 @@ function showInbox(data) {
 
   _rfqData = data.open_rfqs || [];
   renderRfqList(_rfqData);
+
+  // Load confirmed jobs (Surge purchases + RFQ wins)
+  loadConfirmedJobs();
 
   // Show signal card after login
   renderSignal(data);
@@ -2277,10 +2382,149 @@ function ovUpdatePreview() {
   el.textContent = desc || 'Fill in the fields above to see how agents will describe your business.';
 }
 
+
+// ── Confirmed jobs ────────────────────────────────────────────────────────────
+async function loadConfirmedJobs() {
+  if (!_token) return;
+  try {
+    const BASE = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+    const res  = await fetch(`${BASE}/confirmed-jobs?token=${encodeURIComponent(_token)}`);
+    if (!res.ok) return;
+    const { jobs } = await res.json();
+    renderConfirmedJobs(jobs || []);
+  } catch (e) {
+    console.warn('[confirmedJobs] fetch error:', e.message);
+  }
+}
+
+function renderConfirmedJobs(jobs) {
+  const section = document.getElementById('confirmed-jobs-section');
+  const list    = document.getElementById('confirmed-jobs-list');
+  if (!jobs.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  list.innerHTML = jobs.map(j => {
+    const sourceClass = j.source === 'surge_purchase' ? 'cj-surge' : 'cj-rfq';
+    const sourceLabel = j.source === 'surge_purchase' ? 'Surge' : 'RFQ Win';
+    const mapBtn = j.map_url
+      ? `<a href="${j.map_url}" target="_blank" class="cj-btn cj-btn-map">Directions</a>`
+      : '';
+    const customerPhone = j.customer_phone
+      ? `<a href="tel:${j.customer_phone}" class="cj-btn">${j.customer_phone}</a>` : '';
+    const paid = j.paid_amount ? `$${parseFloat(j.paid_amount).toFixed(2)}` : '—';
+    const statusDot = j.status === 'complete'
+      ? '<span style="font-size:11px;color:#16a34a">&#10003; Complete</span>'
+      : '<span style="font-size:11px;color:#f59e0b">&#9679; Active</span>';
+    return `<div class="cj-card">
+      <div class="cj-card-header">
+        <div style="font-size:14px;font-weight:700;color:var(--text)">${escHtml(j.service_name)}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${statusDot}
+          <span class="cj-source ${sourceClass}">${sourceLabel}</span>
+        </div>
+      </div>
+      <div class="cj-row">
+        <div class="cj-field"><strong>WHO</strong><br>${escHtml(j.customer_name || 'Customer')}</div>
+        <div class="cj-field"><strong>WHEN</strong><br>${escHtml(j.schedule_text || 'ASAP')}${j.recurrence_note ? ' (' + escHtml(j.recurrence_note) + ')' : ''}</div>
+        <div class="cj-field"><strong>WHERE</strong><br>${escHtml(j.address || 'TBD')}${j.zip ? ' ' + j.zip : ''}</div>
+        <div class="cj-field"><strong>HOW</strong><br>${paid} via ${escHtml(j.payment_method || 'pending')}</div>
+      </div>
+      ${j.description ? `<div style="font-size:12px;color:var(--text-2);margin-bottom:8px">${escHtml(j.description)}</div>` : ''}
+      <div class="cj-actions">
+        ${mapBtn}
+        ${customerPhone}
+        ${j.status !== 'complete' ? `<button class="cj-btn" onclick="markJobDone('${j.id}',this)">Mark Done</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function markJobDone(jobId, btn) {
+  btn.disabled = true; btn.textContent = 'Marking…';
+  try {
+    const BASE = 'https://gsb-swarm-production.up.railway.app';
+    // Use the /api/surge/done endpoint (business_id lookup by token)
+    const r = await fetch(`${BASE}/api/local-intel/confirmed-jobs-done`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: _token, job_id: jobId }),
+    });
+    if (r.ok) {
+      btn.textContent = '✓ Done';
+      btn.style.color = '#16a34a';
+      loadConfirmedJobs(); // refresh
+    } else {
+      btn.textContent = 'Error'; btn.disabled = false;
+    }
+  } catch (e) {
+    btn.textContent = 'Error'; btn.disabled = false;
+  }
+}
+
+// ── Industry type tabs ────────────────────────────────────────────────────────
+let _ovIndustryType = 'restaurant';
+
+const _industryHints = {
+  restaurant:   'e.g. "Fresh American food — salads, sandwiches, and healthy bowls."',
+  service:      'e.g. "Residential lawn care — mowing, edging, and seasonal cleanup."',
+  professional: 'e.g. "Family law attorney — divorce, custody, and estate planning."',
+  other:        'One sentence describing your core service or product.',
+};
+
+const _serviceListHints = {
+  service:      'Add each service: name, price, and any minimum commitment. e.g. "Lawn mow + edge — $50, 3-month min."',
+  professional: 'Add your service offerings: consultations, procedures, case types, typical fees.',
+};
+
+function ovSetIndustry(type, btn) {
+  _ovIndustryType = type;
+  document.querySelectorAll('.ov-ind-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const hint = document.getElementById('ov-whatWeDoHint');
+  if (hint) hint.textContent = _industryHints[type] || _industryHints.other;
+  const svcGroup = document.getElementById('ov-serviceListGroup');
+  if (svcGroup) svcGroup.style.display = (type === 'service' || type === 'professional') ? 'block' : 'none';
+  const svcHint = document.getElementById('ov-serviceListHint');
+  if (svcHint && _serviceListHints[type]) svcHint.textContent = _serviceListHints[type];
+}
+
+// ── Service rows ──────────────────────────────────────────────────────────────
+function ovAddServiceRow(name, price, note) {
+  const container = document.getElementById('ov-serviceRows');
+  const row = document.createElement('div');
+  row.className = 'svc-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Service name" value="${escHtml(name||'')}" class="svc-name">
+    <input type="text" placeholder="Price" value="${escHtml(price||'')}" style="max-width:90px" class="svc-price">
+    <input type="text" placeholder="Min / note" value="${escHtml(note||'')}" style="max-width:120px" class="svc-note">
+    <button onclick="this.closest('.svc-row').remove()" title="Remove">×</button>
+  `;
+  container.appendChild(row);
+}
+
+function ovGetServiceRows() {
+  return [...document.querySelectorAll('#ov-serviceRows .svc-row')].map(row => ({
+    name:  row.querySelector('.svc-name')?.value.trim()  || '',
+    price: row.querySelector('.svc-price')?.value.trim() || '',
+    note:  row.querySelector('.svc-note')?.value.trim()  || '',
+  })).filter(r => r.name);
+}
+
+// ── Settlement tier restore ───────────────────────────────────────────────────
+function ovRestoreSettlementTier(tier, acp_wallet) {
+  const radio = document.querySelector(`input[name="settlement_tier"][value="${tier || 'none'}"]`);
+  if (radio) radio.checked = true;
+  if (acp_wallet) {
+    const inp = document.getElementById('ov-acpWallet');
+    if (inp) inp.value = acp_wallet;
+  }
+}
+
 async function ovSaveSkills() {
   const btn = document.getElementById('ov-saveSkillsBtn');
   const msg = document.getElementById('ov-skillsMsg');
   btn.disabled = true; msg.textContent = 'Saving…'; msg.className = '';
+  const selectedTier = document.querySelector('input[name="settlement_tier"]:checked')?.value || 'none';
+  const acp_wallet   = document.getElementById('ov-acpWallet')?.value.trim() || null;
   const services_json = {
     what_we_do:    document.getElementById('ov-whatWeDo').value.trim(),
     specialties:   [..._ovTags],
@@ -2288,11 +2532,30 @@ async function ovSaveSkills() {
     response_time: document.getElementById('ov-responseTime').value.trim(),
     service_area:  document.getElementById('ov-serviceArea').value.trim(),
     availability:  document.getElementById('ov-availability').value.trim(),
+    service_list:  ovGetServiceRows(),
   };
   try {
-    const data = await apiFetch('/inbox/services', {
+    // Save existing skills (legacy endpoint)
+    await apiFetch('/inbox/services', {
       method: 'POST',
       body: JSON.stringify({ token: _token, services_json }),
+    });
+    // Save agent profile (new endpoint with industry + settlement)
+    const BASE = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+    await fetch(`${BASE}/agent-profile?token=${encodeURIComponent(_token)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        industry_type:   _ovIndustryType,
+        profile_summary: services_json.what_we_do,
+        services_json:   services_json.service_list,
+        specialties:     services_json.specialties,
+        service_area:    services_json.service_area ? services_json.service_area.split(',').map(s=>s.trim()) : [],
+        availability:    services_json.availability,
+        response_time:   services_json.response_time,
+        settlement_tier: selectedTier,
+        acp_wallet:      acp_wallet,
+      }),
     });
     msg.textContent = '✓ Saved — agents will see your updated profile within minutes.';
     msg.className = 'ov-save-ok';

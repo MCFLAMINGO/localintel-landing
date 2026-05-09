@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Business Inbox — LocalIntel</title>
+  <title>Business Dashboard — LocalIntel</title>
   <meta name="description" content="Receive and respond to job requests from LocalIntel agents. Your dispatch inbox.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
 
@@ -280,6 +280,161 @@
     /* ── INBOX SECTION ── */
     #inbox-section { display: none; }
     #inbox-section.visible { display: block; }
+
+    /* ── TABS ── */
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 4px;
+      margin-bottom: 28px;
+      width: fit-content;
+    }
+    .tab-btn {
+      padding: 7px 18px;
+      border-radius: calc(var(--radius) - 2px);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
+      transition: background var(--transition), color var(--transition);
+      cursor: pointer;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active {
+      background: var(--bg-card-2);
+      color: var(--accent-text);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── OVERVIEW PANEL (light-mode-like cards on dark bg) ── */
+    .ov-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 600px) { .ov-stats { grid-template-columns: repeat(2,1fr); } }
+    .ov-stat {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .ov-stat-val { font-size: 26px; font-weight: 800; color: var(--text); }
+    .ov-stat-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--text-3); margin-top: 2px; }
+
+    .ov-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      margin-bottom: 16px;
+    }
+    .ov-panel-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .ov-panel-sub { font-size: 13px; color: var(--text-2); margin-bottom: 18px; }
+
+    /* completion bar */
+    .ov-completion {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .ov-bar-pct { font-size: 22px; font-weight: 800; color: var(--accent-text); white-space: nowrap; }
+    .ov-bar-track { flex: 1; min-width: 140px; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .ov-bar-fill  { height: 100%; background: var(--accent); border-radius: 4px; transition: width .4s; }
+    .ov-steps-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; width: 100%; }
+    .ov-step-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .ov-step-done { background: var(--accent-light); color: var(--accent-text); }
+    .ov-step-todo { background: var(--bg-card-2); color: var(--text-3); border: 1px solid var(--border); }
+
+    /* skills form */
+    .ov-field-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .ov-field-label { font-size: 13px; font-weight: 600; color: var(--text-2); }
+    .ov-field-hint  { font-size: 11px; color: var(--text-3); }
+    .ov-input, .ov-textarea, .ov-select {
+      width: 100%; padding: 10px 12px;
+      background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--radius); font-size: 14px; font-family: inherit;
+      color: var(--text); transition: border-color .15s;
+    }
+    .ov-input:focus, .ov-textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(22,163,74,0.12); }
+    .ov-textarea { resize: vertical; min-height: 72px; }
+    .ov-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 500px) { .ov-grid-2 { grid-template-columns: 1fr; } }
+
+    /* tag input */
+    .ov-tag-wrap { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-input); cursor: text; }
+    .ov-tag-wrap:focus-within { border-color: var(--accent); }
+    .ov-tag { display: inline-flex; align-items: center; gap: 4px; background: var(--accent-light); color: var(--accent-text); border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 600; }
+    .ov-tag-del { cursor: pointer; font-size: 14px; line-height: 1; opacity: .7; }
+    .ov-tag-del:hover { opacity: 1; }
+    .ov-tag-ghost { border: none; outline: none; font-size: 13px; font-family: inherit; min-width: 80px; flex: 1; background: transparent; color: var(--text); }
+
+    /* agent preview */
+    .ov-agent-preview {
+      background: #0a0a0f;
+      border: 1px solid var(--border);
+      color: #e5e7eb;
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 4px;
+    }
+    .ov-preview-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); margin-bottom: 6px; }
+
+    /* save row */
+    .ov-save-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+    .ov-save-ok  { font-size: 13px; color: var(--success); }
+    .ov-save-err { font-size: 13px; color: var(--error); }
+    .ov-btn {
+      padding: 9px 20px; border-radius: var(--radius); font-size: 13px; font-weight: 600;
+      cursor: pointer; border: none; transition: all .15s;
+    }
+    .ov-btn-green  { background: var(--accent); color: #fff; }
+    .ov-btn-green:hover { background: var(--accent-hover); }
+    .ov-btn-green:disabled { opacity: .5; cursor: default; }
+    .ov-btn-ghost  { background: transparent; border: 1px solid var(--border); color: var(--text-2); }
+    .ov-btn-ghost:hover { border-color: var(--accent); color: var(--accent-text); }
+
+    /* economy + flow */
+    .ov-economy-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 16px; }
+    @media (max-width: 580px) { .ov-economy-grid { grid-template-columns: 1fr; } }
+    .ov-economy-card { background: var(--bg-card-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+    .ov-economy-icon { font-size: 20px; margin-bottom: 6px; }
+    .ov-economy-label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .ov-economy-desc  { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+    .ov-flow { background: #0a0a0f; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; font-size: 12px; font-family: monospace; line-height: 1.8; margin-top: 12px; }
+    .flow-green { color: #4ade80; }
+    .flow-amber { color: #fbbf24; }
+
+    /* menu status */
+    .ov-menu-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dot-green { background: var(--success); }
+    .dot-amber { background: var(--warn); }
+    .dot-grey  { background: var(--text-3); }
+    .ov-menu-cats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .ov-menu-cat { background: var(--bg-card-2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 10px; font-size: 12px; color: var(--text-2); }
+    .ov-warn-box { background: var(--warn-bg); border: 1px solid rgba(245,158,11,0.3); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; color: var(--warn); margin-top: 10px; }
+
+    /* query rows */
+    .ov-query-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .ov-query-row:last-child { border-bottom: none; }
+    .ov-query-text { font-size: 13px; color: var(--text); }
+    .ov-query-cnt  { font-size: 13px; font-weight: 700; color: var(--accent-text); }
+    .ov-empty { font-size: 13px; color: var(--text-3); }
+
+    /* wallet */
+    .ov-wallet-addr { font-family: monospace; font-size: 12px; color: var(--text-2); word-break: break-all; margin-top: 4px; }
 
     .inbox-header {
       display: flex;
@@ -731,6 +886,15 @@
     <!-- INBOX SECTION -->
     <section id="inbox-section">
 
+      <!-- Tab bar -->
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tab-jobs-btn" onclick="switchTab('jobs')">Open Jobs</button>
+        <button class="tab-btn" id="tab-overview-btn" onclick="switchTab('overview')">Overview</button>
+      </div>
+
+      <!-- ═══ JOBS TAB ═══ -->
+      <div class="tab-panel active" id="tab-jobs">
+
       <div class="inbox-header">
         <div class="inbox-header-left">
           <h2 id="inbox-title">Open Jobs</h2>
@@ -877,6 +1041,198 @@
         </div>
       </div>
 
+      </div><!-- /tab-jobs -->
+
+      <!-- ═══ OVERVIEW TAB ═══ -->
+      <div class="tab-panel" id="tab-overview">
+
+        <!-- Completion score -->
+        <div class="ov-completion">
+          <div class="ov-bar-pct" id="ov-pct">0%</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:4px">Agent Visibility Score</div>
+            <div class="ov-bar-track"><div class="ov-bar-fill" id="ov-bar" style="width:0%"></div></div>
+            <div class="ov-steps-row" id="ov-steps"></div>
+          </div>
+        </div>
+
+        <!-- Stats row -->
+        <div class="ov-stats">
+          <div class="ov-stat"><div class="ov-stat-val" id="ov-stat-routed">0</div><div class="ov-stat-lbl">Routed to you</div></div>
+          <div class="ov-stat"><div class="ov-stat-val" id="ov-stat-month">0</div><div class="ov-stat-lbl">This month</div></div>
+          <div class="ov-stat"><div class="ov-stat-val" id="ov-stat-rfq">0</div><div class="ov-stat-lbl">RFQ requests</div></div>
+          <div class="ov-stat"><div class="ov-stat-val" id="ov-stat-matched">0</div><div class="ov-stat-lbl">Jobs matched</div></div>
+        </div>
+
+        <!-- Agent economy -->
+        <div class="ov-panel">
+          <div class="ov-panel-title">Don’t miss the AI agent economy</div>
+          <div class="ov-panel-sub">AI assistants are actively routing real tasks, orders, and service requests to local businesses right now. Here’s how LocalIntel works for you.</div>
+          <div class="ov-economy-grid">
+            <div class="ov-economy-card">
+              <div class="ov-economy-icon">🤖</div>
+              <div class="ov-economy-label">Agent queries</div>
+              <div class="ov-economy-desc">When someone asks an AI assistant "find me a plumber" or "where can I order food near Ponte Vedra", LocalIntel is queried and returns your listing.</div>
+            </div>
+            <div class="ov-economy-card">
+              <div class="ov-economy-icon">📋</div>
+              <div class="ov-economy-label">Real job requests</div>
+              <div class="ov-economy-desc">Customers submit RFQs through AI assistants. You see the job, respond with a quote, and book it — all through your Jobs tab.</div>
+            </div>
+            <div class="ov-economy-card">
+              <div class="ov-economy-icon">💳</div>
+              <div class="ov-economy-label">Live orders &amp; menus</div>
+              <div class="ov-economy-desc">If you have a menu or service catalog, agents can place orders and accept payment on your behalf. No app download needed.</div>
+            </div>
+          </div>
+          <div class="ov-flow" id="ov-flow">
+            <span class="flow-green">agent</span> → "find a business in your zip"<br>
+            <span class="flow-amber">LocalIntel</span> → matches your listing by zip + category + hours<br>
+            <span class="flow-green">agent</span> → returns your name and contact info to the user<br>
+            <span class="flow-amber">result</span> → real customer, real revenue
+          </div>
+        </div>
+
+        <!-- Agent skills -->
+        <div class="ov-panel">
+          <div class="ov-panel-title">Your agent skills</div>
+          <div class="ov-panel-sub">Fill this in so AI agents know exactly what you offer, your pricing, and when you’re available. The more complete this is, the more often you appear in results.</div>
+
+          <div class="ov-field-group">
+            <label class="ov-field-label" for="ov-whatWeDo">What do you offer?</label>
+            <div class="ov-field-hint">One sentence describing your core service or product.</div>
+            <textarea class="ov-textarea" id="ov-whatWeDo" placeholder="e.g. Fresh American food — salads, sandwiches, and healthy bowls."></textarea>
+          </div>
+
+          <div class="ov-field-group">
+            <label class="ov-field-label">Specialties / service tags</label>
+            <div class="ov-field-hint">Press Enter or comma after each tag. Used for agent search matching.</div>
+            <div class="ov-tag-wrap" id="ov-tagWrap" onclick="document.getElementById('ov-tagInput').focus()">
+              <input class="ov-tag-ghost" id="ov-tagInput" placeholder="Add a tag…">
+            </div>
+          </div>
+
+          <div class="ov-grid-2">
+            <div class="ov-field-group">
+              <label class="ov-field-label" for="ov-priceRange">Starting price / price range</label>
+              <div class="ov-field-hint">e.g. "From $12" or "$10–$25 per person"</div>
+              <input type="text" class="ov-input" id="ov-priceRange" placeholder="e.g. $10–$25">
+            </div>
+            <div class="ov-field-group">
+              <label class="ov-field-label" for="ov-responseTime">Response / turnaround time</label>
+              <div class="ov-field-hint">e.g. "Same-day", "24 hours"</div>
+              <input type="text" class="ov-input" id="ov-responseTime" placeholder="e.g. Same-day">
+            </div>
+          </div>
+
+          <div class="ov-grid-2">
+            <div class="ov-field-group">
+              <label class="ov-field-label" for="ov-serviceArea">Service area</label>
+              <div class="ov-field-hint">ZIPs or cities you cover</div>
+              <input type="text" class="ov-input" id="ov-serviceArea" placeholder="e.g. 32082, 32081">
+            </div>
+            <div class="ov-field-group">
+              <label class="ov-field-label" for="ov-availability">Availability</label>
+              <div class="ov-field-hint">When agents can route to you</div>
+              <input type="text" class="ov-input" id="ov-availability" placeholder="e.g. Mon–Sat 11am–8pm">
+            </div>
+          </div>
+
+          <div class="ov-agent-preview">
+            <div class="ov-preview-lbl">Live agent description preview</div>
+            <span id="ov-agentPreview" style="color:#6b7280">Fill in the fields above to see how agents will describe your business.</span>
+          </div>
+
+          <div class="ov-save-row" style="margin-top:14px">
+            <button class="ov-btn ov-btn-green" id="ov-saveSkillsBtn" onclick="ovSaveSkills()">Save agent skills</button>
+            <span id="ov-skillsMsg"></span>
+          </div>
+        </div>
+
+        <!-- Menu / ordering -->
+        <div class="ov-panel">
+          <div class="ov-panel-title">How customers order from you</div>
+          <div class="ov-panel-sub">Both tracks work simultaneously — agents use Surge, your existing customers use your traditional ordering link.</div>
+
+          <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <span style="font-size:17px">🤖</span>
+              <div>
+                <div style="font-size:13px;font-weight:700">Agent ordering <span style="font-size:11px;font-weight:600;background:rgba(22,163,74,0.15);color:var(--accent-text);padding:2px 7px;border-radius:20px;margin-left:6px">AGENTIC</span></div>
+                <div style="font-size:12px;color:var(--text-3);margin-top:1px">AI assistants route orders, show your menu, and accept payment on your behalf.</div>
+              </div>
+            </div>
+            <div id="ov-menuStatusBody"><span class="ov-empty">Checking Surge status…</span></div>
+          </div>
+
+          <div id="ov-legacyPanel" style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:14px;display:none">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <span style="font-size:17px">🔗</span>
+              <div>
+                <div style="font-size:13px;font-weight:700">Traditional ordering <span style="font-size:11px;font-weight:600;background:var(--bg-card-2);color:var(--text-2);padding:2px 7px;border-radius:20px;margin-left:6px">HUMAN ONLY</span></div>
+                <div style="font-size:12px;color:var(--text-3);margin-top:1px">Your existing customers can still order the way they always have.</div>
+              </div>
+            </div>
+            <div id="ov-legacyLink"></div>
+          </div>
+
+          <div class="ov-field-group">
+            <label class="ov-field-label" for="ov-menuUrl">Override ordering URL <span style="font-weight:400;color:var(--text-3)">(optional)</span></label>
+            <div class="ov-field-hint">Replaces the default ordering link shown to customers.</div>
+            <div style="display:flex;gap:8px">
+              <input type="text" class="ov-input" id="ov-menuUrl" placeholder="https://…">
+              <button class="ov-btn ov-btn-ghost" onclick="ovSaveMenuUrl()">Save</button>
+            </div>
+            <span id="ov-menuMsg" style="font-size:13px;margin-top:4px"></span>
+          </div>
+        </div>
+
+        <!-- Queries that found you -->
+        <div class="ov-panel">
+          <div class="ov-panel-title">Queries that found you</div>
+          <div class="ov-panel-sub">What people were searching when LocalIntel routed them to your listing.</div>
+          <div id="ov-topQueries"><span class="ov-empty">No routed queries yet.</span></div>
+        </div>
+
+        <!-- Wallet -->
+        <div class="ov-panel">
+          <div class="ov-panel-title">Wallet &amp; payouts</div>
+          <div class="ov-panel-sub">Your wallet is where LocalIntel sends revenue and deducts fees on confirmed jobs. It also signals to agents that you’re active in the routing pool.</div>
+
+          <div id="ov-walletState" style="margin-bottom:16px"></div>
+
+          <div style="background:var(--bg-card-2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px">
+              <div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">What is a wallet?</div>
+                <div style="font-size:12px;color:var(--text-2);line-height:1.5">A digital address that receives payments automatically. You keep it forever, across any business.</div>
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">What is pathUSD?</div>
+                <div style="font-size:12px;color:var(--text-2);line-height:1.5">pathUSD is a stable digital dollar — always worth $1.00. Fees are deducted in pathUSD. Revenue lands here instantly on confirmed jobs.</div>
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:4px">Fee model</div>
+                <div style="font-size:12px;color:var(--text-2);line-height:1.5"><strong style="color:var(--text)">0.5% of job value</strong> on confirmed jobs only. Never on searches or unbooked quotes.</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="ov-walletBody"></div>
+
+          <div class="ov-field-group" style="margin-top:16px">
+            <label class="ov-field-label" for="ov-walletInput">Wallet address</label>
+            <div class="ov-field-hint">EVM-compatible address (0x…) on Tempo mainnet.</div>
+            <div style="display:flex;gap:8px">
+              <input type="text" class="ov-input" id="ov-walletInput" placeholder="0x…" style="font-family:monospace;font-size:13px">
+              <button class="ov-btn ov-btn-green" onclick="ovSaveWallet()">Save</button>
+            </div>
+            <span id="ov-walletMsg" style="font-size:13px;margin-top:4px"></span>
+          </div>
+        </div>
+
+      </div><!-- /tab-overview -->
+
     </section>
 
   </div>
@@ -987,6 +1343,9 @@ function showInbox(data) {
 
   // Pre-fill profile editor with saved data
   prefillProfile(data);
+
+  // Render overview tab
+  renderOverview(data);
 
   // Handle URL params
   const params = getParams();
@@ -1767,6 +2126,265 @@ function prefillProfile(bizData) {
     statusEl.style.color       = 'var(--success)';
     statusEl.innerHTML = `✅ Menu fetched successfully at ${ts}`;
     if (bizData.services_json) renderMenuPreview(bizData.services_json);
+  }
+}
+
+// ── OVERVIEW TAB ───────────────────────────────────────────────────────────────────────────────
+let _ovTags = [];
+let _ovLastBiz = null;
+let _ovLastSurgeMenu = null;
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab + '-btn').classList.add('active');
+}
+
+function renderOverview(data) {
+  _ovLastBiz = {
+    name:           data.business_name,
+    address:        data.address        || null,
+    zip:            data.zip,
+    category:       data.category,
+    category_group: data.category_group || null,
+    wallet:         data.wallet         || null,
+    claimed:        !!data.claimed_at || data.claimed || false,
+    services_json:  data.services_json  || null,
+    services_text:  data.services_text  || null,
+    menu_url:       data.menu_url       || null,
+    legacy_order_url: data.legacy_order_url || data.menu_url || null,
+  };
+  _ovLastSurgeMenu = data.surge_menu || null;
+
+  const s  = data.stats    || {};
+  const sm = data.surge_menu;
+
+  // Completion
+  ovRenderCompletion(_ovLastBiz, sm);
+
+  // Stats
+  document.getElementById('ov-stat-routed').textContent  = s.total_routed ?? 0;
+  document.getElementById('ov-stat-month').textContent   = s.this_month   ?? 0;
+  document.getElementById('ov-stat-rfq').textContent     = s.rfq_sent     ?? 0;
+  document.getElementById('ov-stat-matched').textContent = s.rfq_matched  ?? 0;
+
+  // Agent flow example — personalised
+  const catLabel = (_ovLastBiz.category_group || _ovLastBiz.category || 'your service').replace(/_/g, ' ');
+  document.getElementById('ov-flow').innerHTML = `
+<span class="flow-green">agent</span> → "find a ${escHtml(catLabel)} in ${escHtml(_ovLastBiz.zip||'your zip')}"<br>
+<span class="flow-amber">LocalIntel</span> → matches <strong>${escHtml(_ovLastBiz.name||'your listing')}</strong> by zip + category + hours<br>
+<span class="flow-green">agent</span> → returns your name${sm?.connected ? ', menu, and order link' : ' and contact info'} to the user<br>
+<span class="flow-amber">result</span> → real customer, real ${sm?.connected ? 'order' : 'lead'}, real revenue`.trim();
+
+  // Skills form
+  ovInitSkills(data.services_json, data.services_text);
+
+  // Menu
+  ovRenderMenu(_ovLastBiz, sm);
+
+  // Top queries
+  const tqEl = document.getElementById('ov-topQueries');
+  const queries = Array.isArray(data.top_queries) ? data.top_queries : [];
+  tqEl.innerHTML = queries.length
+    ? queries.map(q => `<div class="ov-query-row"><div class="ov-query-text">${escHtml(q.query)}</div><div class="ov-query-cnt">${escHtml(q.cnt)}×</div></div>`).join('')
+    : '<span class="ov-empty">No routed queries yet — once agents search for businesses like yours, top searches appear here.</span>';
+
+  // Wallet
+  ovRenderWallet(_ovLastBiz, data.wallet_funded, data.balance_usd_micro);
+}
+
+function ovRenderCompletion(b, sm) {
+  const steps = [
+    { label: 'Claimed',       done: b.claimed },
+    { label: 'Skills filled', done: !!(b.services_json || b.services_text) },
+    { label: 'Menu connected',done: !!(sm?.connected || b.menu_url) },
+    { label: 'Wallet linked', done: !!b.wallet },
+  ];
+  const done = steps.filter(s => s.done).length;
+  const pct  = Math.round((done / steps.length) * 100);
+  document.getElementById('ov-pct').textContent  = pct + '%';
+  document.getElementById('ov-bar').style.width  = pct + '%';
+  document.getElementById('ov-steps').innerHTML  = steps.map(s =>
+    `<span class="ov-step-chip ${s.done ? 'ov-step-done' : 'ov-step-todo'}">${s.done ? '✓' : '○'} ${escHtml(s.label)}</span>`
+  ).join('');
+}
+
+function ovInitSkills(sj, servicesText) {
+  if (sj) {
+    document.getElementById('ov-whatWeDo').value    = sj.what_we_do    || '';
+    document.getElementById('ov-priceRange').value  = sj.price_range   || '';
+    document.getElementById('ov-responseTime').value= sj.response_time || '';
+    document.getElementById('ov-serviceArea').value = sj.service_area  || '';
+    document.getElementById('ov-availability').value= sj.availability  || '';
+    _ovTags = Array.isArray(sj.specialties) ? [...sj.specialties] : [];
+  } else if (servicesText) {
+    document.getElementById('ov-whatWeDo').value = servicesText;
+  }
+  ovRenderTags();
+  ovUpdatePreview();
+  ['ov-whatWeDo','ov-priceRange','ov-responseTime','ov-serviceArea','ov-availability'].forEach(id => {
+    document.getElementById(id).addEventListener('input', ovUpdatePreview);
+  });
+}
+
+function ovRenderTags() {
+  const wrap  = document.getElementById('ov-tagWrap');
+  const input = document.getElementById('ov-tagInput');
+  wrap.querySelectorAll('.ov-tag').forEach(t => t.remove());
+  _ovTags.forEach((t, i) => {
+    const el = document.createElement('span');
+    el.className = 'ov-tag';
+    el.innerHTML = `${escHtml(t)}<span class="ov-tag-del" data-i="${i}">×</span>`;
+    el.querySelector('.ov-tag-del').onclick = () => { _ovTags.splice(i, 1); ovRenderTags(); ovUpdatePreview(); };
+    wrap.insertBefore(el, input);
+  });
+}
+
+document.getElementById('ov-tagInput').addEventListener('keydown', e => {
+  const val = e.target.value.trim().replace(/,+$/, '');
+  if ((e.key === 'Enter' || e.key === ',') && val) {
+    e.preventDefault();
+    if (!_ovTags.includes(val)) { _ovTags.push(val); ovRenderTags(); ovUpdatePreview(); }
+    e.target.value = '';
+  }
+  if (e.key === 'Backspace' && !e.target.value && _ovTags.length) {
+    _ovTags.pop(); ovRenderTags(); ovUpdatePreview();
+  }
+});
+
+function ovBuildDescription() {
+  const parts = [];
+  const what  = document.getElementById('ov-whatWeDo').value.trim();
+  const price = document.getElementById('ov-priceRange').value.trim();
+  const resp  = document.getElementById('ov-responseTime').value.trim();
+  const area  = document.getElementById('ov-serviceArea').value.trim();
+  const avail = document.getElementById('ov-availability').value.trim();
+  if (what)           parts.push(what);
+  if (_ovTags.length) parts.push('Specialties: ' + _ovTags.join(', ') + '.');
+  if (price)          parts.push('Pricing: ' + price + '.');
+  if (area)           parts.push('Service area: ' + area + '.');
+  if (resp)           parts.push('Response time: ' + resp + '.');
+  if (avail)          parts.push('Available: ' + avail + '.');
+  return parts.join(' ');
+}
+
+function ovUpdatePreview() {
+  const desc = ovBuildDescription();
+  const el   = document.getElementById('ov-agentPreview');
+  el.style.color = desc ? '#e5e7eb' : '#6b7280';
+  el.textContent = desc || 'Fill in the fields above to see how agents will describe your business.';
+}
+
+async function ovSaveSkills() {
+  const btn = document.getElementById('ov-saveSkillsBtn');
+  const msg = document.getElementById('ov-skillsMsg');
+  btn.disabled = true; msg.textContent = 'Saving…'; msg.className = '';
+  const services_json = {
+    what_we_do:    document.getElementById('ov-whatWeDo').value.trim(),
+    specialties:   [..._ovTags],
+    price_range:   document.getElementById('ov-priceRange').value.trim(),
+    response_time: document.getElementById('ov-responseTime').value.trim(),
+    service_area:  document.getElementById('ov-serviceArea').value.trim(),
+    availability:  document.getElementById('ov-availability').value.trim(),
+  };
+  try {
+    const data = await apiFetch('/inbox/services', {
+      method: 'POST',
+      body: JSON.stringify({ token: _token, services_json }),
+    });
+    msg.textContent = '✓ Saved — agents will see your updated profile within minutes.';
+    msg.className = 'ov-save-ok';
+    if (_ovLastBiz) {
+      _ovLastBiz.services_json = services_json;
+      ovRenderCompletion(_ovLastBiz, _ovLastSurgeMenu);
+    }
+  } catch(e) {
+    msg.textContent = '✗ ' + e.message; msg.className = 'ov-save-err';
+  }
+  btn.disabled = false;
+}
+
+async function ovSaveMenuUrl() {
+  const url = document.getElementById('ov-menuUrl').value.trim();
+  const msg = document.getElementById('ov-menuMsg');
+  if (!url) return;
+  msg.textContent = 'Saving…'; msg.className = '';
+  try {
+    await apiFetch('/inbox/services', {
+      method: 'POST',
+      body: JSON.stringify({ token: _token, menu_url: url }),
+    });
+    msg.textContent = '✓ Saved';
+    msg.className = 'ov-save-ok';
+  } catch(e) {
+    msg.textContent = '✗ ' + e.message; msg.className = 'ov-save-err';
+  }
+}
+
+async function ovSaveWallet() {
+  const addr = document.getElementById('ov-walletInput').value.trim();
+  const msg  = document.getElementById('ov-walletMsg');
+  if (!addr) return;
+  msg.textContent = 'Saving…'; msg.className = '';
+  try {
+    const data = await apiFetch('/inbox/wallet', {
+      method: 'POST',
+      body: JSON.stringify({ token: _token, wallet: addr }),
+    });
+    msg.textContent = '✓ Wallet saved'; msg.className = 'ov-save-ok';
+    if (_ovLastBiz) {
+      _ovLastBiz.wallet = data.wallet;
+      ovRenderWallet(_ovLastBiz, false, 0);
+      ovRenderCompletion(_ovLastBiz, _ovLastSurgeMenu);
+    }
+  } catch(e) {
+    msg.textContent = '✗ ' + e.message; msg.className = 'ov-save-err';
+  }
+}
+
+function ovRenderMenu(b, sm) {
+  const el = document.getElementById('ov-menuStatusBody');
+  if (sm?.connected) {
+    const cats = sm.categories || [];
+    el.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="ov-menu-dot dot-green"></div>
+        <div>
+          <strong>Surge connected</strong> — ${sm.total_items} items in catalog
+          ${sm.orderable_items < sm.total_items
+            ? `<div class="ov-warn-box">⚠ ${sm.total_items - sm.orderable_items} of ${sm.total_items} items have online ordering disabled. <a href="https://surge.basalthq.com" target="_blank" style="color:var(--warn);font-weight:600">Open Surge Admin →</a></div>`
+            : `<div style="color:var(--success);font-size:13px;margin-top:4px">✓ All ${sm.orderable_items} items are orderable by agents</div>`}
+        </div>
+      </div>
+      ${cats.length ? `<div class="ov-menu-cats">${cats.map(c => `<span class="ov-menu-cat">${escHtml(c)}</span>`).join('')}</div>` : ''}`;
+  } else if (b.wallet) {
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:8px"><div class="ov-menu-dot dot-amber"></div><div style="font-size:13px;color:var(--text-2)">Wallet connected but no Surge catalog found. Make sure your Surge account uses this wallet address.<br><a href="https://surge.basalthq.com" target="_blank" style="color:var(--accent-text);font-weight:600">Open Surge →</a></div></div>`;
+  } else {
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:8px"><div class="ov-menu-dot dot-grey"></div><div style="font-size:13px;color:var(--text-2)">No agent ordering connected. <a href="https://surge.basalthq.com" target="_blank" style="color:var(--accent-text);font-weight:600">Create a free Surge account →</a></div></div>`;
+  }
+  const legacyUrl = b.legacy_order_url || b.menu_url || null;
+  if (legacyUrl) {
+    document.getElementById('ov-legacyPanel').style.display = 'block';
+    document.getElementById('ov-legacyLink').innerHTML = `<a href="${escHtml(legacyUrl)}" target="_blank" style="font-size:13px;color:var(--accent-text);font-weight:600;word-break:break-all">${escHtml(legacyUrl)} →</a><div style="font-size:12px;color:var(--text-3);margin-top:4px">Visible to human customers only.</div>`;
+    document.getElementById('ov-menuUrl').value = legacyUrl;
+  }
+}
+
+function ovRenderWallet(b, funded, balanceMicro) {
+  const state = document.getElementById('ov-walletState');
+  const body  = document.getElementById('ov-walletBody');
+  if (b.wallet && funded) {
+    state.innerHTML = `<div style="background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);border-radius:var(--radius);padding:12px 16px"><div style="font-size:13px;font-weight:700;color:var(--success);margin-bottom:4px">✓ Active in routing pool</div><div style="font-size:12px;color:var(--success);line-height:1.5">Your wallet is funded. Agents are routing confirmed jobs to you.</div></div>`;
+    body.innerHTML  = `<div style="font-size:14px;font-weight:600;color:var(--accent-text)">✓ Connected</div><div class="ov-wallet-addr">${escHtml(b.wallet)}</div>`;
+    document.getElementById('ov-walletInput').value = b.wallet;
+  } else if (b.wallet) {
+    state.innerHTML = `<div class="ov-warn-box"><strong>⚠ Wallet connected — add funds to enter routing pool</strong><br><span style="font-size:12px">Fund it through your Surge account and agents will start routing confirmed jobs to you. <a href="https://surge.basalthq.com" target="_blank" style="color:var(--warn);font-weight:600">Fund via Surge →</a></span></div>`;
+    body.innerHTML  = `<div style="font-size:14px;font-weight:600;color:var(--text)">✓ Connected</div><div class="ov-wallet-addr">${escHtml(b.wallet)}</div>`;
+    document.getElementById('ov-walletInput').value = b.wallet;
+  } else {
+    state.innerHTML = `<div style="background:var(--bg-card-2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px"><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">No wallet connected</div><div style="font-size:12px;color:var(--text-2);line-height:1.6"><strong style="color:var(--text)">Recommended:</strong> Create a free business account at <a href="https://surge.basalthq.com" target="_blank" style="color:var(--accent-text);font-weight:600">surge.basalthq.com</a> — your wallet is included. Copy it from your Surge dashboard and paste below.</div></div>`;
+    body.innerHTML  = `<span style="font-size:13px;color:var(--text-3)">No wallet connected yet.</span>`;
   }
 }
 </script>

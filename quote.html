@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Quotes — LocalIntel</title>
+  <meta name="description" content="Post a job, get competing quotes from local businesses. Free to submit. Pay nothing until a job is confirmed.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #FFFFFF;
+      --bg-2:     #F9FAFB;
+      --text:     #111827;
+      --text-2:   #6B7280;
+      --text-3:   #9CA3AF;
+      --accent:   #16A34A;
+      --accent-h: #15803D;
+      --accent-l: #DCFCE7;
+      --border:   #E5E7EB;
+      --error:    #DC2626;
+      --r:        10px;
+      --font:     'Inter', -apple-system, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: #F3F4F6; color: var(--text); min-height: 100vh; }
+
+    /* NAV */
+    nav { background: #fff; border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .nav-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 16px; color: var(--text); text-decoration: none; }
+    .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+    .nav-link { font-size: 13px; color: var(--text-2); text-decoration: none; }
+    .nav-link:hover { color: var(--text); }
+
+    /* LAYOUT */
+    .page { max-width: 620px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* HEADER */
+    .page-head { margin-bottom: 32px; }
+    .page-head h1 { font-size: 26px; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+    .page-head p  { font-size: 15px; color: var(--text-2); line-height: 1.6; }
+
+    /* CARD */
+    .card { background: #fff; border: 1px solid var(--border); border-radius: var(--r); padding: 24px; margin-bottom: 16px; }
+    .card-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); margin-bottom: 16px; }
+
+    /* FORM */
+    .field { margin-bottom: 18px; }
+    .field:last-child { margin-bottom: 0; }
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 6px; }
+    input, textarea, select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border);
+      border-radius: var(--r); font-size: 14px; font-family: var(--font);
+      color: var(--text); background: #fff; outline: none;
+      transition: border-color .15s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 90px; }
+    .field-hint { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+
+    /* TWO COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 480px) { .two-col { grid-template-columns: 1fr; } }
+
+    /* CATEGORIES */
+    .cat-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cat-btn {
+      padding: 7px 14px; border: 1px solid var(--border); border-radius: 20px;
+      font-size: 13px; font-weight: 500; cursor: pointer; background: #fff;
+      color: var(--text-2); transition: all .15s;
+    }
+    .cat-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .cat-btn.selected { background: var(--accent-l); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+    /* SAME DAY TOGGLE */
+    .toggle-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0; background: #E5E7EB; border-radius: 11px; cursor: pointer; transition: .2s;
+    }
+    .toggle-track::before {
+      content: ''; position: absolute; width: 16px; height: 16px; left: 3px; bottom: 3px;
+      background: #fff; border-radius: 50%; transition: .2s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle input:checked + .toggle-track::before { transform: translateX(18px); }
+    .toggle-label { font-size: 13px; font-weight: 600; color: var(--text); }
+    .toggle-sub { font-size: 12px; color: var(--text-3); }
+
+    /* WINDOW BADGE */
+    .window-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      background: var(--accent-l); color: var(--accent); border: 1px solid #bbf7d0;
+    }
+    .window-badge.large { background: #FEF9C3; color: #854d0e; border-color: #fde68a; }
+
+    /* SUBMIT */
+    .btn-submit {
+      width: 100%; padding: 14px; background: var(--accent); color: #fff;
+      border: none; border-radius: var(--r); font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-submit:hover:not(:disabled) { background: var(--accent-h); }
+    .btn-submit:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* SUCCESS STATE */
+    #successState { display: none; }
+    .success-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--accent-l); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .success-icon svg { stroke: var(--accent); }
+    .success-wrap { text-align: center; padding: 32px 20px; }
+    .success-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .success-sub { font-size: 14px; color: var(--text-2); margin-bottom: 24px; line-height: 1.6; }
+    .quote-link-box {
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--r);
+      padding: 14px 16px; font-family: monospace; font-size: 13px; word-break: break-all;
+      color: var(--text-2); margin-bottom: 16px;
+    }
+    .btn-copy {
+      padding: 10px 20px; background: var(--text); color: #fff; border: none;
+      border-radius: var(--r); font-size: 13px; font-weight: 600; cursor: pointer; margin-right: 8px;
+    }
+    .btn-view {
+      padding: 10px 20px; background: var(--accent); color: #fff; border: none;
+      border-radius: var(--r); font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block;
+    }
+    .success-meta { font-size: 12px; color: var(--text-3); margin-top: 16px; }
+
+    .error-box { background: #FEF2F2; border: 1px solid #FECACA; border-radius: var(--r); padding: 12px 16px; font-size: 13px; color: var(--error); margin-top: 12px; display: none; }
+
+    /* HOW IT WORKS */
+    .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 480px) { .how-grid { grid-template-columns: 1fr; } }
+    .how-item { text-align: center; }
+    .how-num { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-l); color: var(--accent); font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
+    .how-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .how-desc { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo"><div class="logo-dot"></div>LocalIntel</a>
+    <a href="/search.html" class="nav-link">Search businesses →</a>
+  </nav>
+
+  <div class="page">
+
+    <!-- HEADER -->
+    <div class="page-head">
+      <h1 id="pageTitle">Get competing quotes from local businesses</h1>
+      <p id="pageSubtitle">Describe your job. We'll notify matching businesses instantly. You compare bids and pick the best one. Free to post — you pay nothing until a job is confirmed.</p>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="card" style="margin-bottom:24px;">
+      <div class="how-grid">
+        <div class="how-item">
+          <div class="how-num">1</div>
+          <div class="how-title">Post your job</div>
+          <div class="how-desc">Describe what you need in plain English. Takes 60 seconds.</div>
+        </div>
+        <div class="how-item">
+          <div class="how-num">2</div>
+          <div class="how-title">Businesses bid</div>
+          <div class="how-desc">Matching local businesses get notified and send you their price and availability.</div>
+        </div>
+        <div class="how-item">
+          <div class="how-num">3</div>
+          <div class="how-title">Pick the best</div>
+          <div class="how-desc">Compare bids side by side. Select one. Losers are notified automatically.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <div id="formState">
+      <div class="card">
+        <div class="card-title">What do you need?</div>
+
+        <!-- Category picker -->
+        <div class="field">
+          <label>Category <span style="font-weight:400;color:var(--text-3)">(optional — helps us find the right businesses)</span></label>
+          <div class="cat-grid" id="catGrid"></div>
+          <input type="hidden" id="selectedCategory" value="">
+        </div>
+
+        <!-- Description -->
+        <div class="field">
+          <label for="description">Describe the job <span style="color:var(--error)">*</span></label>
+          <textarea id="description" placeholder="e.g. Need my front lawn mowed and hedges trimmed at 205 Odoms Mill Blvd. About 1/4 acre yard. Looking to get this done this week."></textarea>
+          <div class="field-hint">The more detail you give, the better the bids you'll receive.</div>
+        </div>
+
+        <!-- ZIP + Budget -->
+        <div class="two-col">
+          <div class="field" style="margin-bottom:0">
+            <label for="zip">ZIP code <span style="color:var(--error)">*</span></label>
+            <input type="text" id="zip" placeholder="32082" maxlength="5" inputmode="numeric">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label for="budget">Budget <span style="font-weight:400;color:var(--text-3)">(optional)</span></label>
+            <input type="number" id="budget" placeholder="e.g. 250" min="0" step="1">
+            <div class="field-hint">$5,000+ gets a 72-hour bid window.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Timing</div>
+
+        <!-- Same-day toggle -->
+        <div class="toggle-row">
+          <label class="toggle">
+            <input type="checkbox" id="sameDayToggle">
+            <div class="toggle-track"></div>
+          </label>
+          <div>
+            <div class="toggle-label">I need this today</div>
+            <div class="toggle-sub">Same-day jobs get a 4-hour bid window so businesses respond fast.</div>
+          </div>
+        </div>
+
+        <div id="windowBadge" style="margin-top:12px;">
+          <span class="window-badge">📅 24-hour bid window</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Where should we send your bids?</div>
+        <div class="two-col">
+          <div class="field" style="margin-bottom:0">
+            <label for="custEmail">Email <span style="font-weight:400;color:var(--text-3)">(optional)</span></label>
+            <input type="email" id="custEmail" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label for="custPhone">Phone / SMS <span style="font-weight:400;color:var(--text-3)">(optional)</span></label>
+            <input type="tel" id="custPhone" placeholder="+1 (904) 555-0100" autocomplete="tel">
+          </div>
+        </div>
+        <div class="field-hint" style="margin-top:8px;">We'll text or email you when bids come in. Your contact info is never shared with businesses.</div>
+      </div>
+
+      <div class="error-box" id="errorBox"></div>
+
+      <button class="btn-submit" id="submitBtn" onclick="submitJob()">Post my job — get quotes →</button>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div id="successState">
+      <div class="card">
+        <div class="success-wrap">
+          <div class="success-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <h2 class="success-title">Your job is posted.</h2>
+          <p class="success-sub" id="successMsg">Matching businesses have been notified. Bids will come in within your window. We'll send you a link to compare them.</p>
+
+          <div class="quote-link-box" id="quoteLinkBox"></div>
+
+          <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
+            <button class="btn-copy" id="copyBtn" onclick="copyLink()">Copy link</button>
+            <a class="btn-view" id="viewBidsBtn" href="#">View bids →</a>
+          </div>
+
+          <p class="success-meta" id="windowMeta"></p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page -->
+
+  <script>
+  'use strict';
+
+  const API  = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+  const CATS = [
+    { value: 'landscaping',    label: '🌿 Landscaping'   },
+    { value: 'plumber',        label: '🔧 Plumbing'      },
+    { value: 'electrician',    label: '⚡ Electrical'    },
+    { value: 'cleaning',       label: '🧹 Cleaning'      },
+    { value: 'painter',        label: '🖌 Painting'      },
+    { value: 'contractor',     label: '🏗 Contractor'    },
+    { value: 'pest_control',   label: '🐛 Pest Control'  },
+    { value: 'hvac',           label: '❄️ HVAC'          },
+    { value: 'roofing',        label: '🏠 Roofing'       },
+    { value: 'moving',         label: '📦 Moving'        },
+    { value: 'photography',    label: '📷 Photography'   },
+    { value: 'catering',       label: '🍽 Catering'      },
+    { value: 'other',          label: '✳️ Other'         },
+  ];
+
+  // ── Pre-fill from URL params ──────────────────────────────────────────────
+  const params = new URLSearchParams(window.location.search);
+  const refTag = params.get('ref') || null;
+  const preZip = params.get('zip') || '';
+  const preCat = params.get('category') || '';
+
+  if (preZip) document.getElementById('zip').value = preZip;
+
+  // ── Category grid ─────────────────────────────────────────────────────────
+  const grid = document.getElementById('catGrid');
+  CATS.forEach(c => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cat-btn' + (c.value === preCat ? ' selected' : '');
+    btn.textContent = c.label;
+    btn.dataset.value = c.value;
+    if (c.value === preCat) document.getElementById('selectedCategory').value = c.value;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+      const already = document.getElementById('selectedCategory').value === c.value;
+      if (already) {
+        document.getElementById('selectedCategory').value = '';
+      } else {
+        btn.classList.add('selected');
+        document.getElementById('selectedCategory').value = c.value;
+      }
+    });
+    grid.appendChild(btn);
+  });
+
+  // ── Bid window badge ──────────────────────────────────────────────────────
+  function updateWindowBadge() {
+    const budget    = parseFloat(document.getElementById('budget').value) || 0;
+    const sameDay   = document.getElementById('sameDayToggle').checked;
+    const badge     = document.getElementById('windowBadge');
+    let label, cls;
+    if (budget >= 5000) {
+      label = '⏳ 72-hour bid window (large job)';
+      cls   = 'window-badge large';
+    } else if (sameDay) {
+      label = '⚡ 4-hour bid window (same day)';
+      cls   = 'window-badge';
+    } else {
+      label = '📅 24-hour bid window';
+      cls   = 'window-badge';
+    }
+    badge.innerHTML = `<span class="${cls}">${label}</span>`;
+  }
+  document.getElementById('budget').addEventListener('input', updateWindowBadge);
+  document.getElementById('sameDayToggle').addEventListener('change', updateWindowBadge);
+
+  // ── Submit ────────────────────────────────────────────────────────────────
+  async function submitJob() {
+    const btn         = document.getElementById('submitBtn');
+    const errBox      = document.getElementById('errorBox');
+    const description = document.getElementById('description').value.trim();
+    const zip         = document.getElementById('zip').value.trim();
+    const category    = document.getElementById('selectedCategory').value;
+    const budget_usd  = parseFloat(document.getElementById('budget').value) || null;
+    const is_same_day = document.getElementById('sameDayToggle').checked;
+    const customer_email = document.getElementById('custEmail').value.trim() || null;
+    const customer_phone = document.getElementById('custPhone').value.trim() || null;
+
+    errBox.style.display = 'none';
+
+    if (!description) { showError('Please describe your job.'); return; }
+    if (!zip || !/^\d{5}$/.test(zip)) { showError('Please enter a valid 5-digit ZIP code.'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Posting your job…';
+
+    try {
+      const res  = await fetch(`${API}/rfq/submit`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          description, zip, category: category || null,
+          budget_usd, is_same_day,
+          customer_email, customer_phone,
+          ref_tag: refTag,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Submission failed');
+      showSuccess(data);
+    } catch (err) {
+      showError(err.message || 'Something went wrong. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Post my job — get quotes →';
+    }
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+
+  function showSuccess(data) {
+    document.getElementById('formState').style.display    = 'none';
+    document.getElementById('successState').style.display = 'block';
+
+    const url = data.quote_url || `https://www.thelocalintel.com/rfq/${data.magic_token}`;
+    document.getElementById('quoteLinkBox').textContent = url;
+    document.getElementById('viewBidsBtn').href         = url;
+
+    const windowLabels = {
+      same_day:  '4 hours (same-day job)',
+      scheduled: '24 hours',
+      large_job: '72 hours (large job)',
+      override:  'custom window',
+    };
+    const wLabel = windowLabels[data.bid_window_type] || '24 hours';
+    const count  = data.matched_count || 0;
+
+    document.getElementById('successMsg').textContent =
+      `We notified ${count} matching business${count === 1 ? '' : 'es'}. ` +
+      `Bids will arrive within your ${wLabel} window. ` +
+      (data.customer_email ? 'We\'ll email you when bids come in.' : 'Bookmark the link below to check your bids.');
+
+    const dl = data.deadline_at ? new Date(data.deadline_at) : null;
+    if (dl) {
+      document.getElementById('windowMeta').textContent =
+        `Bid window closes ${dl.toLocaleDateString('en-US', { weekday:'long', month:'short', day:'numeric' })} at ${dl.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' })}.`;
+    }
+  }
+
+  function copyLink() {
+    const url = document.getElementById('quoteLinkBox').textContent;
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy link', 2000);
+    });
+  }
+  </script>
+
+</body>
+</html>

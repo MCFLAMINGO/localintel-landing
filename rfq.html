@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Bids — LocalIntel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F9FAFB;
+      color: #111827;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: #fff;
+      border-bottom: 1px solid #E5E7EB;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #16A34A;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-logo svg { width: 22px; height: 22px; }
+
+    /* ── LAYOUT ── */
+    .page-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 16px 80px;
+    }
+
+    /* ── JOB SUMMARY CARD ── */
+    .job-card {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .job-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .job-category {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6B7280;
+      margin-bottom: 4px;
+    }
+    .job-description {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.4;
+    }
+    .job-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .job-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: #6B7280;
+    }
+    .job-meta-item svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* countdown */
+    .countdown-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      color: #15803D;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .countdown-badge.urgent {
+      background: #FFF7ED;
+      border-color: #FED7AA;
+      color: #C2410C;
+    }
+    .countdown-badge.expired {
+      background: #FEF2F2;
+      border-color: #FECACA;
+      color: #B91C1C;
+    }
+    .countdown-badge svg { width: 12px; height: 12px; }
+
+    /* ── SECTION HEADING ── */
+    .section-heading {
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6B7280;
+      margin-bottom: 12px;
+    }
+
+    /* ── STATES ── */
+    .state-box {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .state-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .state-icon svg { width: 48px; height: 48px; }
+    .state-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+    .state-body { font-size: 0.9rem; color: #6B7280; max-width: 340px; margin: 0 auto; }
+
+    /* loading spinner */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid #E5E7EB;
+      border-top-color: #16A34A;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    /* ── BID CARDS ── */
+    .bid-list { display: flex; flex-direction: column; gap: 16px; }
+
+    .bid-card {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 20px 24px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .bid-card:hover { border-color: #A7F3D0; box-shadow: 0 2px 8px rgba(22,163,74,0.08); }
+    .bid-card.selected {
+      border-color: #16A34A;
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
+    }
+    .bid-card.declined {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .bid-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .bid-business-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .verified-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #1D4ED8;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    .verified-badge svg { width: 10px; height: 10px; }
+
+    .bid-price {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #16A34A;
+    }
+    .bid-price-label {
+      font-size: 0.72rem;
+      color: #6B7280;
+      text-align: right;
+      margin-top: 2px;
+    }
+
+    .bid-eta {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.82rem;
+      color: #374151;
+      margin-top: 10px;
+    }
+    .bid-eta svg { width: 13px; height: 13px; color: #6B7280; }
+
+    .bid-message {
+      margin-top: 10px;
+      font-size: 0.87rem;
+      color: #4B5563;
+      line-height: 1.5;
+      border-left: 3px solid #D1FAE5;
+      padding-left: 10px;
+    }
+
+    .bid-actions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-select {
+      background: #16A34A;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .btn-select:hover { background: #15803D; }
+    .btn-select:disabled { background: #9CA3AF; cursor: not-allowed; }
+    .btn-select svg { width: 16px; height: 16px; }
+
+    /* winner chip */
+    .winner-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #F0FDF4;
+      border: 1px solid #86EFAC;
+      color: #15803D;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+    .winner-chip svg { width: 14px; height: 14px; }
+
+    /* ── CONFIRMATION BANNER ── */
+    .confirm-banner {
+      background: #F0FDF4;
+      border: 1px solid #86EFAC;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: none;
+    }
+    .confirm-banner.visible { display: block; }
+    .confirm-banner-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #15803D;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .confirm-banner-title svg { width: 18px; height: 18px; }
+    .confirm-banner-body { font-size: 0.87rem; color: #374151; }
+
+    /* ── POLL STATUS ── */
+    .poll-status {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #9CA3AF;
+      margin-top: 16px;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1F2937;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      z-index: 999;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .bid-top { flex-direction: column; gap: 8px; }
+      .bid-price { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    LocalIntel
+  </a>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- CONFIRMATION BANNER (hidden until booking) -->
+  <div class="confirm-banner" id="confirmBanner">
+    <div class="confirm-banner-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      Bid accepted — you're all set
+    </div>
+    <div class="confirm-banner-body" id="confirmBody">
+      The business has been notified and will follow up shortly.
+    </div>
+  </div>
+
+  <!-- JOB SUMMARY CARD -->
+  <div class="job-card" id="jobCard" style="display:none;">
+    <div class="job-card-header">
+      <div>
+        <div class="job-category" id="jobCategory">—</div>
+        <div class="job-description" id="jobDescription">Loading…</div>
+        <div class="job-meta" id="jobMeta"></div>
+      </div>
+      <div class="countdown-badge" id="countdownBadge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span id="countdownText">…</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BIDS AREA -->
+  <div id="bidsArea">
+    <!-- Loading state (default) -->
+    <div id="stateLoading" class="state-box">
+      <div class="spinner"></div>
+      <div class="state-title">Loading your bids…</div>
+      <div class="state-body">Hang tight while we pull in the latest quotes.</div>
+    </div>
+
+    <!-- No bids yet -->
+    <div id="stateNoBids" class="state-box" style="display:none;">
+      <div class="state-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="state-title">No bids yet</div>
+      <div class="state-body" id="noBidsBody">Businesses are reviewing your job. Check back soon — this page refreshes automatically.</div>
+    </div>
+
+    <!-- Error / expired -->
+    <div id="stateError" class="state-box" style="display:none;">
+      <div class="state-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F87171" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <div class="state-title" id="errorTitle">Something went wrong</div>
+      <div class="state-body" id="errorBody">We couldn't load your bids. Please check your link or try again.</div>
+    </div>
+
+    <!-- Bids list -->
+    <div id="stateBids" style="display:none;">
+      <div class="section-heading" id="bidsHeading">Bids received</div>
+      <div class="bid-list" id="bidList"></div>
+      <div class="poll-status" id="pollStatus"></div>
+    </div>
+
+  </div><!-- /bidsArea -->
+
+</div><!-- /page-wrap -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── CONFIG ──
+  const API_BASE = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+  const POLL_INTERVAL_MS = 30_000;
+
+  // ── STATE ──
+  let rfqData = null;
+  let pollTimer = null;
+  let bookingInProgress = false;
+  let isBooked = false;
+
+  // ── TOKEN ──
+  const magic_token = window.location.pathname.split('/').filter(Boolean).pop();
+
+  if (!magic_token || magic_token.length < 8) {
+    showError('Invalid link', 'This link does not appear to be valid. Please use the link from your confirmation SMS or email.');
+  } else {
+    fetchStatus();
+    pollTimer = setInterval(fetchStatus, POLL_INTERVAL_MS);
+  }
+
+  // ── FETCH ──
+  async function fetchStatus() {
+    try {
+      const res = await fetch(`${API_BASE}/rfq/status/${magic_token}`);
+      if (res.status === 404) {
+        stopPolling();
+        showError('Link not found', 'We couldn\'t find a job matching this link. It may have expired or the link may be incorrect.');
+        return;
+      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      rfqData = data;
+      render(data);
+      updatePollStatus();
+    } catch (err) {
+      console.error('fetchStatus error:', err);
+      if (!rfqData) {
+        showError('Connection error', 'We couldn\'t reach LocalIntel. Please check your connection and try refreshing.');
+      }
+      // if we already have data, silently retry
+    }
+  }
+
+  // ── RENDER ──
+  function render(data) {
+    // job card
+    renderJobCard(data);
+
+    const responses = data.responses || [];
+    const pending = responses.filter(r => r.status === 'pending');
+    const winner = responses.find(r => r.status === 'accepted');
+
+    if (data.status === 'expired' && !winner) {
+      stopPolling();
+      showError('Bid window closed', 'The bidding period for this job has ended and no bid was selected. Please submit a new request if you still need help.');
+      return;
+    }
+
+    if (isBooked || winner) {
+      isBooked = true;
+      stopPolling();
+      renderBids(responses, winner ? winner.id : null, true);
+      return;
+    }
+
+    if (responses.length === 0) {
+      showState('stateNoBids');
+      const deadline = data.bid_deadline ? new Date(data.bid_deadline) : null;
+      if (deadline) {
+        document.getElementById('noBidsBody').textContent =
+          `Businesses are reviewing your job. The bidding window closes ${formatRelative(deadline)}.`;
+      }
+      return;
+    }
+
+    renderBids(responses, null, false);
+  }
+
+  function renderJobCard(data) {
+    document.getElementById('jobCard').style.display = 'block';
+    document.getElementById('jobCategory').textContent = data.job_type || 'Service Request';
+    document.getElementById('jobDescription').textContent = data.description || '—';
+
+    // meta row
+    const meta = document.getElementById('jobMeta');
+    meta.innerHTML = '';
+    if (data.zip_code) meta.appendChild(metaItem(iconPin(), data.zip_code));
+    if (data.budget_usd) meta.appendChild(metaItem(iconDollar(), `Budget $${Number(data.budget_usd).toLocaleString()}`));
+    if (data.bid_window_type) {
+      const labels = { same_day: 'Same-day', standard: '24h window', large_job: '72h window' };
+      meta.appendChild(metaItem(iconClock(), labels[data.bid_window_type] || data.bid_window_type));
+    }
+
+    // countdown
+    const deadline = data.bid_deadline ? new Date(data.bid_deadline) : null;
+    if (deadline) updateCountdown(deadline);
+  }
+
+  function renderBids(responses, winnerId, booked) {
+    showState('stateBids');
+
+    const heading = document.getElementById('bidsHeading');
+    heading.textContent = booked ? 'Your selection' : `${responses.length} bid${responses.length !== 1 ? 's' : ''} received`;
+
+    const list = document.getElementById('bidList');
+    list.innerHTML = '';
+
+    // sort: winner first, then by price asc
+    const sorted = [...responses].sort((a, b) => {
+      if (a.id === winnerId) return -1;
+      if (b.id === winnerId) return 1;
+      return (a.quote_usd || 0) - (b.quote_usd || 0);
+    });
+
+    sorted.forEach(r => {
+      const isWinner = r.id === winnerId;
+      const isDeclined = booked && !isWinner;
+      list.appendChild(buildBidCard(r, isWinner, isDeclined, booked));
+    });
+  }
+
+  function buildBidCard(r, isWinner, isDeclined, booked) {
+    const card = document.createElement('div');
+    card.className = 'bid-card' + (isWinner ? ' selected' : '') + (isDeclined ? ' declined' : '');
+
+    const price = r.quote_usd ? `$${Number(r.quote_usd).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}` : 'Quote TBD';
+    const eta = r.eta_text || (r.eta_minutes ? formatEta(r.eta_minutes) : null);
+    const businessName = r.business_name || 'Local Business';
+    const isVerified = !!r.sunbiz_verified;
+
+    card.innerHTML = `
+      <div class="bid-top">
+        <div>
+          <div class="bid-business-name">
+            ${escHtml(businessName)}
+            ${isVerified ? `<span class="verified-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Verified
+            </span>` : ''}
+          </div>
+          ${eta ? `<div class="bid-eta">${iconClock()}Available: <strong>${escHtml(eta)}</strong></div>` : ''}
+          ${r.message ? `<div class="bid-message">${escHtml(r.message)}</div>` : ''}
+        </div>
+        <div style="text-align:right; flex-shrink:0;">
+          <div class="bid-price">${price}</div>
+          ${r.quote_usd ? '<div class="bid-price-label">flat quote</div>' : ''}
+        </div>
+      </div>
+      <div class="bid-actions" id="actions-${r.id}">
+        ${renderActions(r, isWinner, isDeclined, booked)}
+      </div>
+    `;
+
+    if (!booked && !isWinner) {
+      const btn = card.querySelector(`#btn-${r.id}`);
+      if (btn) btn.addEventListener('click', () => handleBook(r.id));
+    }
+
+    return card;
+  }
+
+  function renderActions(r, isWinner, isDeclined, booked) {
+    if (isWinner) {
+      return `<span class="winner-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Selected
+      </span>`;
+    }
+    if (isDeclined || booked) return '';
+    return `<button class="btn-select" id="btn-${r.id}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      Select this bid
+    </button>`;
+  }
+
+  // ── BOOK ──
+  async function handleBook(response_id) {
+    if (bookingInProgress) return;
+    bookingInProgress = true;
+
+    // disable all select buttons
+    document.querySelectorAll('.btn-select').forEach(b => b.disabled = true);
+
+    try {
+      const res = await fetch(`${API_BASE}/rfq/book`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ magic_token, response_id })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+
+      const result = await res.json();
+      isBooked = true;
+      stopPolling();
+
+      // show confirmation banner
+      const banner = document.getElementById('confirmBanner');
+      banner.classList.add('visible');
+      const winnerName = rfqData?.responses?.find(r => r.id === response_id)?.business_name || 'the business';
+      document.getElementById('confirmBody').textContent =
+        `${winnerName} has been notified and will reach out shortly to confirm the details.`;
+
+      // re-render with winner marked
+      if (rfqData) {
+        rfqData.responses = rfqData.responses.map(r => ({
+          ...r,
+          status: r.id === response_id ? 'accepted' : 'declined'
+        }));
+        renderBids(rfqData.responses, response_id, true);
+      }
+
+      showToast('Bid accepted.');
+
+    } catch (err) {
+      console.error('booking error:', err);
+      showToast('Error: ' + err.message);
+      // re-enable buttons
+      document.querySelectorAll('.btn-select').forEach(b => b.disabled = false);
+      bookingInProgress = false;
+    }
+  }
+
+  // ── COUNTDOWN ──
+  function updateCountdown(deadline) {
+    const badge = document.getElementById('countdownBadge');
+    const span = document.getElementById('countdownText');
+
+    function tick() {
+      const ms = deadline - Date.now();
+      if (ms <= 0) {
+        span.textContent = 'Expired';
+        badge.className = 'countdown-badge expired';
+        return;
+      }
+      const h = Math.floor(ms / 3_600_000);
+      const m = Math.floor((ms % 3_600_000) / 60_000);
+      const isUrgent = h < 2;
+      badge.className = 'countdown-badge' + (isUrgent ? ' urgent' : '');
+      span.textContent = h > 0 ? `${h}h ${m}m left` : `${m}m left`;
+    }
+
+    tick();
+    setInterval(tick, 30_000);
+  }
+
+  // ── POLL STATUS LABEL ──
+  function updatePollStatus() {
+    if (isBooked) return;
+    const el = document.getElementById('pollStatus');
+    if (el) {
+      const now = new Date();
+      el.textContent = `Last updated ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · refreshes every 30s`;
+    }
+  }
+
+  function stopPolling() {
+    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  }
+
+  // ── SHOW STATE ──
+  function showState(id) {
+    ['stateLoading', 'stateNoBids', 'stateError', 'stateBids'].forEach(s => {
+      document.getElementById(s).style.display = s === id ? '' : 'none';
+    });
+  }
+
+  function showError(title, body) {
+    showState('stateError');
+    document.getElementById('errorTitle').textContent = title;
+    document.getElementById('errorBody').textContent = body;
+  }
+
+  // ── TOAST ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── HELPERS ──
+  function formatEta(minutes) {
+    if (minutes < 60) return `${minutes} min`;
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return m > 0 ? `${h}h ${m}m` : `${h}h`;
+  }
+
+  function formatRelative(date) {
+    const ms = date - Date.now();
+    if (ms <= 0) return 'soon';
+    const h = Math.floor(ms / 3_600_000);
+    if (h < 1) return 'in less than an hour';
+    if (h < 24) return `in ${h} hour${h !== 1 ? 's' : ''}`;
+    const d = Math.floor(h / 24);
+    return `in ${d} day${d !== 1 ? 's' : ''}`;
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function metaItem(icon, text) {
+    const el = document.createElement('div');
+    el.className = 'job-meta-item';
+    el.innerHTML = icon + escHtml(text);
+    return el;
+  }
+
+  // ── SVG ICONS ──
+  function iconPin() {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+      <circle cx="12" cy="10" r="3"/>
+    </svg>`;
+  }
+
+  function iconDollar() {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23"/>
+      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+    </svg>`;
+  }
+
+  function iconClock() {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </svg>`;
+  }
+</script>
+</body>
+</html>

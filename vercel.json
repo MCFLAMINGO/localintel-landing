@@ -7,6 +7,10 @@
     {
       "source": "/neighborhood/:slug",
       "destination": "/neighborhood/:slug.html"
+    },
+    {
+      "source": "/rfq/:token",
+      "destination": "/rfq.html"
     }
   ],
   "redirects": [
@@ -33,6 +37,11 @@
     {
       "source": "/admin",
       "destination": "/admin.html",
+      "permanent": false
+    },
+    {
+      "source": "/quote",
+      "destination": "/quote.html",
       "permanent": false
     }
   ]

@@ -7395,4 +7395,11 @@
     <priority>0.7</priority>
   </url>
 
+
+  <!-- Business pages (1 claimed businesses) -->
+  <url>
+    <loc>https://www.thelocalintel.com/biz/mcflamingo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

@@ -229,7 +229,7 @@
           <div class="map-legend">
             <div class="map-legend-title">Businesses</div>
             <div class="ml-row"><div class="ml-dot" style="background:#16a34a"></div><span>Claimed</span></div>
-            <div class="ml-row"><div class="ml-dot" style="background:#6b7280"></div><span>Unclaimed</span></div>
+            <div class="ml-row"><div class="ml-dot" style="background:#9CA3AF"></div><span>Unclaimed</span></div>
           </div>
         </div>
       </div>
@@ -404,8 +404,8 @@
     el.innerHTML = '';
     _map = window.L.map('zip-map', {zoomControl:true, scrollWheelZoom:false});
 
-    // Dark CartoDB tiles — matches site theme
-    window.L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    // Light CartoDB tiles
+    window.L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '© OpenStreetMap contributors © CARTO',
       subdomains: 'abcd', maxZoom: 19
     }).addTo(_map);
@@ -428,7 +428,7 @@
       // 2. Draw primary ZIP boundary (bright outline)
       if (bdata.zip_intelligence && bdata.zip_intelligence.boundary_geojson) {
         const primary = window.L.geoJSON(bdata.zip_intelligence.boundary_geojson, {
-          style: { color:'#00e676', weight:2.5, opacity:1, fillColor:'#00e676', fillOpacity:0.07 }
+          style: { color:'#16A34A', weight:2, opacity:0.8, fillColor:'#16A34A', fillOpacity:0.05 }
         }).addTo(_map);
         // Fit map to this ZIP's polygon
         _map.fitBounds(primary.getBounds(), {padding:[20,20]});
@@ -439,8 +439,8 @@
       let bizCount = 0;
       businesses.forEach(b => {
         if (!b.lat || !b.lon) return;
-        const claimed = !!b.website;
-        const color = claimed ? '#00e676' : '#6b7280';
+        const claimed = !!b.is_claimed;
+        const color = claimed ? '#16A34A' : '#9CA3AF';
         window.L.circleMarker([parseFloat(b.lat), parseFloat(b.lon)], {
           radius: claimed ? 6 : 4,
           fillColor: color, color:'#111', weight:1, fillOpacity:0.85
@@ -470,7 +470,7 @@
         const data = await fetch(`${RAILWAY}/api/local-intel/pins?zip=${ZIP}`).then(r => r.json());
         const pins = data.pins || [];
         pins.forEach(p => {
-          const color = p.claimed ? '#00e676' : '#6b7280';
+          const color = p.claimed ? '#16A34A' : '#9CA3AF';
           window.L.circleMarker([p.lat, p.lon], {radius:p.claimed?6:4, fillColor:color, color:'#111', weight:1, fillOpacity:0.85})
             .addTo(_map)
             .bindTooltip(`<strong>${esc(p.name)}</strong>`, {direction:'top'});

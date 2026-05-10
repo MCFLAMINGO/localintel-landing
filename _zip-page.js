@@ -96,12 +96,20 @@
     .ic-badge.dense{background:#dcfce7;color:#166534}
     .ic-badge.bal{background:#e5e7eb;color:#6b7280}
     .ic-badge.under{background:#ffedd5;color:#9a3412}
-    /* Permits */
-    .permit-box{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--rl);padding:24px 28px;max-width:480px;margin-bottom:52px}
-    .permit-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
-    .permit-row:last-child{border-bottom:none}
-    .permit-lbl{font-size:14px;color:var(--text-2)}
-    .permit-val{font-size:18px;font-weight:800}
+    /* Permits — premium gate */
+    .permit-gate{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--rl);padding:28px;margin-bottom:52px;position:relative;overflow:hidden}
+    .permit-gate::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(249,250,251,.97) 75%);pointer-events:none;z-index:1}
+    .permit-blurred{display:flex;flex-direction:column;gap:14px;filter:blur(3px);user-select:none;pointer-events:none}
+    .permit-blur-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+    .permit-blur-row:last-child{border-bottom:none}
+    .permit-blur-lbl{font-size:14px;color:var(--text-2)}
+    .permit-blur-val{font-size:18px;font-weight:800;color:var(--text)}
+    .permit-cta{position:absolute;bottom:0;left:0;right:0;z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 24px 24px;text-align:center}
+    .permit-lock-label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
+    .permit-lock-msg{font-size:15px;font-weight:600;color:var(--text);max-width:380px;line-height:1.5}
+    .permit-lock-sub{font-size:13px;color:var(--text-2);max-width:340px}
+    .permit-consult-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;background:var(--text);color:#fff;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s}
+    .permit-consult-btn:hover{background:#1f2937}
     /* Demo */
     .demo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:52px}
     .dc{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:16px}
@@ -274,8 +282,21 @@
       <div class="ind-grid" id="ind-grid"><p class="loading-msg">Loading industry data…</p></div>
 
       <h2 class="sec-title">Permit Activity — <span>Last 6 Months</span></h2>
-      <p class="sec-sub" id="permit-sub">Construction and development signals from SJC GIS permit database.</p>
-      <div class="permit-box" id="permit-box"><p class="loading-msg">Loading permit data…</p></div>
+      <p class="sec-sub" id="permit-sub">Construction and development signals from county GIS permit databases.</p>
+      <div class="permit-gate" id="permit-gate">
+        <!-- blurred teaser numbers — populated by renderPermits() -->
+        <div class="permit-blurred" id="permit-blurred">
+          <div class="permit-blur-row"><span class="permit-blur-lbl">Commercial Permits</span><span class="permit-blur-val" id="pb-commercial">—</span></div>
+          <div class="permit-blur-row"><span class="permit-blur-lbl">Residential Permits</span><span class="permit-blur-val" id="pb-residential">—</span></div>
+          <div class="permit-blur-row"><span class="permit-blur-lbl">Total Permits (6 mo)</span><span class="permit-blur-val" id="pb-total">—</span></div>
+        </div>
+        <div class="permit-cta">
+          <span class="permit-lock-label">🔒 Premium Signal</span>
+          <div class="permit-lock-msg">Permit activity data is available with a paid market consultation.</div>
+          <div class="permit-lock-sub">Get the full breakdown — commercial vs. residential, trend direction, and what it means for your category in ${ZIP}.</div>
+          <a class="permit-consult-btn" href="/claim.html?ref=permit&zip=${ZIP}">Get Market Consultation →</a>
+        </div>
+      </div>
 
       <h2 class="sec-title">Demographics — <span>${NAME}</span></h2>
       <div class="demo-grid" style="margin-top:16px">
@@ -445,20 +466,19 @@
     }).join('');
   }
 
-  // ── Permits ─────────────────────────────────────────────────────────────────
+  // Permits (gated premium) — gate is always visible.
+  // If real permit numbers exist, populate the blurred teaser values.
   function renderPermits(permits) {
-    const box = document.getElementById('permit-box');
-    if (!permits || !permits.total) {
-      box.innerHTML = '<p class="loading-msg">No permit data — available for SJC ZIPs only.</p>';
-      document.getElementById('permit-sub').textContent = 'Permit data from SJC GIS — available for St. Johns County ZIPs.';
-      return;
+    if (permits && permits.total) {
+      document.getElementById('pb-commercial').textContent = permits.commercial || 0;
+      document.getElementById('pb-residential').textContent = permits.residential || 0;
+      document.getElementById('pb-total').textContent = permits.total;
+      document.getElementById('permit-sub').textContent =
+        `${permits.total} permits filed in the last 6 months — full breakdown requires consultation.`;
+    } else {
+      document.getElementById('permit-sub').textContent =
+        'Construction and development signals — full breakdown requires consultation.';
     }
-    document.getElementById('permit-sub').textContent = `${permits.total} permits filed in the last 6 months in ${ZIP}.`;
-    box.innerHTML = [
-      {label:'Commercial Permits', val: permits.commercial},
-      {label:'Residential Permits', val: permits.residential},
-      {label:'Total Permits (6mo)', val: permits.total},
-    ].map(p => `<div class="permit-row"><span class="permit-lbl">${p.label}</span><span class="permit-val">${p.val || 0}</span></div>`).join('');
   }
 
   // ── Leaflet map ─────────────────────────────────────────────────────────────
@@ -678,7 +698,7 @@
     } catch(e) {
       document.getElementById('gap-grid').innerHTML  = '<p class="loading-msg">Unable to load live data.</p>';
       document.getElementById('ind-grid').innerHTML  = '<p class="loading-msg">Unable to load industry data.</p>';
-      document.getElementById('permit-box').innerHTML = '<p class="loading-msg">Unable to load permit data.</p>';
+      document.getElementById('permit-sub').textContent = 'Construction and development signals — full breakdown requires consultation.';
     }
   }
 

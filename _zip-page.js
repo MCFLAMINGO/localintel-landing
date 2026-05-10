@@ -145,6 +145,45 @@
     .fl a{font-size:13px;color:var(--text-3)}
     .fl a:hover{color:var(--green)}
     .loading-msg{color:var(--text-3);font-size:14px;padding:12px 0}
+    /* Market Brief */
+    .brief-card{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--rl);padding:24px 28px;margin-bottom:52px}
+    .brief-narrative{font-size:16px;color:var(--text);line-height:1.7;margin-bottom:16px}
+    .brief-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .brief-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid var(--border);color:var(--text-3)}
+    .brief-badge.est{border-color:#fbbf24;color:#92400e;background:#fffbeb}
+    .brief-badge.verified{border-color:var(--green);color:var(--green-t);background:var(--green-l)}
+    .opp-score{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text-2)}
+    .opp-bar{height:6px;border-radius:3px;background:var(--border);width:80px;overflow:hidden}
+    .opp-fill{height:100%;border-radius:3px;background:var(--green)}
+    /* Top Questions */
+    .qa-list{display:flex;flex-direction:column;gap:12px;margin-bottom:52px}
+    .qa{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:20px 24px}
+    .qa-q{font-size:15px;font-weight:700;margin-bottom:8px;color:var(--text)}
+    .qa-a{font-size:14px;color:var(--text-2);line-height:1.6}
+    .qa-sig{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:20px;margin-top:10px}
+    .qa-sig.moderate{background:#ffedd5;color:#9a3412}
+    .qa-sig.low{background:#e5e7eb;color:#6b7280}
+    .qa-sig.high{background:#dcfce7;color:#166534}
+    /* Restaurant signal */
+    .rest-card{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--rl);padding:24px 28px;margin-bottom:52px}
+    .rest-stat-row{display:flex;flex-wrap:wrap;gap:24px;margin-bottom:20px}
+    .rest-stat{display:flex;flex-direction:column}
+    .rest-stat-val{font-size:26px;font-weight:800;line-height:1}
+    .rest-stat-lbl{font-size:11px;color:var(--text-3);margin-top:3px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+    .rest-stat-val.over{color:#dc2626}
+    .rest-stat-val.under{color:var(--green)}
+    .rest-stat-val.neutral{color:var(--text)}
+    .tier-bar{display:flex;flex-direction:column;gap:8px}
+    .tier-row{display:flex;align-items:center;gap:10px;font-size:13px}
+    .tier-lbl{width:80px;color:var(--text-2);font-weight:600;flex-shrink:0}
+    .tier-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+    .tier-fill{height:100%;border-radius:4px}
+    .tier-count{font-size:12px;color:var(--text-3);width:24px;text-align:right;flex-shrink:0}
+    /* Growth signals */
+    .growth-strip{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:52px}
+    .gs{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;flex:1;min-width:140px}
+    .gs-val{font-size:20px;font-weight:800;margin-bottom:2px}
+    .gs-lbl{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em;font-weight:600}
     @media(max-width:640px){.hero{padding:44px 18px 40px}.main{padding:36px 18px}.nav-links a:not(.cta){display:none}}
   `;
   const styleEl = document.createElement('style');
@@ -196,6 +235,35 @@
     </section>
 
     <main class="main">
+
+      <!-- Market Brief -->
+      <div class="brief-card" id="brief-card" style="display:none">
+        <p class="brief-narrative" id="brief-narrative"></p>
+        <div class="brief-meta">
+          <span class="brief-badge est" id="brief-conf-badge"></span>
+          <span class="opp-score">Opportunity score: <span id="brief-opp-score">—</span>/100 <div class="opp-bar"><div class="opp-fill" id="brief-opp-bar" style="width:0%"></div></div></span>
+        </div>
+      </div>
+
+      <!-- Top Questions -->
+      <h2 class="sec-title" id="qa-title" style="display:none">Market Q&amp;A — <span>${NAME}</span></h2>
+      <p class="sec-sub" id="qa-sub" style="display:none">Real questions agents ask about this market. Answers derived from live indexed data.</p>
+      <div class="qa-list" id="qa-list"></div>
+
+      <!-- Restaurant Signal -->
+      <div id="rest-section" style="display:none;margin-bottom:0">
+        <h2 class="sec-title">Restaurant Signal — <span>${ZIP}</span></h2>
+        <p class="sec-sub">Food &amp; beverage market saturation based on population, income, and business counts.</p>
+        <div class="rest-card">
+          <div class="rest-stat-row" id="rest-stats"></div>
+          <div class="tier-bar" id="tier-bar"></div>
+        </div>
+      </div>
+
+      <!-- Growth Signals -->
+      <h2 class="sec-title" id="growth-title" style="display:none">Growth Signals — <span>${NAME}</span></h2>
+      <p class="sec-sub" id="growth-sub" style="display:none">Infrastructure momentum, construction activity, and trajectory.</p>
+      <div class="growth-strip" id="growth-strip" style="margin-bottom:52px"></div>
 
       <h2 class="sec-title">Sector Signals — <span>${ZIP}</span></h2>
       <p class="sec-sub" id="gap-sub">Live market signals. Full analysis available to verified business owners.</p>
@@ -520,6 +588,74 @@
       }
       if (mi.dominant_sector) document.getElementById('d-dom').textContent = mi.dominant_sector.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
       if (oracle.growth_state || oracle.market_maturity) document.getElementById('d-growth').textContent = (oracle.growth_state || oracle.market_maturity || '—').replace(/_/g,' ');
+
+      // ── Market Brief ───────────────────────────────────────────────────────
+      const narrative = oracle.oracle_narrative;
+      const oppScore  = mi.market_opportunity_score || 0;
+      const confTier  = oracle.economic_layer?.data_confidence?.confidence_tier || 'ESTIMATED';
+      if (narrative) {
+        document.getElementById('brief-narrative').textContent = narrative;
+        document.getElementById('brief-opp-score').textContent = oppScore;
+        document.getElementById('brief-opp-bar').style.width = oppScore + '%';
+        const cb = document.getElementById('brief-conf-badge');
+        cb.textContent = confTier === 'VERIFIED' ? '✓ Verified Data' : 'Estimated Data';
+        cb.className   = 'brief-badge ' + (confTier === 'VERIFIED' ? 'verified' : 'est');
+        document.getElementById('brief-card').style.display = 'block';
+      }
+
+      // ── Top Questions ──────────────────────────────────────────────────────
+      const tqs = oracle.top_questions || [];
+      if (tqs.length) {
+        document.getElementById('qa-title').style.display = '';
+        document.getElementById('qa-sub').style.display   = '';
+        document.getElementById('qa-list').innerHTML = tqs.map(q => `
+          <div class="qa">
+            <div class="qa-q">${esc(q.question)}</div>
+            <div class="qa-a">${esc(q.answer)}</div>
+            <span class="qa-sig ${esc(q.signal_strength || 'low')}">${(q.signal_strength || 'low').toUpperCase()} SIGNAL</span>
+          </div>`).join('');
+      }
+
+      // ── Restaurant Signal ─────────────────────────────────────────────────
+      const rc = oracle.restaurant_capacity;
+      if (rc && rc.restaurant_count > 0) {
+        document.getElementById('rest-section').style.display = 'block';
+        const capRate   = rc.capture_rate_pct || 0;
+        const satStatus = rc.saturation_status || 'unknown';
+        const satColor  = capRate > 110 ? 'over' : capRate < 80 ? 'under' : 'neutral';
+        const satLabel  = capRate > 110 ? 'Oversaturated' : capRate < 80 ? 'Undersupplied' : 'Balanced';
+        document.getElementById('rest-stats').innerHTML = `
+          <div class="rest-stat"><div class="rest-stat-val ${satColor}">${capRate}%</div><div class="rest-stat-lbl">Capture Rate</div></div>
+          <div class="rest-stat"><div class="rest-stat-val neutral">${rc.restaurant_count}</div><div class="rest-stat-lbl">Food Businesses</div></div>
+          <div class="rest-stat"><div class="rest-stat-val neutral">${rc.restaurants_market_can_support || '—'}</div><div class="rest-stat-lbl">Market Can Support</div></div>
+          <div class="rest-stat"><div class="rest-stat-val ${satColor}">${satLabel}</div><div class="rest-stat-lbl">Status</div></div>`;
+        const tiers = rc.tier_breakdown || {};
+        const tierOrder = [['fine','Fine Dining','#6d28d9'],['upscale','Upscale','#2563eb'],['midrange','Mid-Range','#0891b2'],['budget','Budget','#16a34a']];
+        const maxTier = Math.max(...tierOrder.map(([k]) => tiers[k] || 0), 1);
+        document.getElementById('tier-bar').innerHTML = tierOrder
+          .filter(([k]) => (tiers[k] || 0) > 0)
+          .map(([k, lbl, color]) => `
+            <div class="tier-row">
+              <div class="tier-lbl">${lbl}</div>
+              <div class="tier-track"><div class="tier-fill" style="width:${Math.round(((tiers[k]||0)/maxTier)*100)}%;background:${color}"></div></div>
+              <div class="tier-count">${tiers[k] || 0}</div>
+            </div>`).join('');
+      }
+
+      // ── Growth Signals ────────────────────────────────────────────────────
+      const gt = oracle.growth_trajectory;
+      if (gt) {
+        document.getElementById('growth-title').style.display = '';
+        document.getElementById('growth-sub').style.display   = '';
+        const infra = gt.infrastructure_momentum || 0;
+        const infraColor = infra >= 50 ? '#16a34a' : infra >= 25 ? '#d97706' : '#6b7280';
+        document.getElementById('growth-strip').innerHTML = `
+          <div class="gs"><div class="gs-val" style="color:#16a34a">${esc(gt.label || gt.state || '—')}</div><div class="gs-lbl">Trajectory</div></div>
+          <div class="gs"><div class="gs-val" style="color:${infraColor}">${infra}/100</div><div class="gs-lbl">Infrastructure Momentum</div></div>
+          <div class="gs"><div class="gs-val">${gt.flood_zone_pct || 0}%</div><div class="gs-lbl">Flood Zone Coverage</div></div>
+          <div class="gs"><div class="gs-val">${gt.active_construction || 0}</div><div class="gs-lbl">Active Construction Sites</div></div>
+          <div class="gs"><div class="gs-val">${dem.owner_occupied_pct || 0}%</div><div class="gs-lbl">Owner-Occupied Homes</div></div>`;
+      }
 
       if (mi.sector_breakdown) {
         renderGaps(computeGaps(mi.sector_breakdown, pop, hhi, oracle.market_maturity || 'established'));

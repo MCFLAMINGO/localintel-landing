@@ -294,7 +294,7 @@
           <span class="permit-lock-label">🔒 Premium Signal</span>
           <div class="permit-lock-msg">Permit activity data is available with a paid market consultation.</div>
           <div class="permit-lock-sub">Get the full breakdown — commercial vs. residential, trend direction, and what it means for your category in ${ZIP}.</div>
-          <a class="permit-consult-btn" href="/claim.html?ref=permit&zip=${ZIP}">Get Market Consultation →</a>
+          <a class="permit-consult-btn" href="/consult.html?ref=permit&zip=${ZIP}">Get Market Consultation →</a>
         </div>
       </div>
 

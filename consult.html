@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Consultation — LocalIntel</title>
+<meta name="description" content="Get a paid market intelligence report for any Florida ZIP. Custom gap analysis, expansion signals, and sector whitespace — built for realtors, developers, and business owners.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#fff;--bg-2:#f9fafb;--text:#111827;--text-2:#6B7280;--text-3:#9CA3AF;--green:#16A34A;--green-h:#15803D;--green-l:#DCFCE7;--green-t:#166534;--border:#E5E7EB;--r:10px;--rl:16px;--font:'Inter',-apple-system,sans-serif;--max:680px}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+  body{font-family:var(--font);font-size:16px;line-height:1.65;color:var(--text);background:var(--bg)}
+  a{color:inherit;text-decoration:none}
+
+  /* Nav */
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center}
+  .ni{max-width:1100px;margin:0 auto;padding:0 24px;width:100%;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px}
+  .logo-dot{width:26px;height:26px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center}
+  .logo-dot::after{content:'';width:9px;height:9px;border-radius:50%;background:#fff}
+  .nav-back{font-size:14px;color:var(--text-2);font-weight:500;display:flex;align-items:center;gap:6px}
+  .nav-back:hover{color:var(--green)}
+
+  /* Hero */
+  .hero{background:linear-gradient(135deg,#f0fdf4 0%,#fff 60%);border-bottom:1px solid var(--border);padding:56px 24px 44px}
+  .hi{max-width:var(--max);margin:0 auto}
+  .eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-t);background:var(--green-l);padding:4px 10px;border-radius:20px;margin-bottom:16px}
+  h1{font-size:clamp(28px,5vw,40px);font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:12px}
+  .hsub{font-size:17px;color:var(--text-2);max-width:520px;line-height:1.6}
+
+  /* Form card */
+  .main{max-width:var(--max);margin:0 auto;padding:48px 24px 80px}
+  .card{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:36px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  .form-group{margin-bottom:22px}
+  label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+  label span{color:var(--text-3);font-weight:400}
+  input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-size:15px;font-family:var(--font);color:var(--text);background:#fff;outline:none;transition:border .15s}
+  input:focus,select:focus,textarea:focus{border-color:var(--green)}
+  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+  textarea{resize:vertical;min-height:100px;line-height:1.6}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .submit-btn{width:100%;padding:14px 24px;background:var(--green);color:#fff;border:none;border-radius:var(--r);font-size:16px;font-weight:700;font-family:var(--font);cursor:pointer;transition:all .15s;margin-top:8px}
+  .submit-btn:hover{background:var(--green-h);transform:translateY(-1px);box-shadow:0 4px 12px rgba(22,163,74,.3)}
+  .submit-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+  .form-note{font-size:13px;color:var(--text-3);text-align:center;margin-top:14px;line-height:1.5}
+
+  /* What you get */
+  .value-section{margin-top:48px}
+  .value-title{font-size:16px;font-weight:700;margin-bottom:16px}
+  .value-list{display:flex;flex-direction:column;gap:10px}
+  .vli{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:var(--text-2);line-height:1.5}
+  .vcheck{width:20px;height:20px;background:var(--green-l);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:11px;font-weight:800;color:var(--green-t)}
+  .price-note{margin-top:24px;padding:16px 20px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);font-size:14px;color:var(--text-2);line-height:1.6}
+  .price-note strong{color:var(--text)}
+
+  /* Success state */
+  .success{display:none;text-align:center;padding:48px 24px}
+  .success-icon{width:64px;height:64px;background:var(--green-l);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px}
+  .success h2{font-size:24px;font-weight:800;margin-bottom:10px}
+  .success p{font-size:15px;color:var(--text-2);max-width:380px;margin:0 auto 28px;line-height:1.6}
+  .success a{display:inline-block;padding:11px 22px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);font-size:14px;font-weight:600;color:var(--text-2)}
+  .success a:hover{border-color:var(--green);color:var(--green)}
+
+  .error-msg{font-size:13px;color:#dc2626;margin-top:10px;display:none}
+  @media(max-width:560px){.form-row{grid-template-columns:1fr}.card{padding:24px 20px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="ni">
+    <a href="/" class="logo"><div class="logo-dot"></div>LocalIntel</a>
+    <a href="javascript:history.back()" class="nav-back">← Back</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hi">
+    <div class="eyebrow">Market Intelligence</div>
+    <h1>Get a Florida Market<br>Consultation Report</h1>
+    <p class="hsub">Custom gap analysis, expansion signals, and sector whitespace — built for realtors, developers, franchisors, and business owners making location decisions.</p>
+  </div>
+</section>
+
+<main class="main">
+  <div id="form-section">
+    <div class="card">
+      <form id="consult-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Your name</label>
+            <input type="text" id="name" name="name" placeholder="Jane Smith" required autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="zip">Florida ZIP code <span>(primary market)</span></label>
+            <input type="text" id="zip" name="zip" placeholder="32082" maxlength="5" inputmode="numeric">
+          </div>
+          <div class="form-group">
+            <label for="intent">What are you deciding?</label>
+            <select id="intent" name="intent" required>
+              <option value="" disabled selected>Select one…</option>
+              <option value="opening_business">Opening or expanding a business</option>
+              <option value="real_estate">Commercial real estate decision</option>
+              <option value="investment">Investment or site selection</option>
+              <option value="franchise">Franchise territory analysis</option>
+              <option value="economic_dev">Economic development / EDO</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">What are you trying to figure out? <span>(optional)</span></label>
+          <textarea id="description" name="description" placeholder="e.g. Is there room for a fast-casual healthy concept in Ponte Vedra? What sectors are undersupplied in 32082 vs 32092?"></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-btn">Request Consultation →</button>
+        <div class="error-msg" id="error-msg">Something went wrong — please try again or email erik@mcflamingo.com directly.</div>
+        <p class="form-note">We typically respond within 24 hours. Reports start at $750.</p>
+      </form>
+    </div>
+
+    <div class="value-section">
+      <div class="value-title">What you get</div>
+      <div class="value-list">
+        <div class="vli"><div class="vcheck">✓</div><span><strong>Sector gap analysis</strong> — where demand exists and supply is missing in your target ZIP, with actual vs. expected business counts</span></div>
+        <div class="vli"><div class="vcheck">✓</div><span><strong>Competitive density map</strong> — who's already there, their tenure, and price tier coverage in the corridor</span></div>
+        <div class="vli"><div class="vcheck">✓</div><span><strong>Permit activity data</strong> — commercial and residential permit trends for the last 6–12 months, what's being built nearby</span></div>
+        <div class="vli"><div class="vcheck">✓</div><span><strong>Growth trajectory read</strong> — infrastructure momentum, flood zone risk, construction activity, and demographic shift signals</span></div>
+        <div class="vli"><div class="vcheck">✓</div><span><strong>Investment signal</strong> — buy / hold / avoid recommendation with reasoning, comparable ZIP benchmarks</span></div>
+      </div>
+      <div class="price-note">
+        <strong>Pricing:</strong> Reports start at <strong>$750</strong> for a focused single-ZIP / single-sector analysis. Full expansion packages with multi-ZIP comparisons and executive summary run $2,000–$5,000. Payment via ACH or pathUSD on Tempo mainnet. We'll confirm scope and price before any charge.
+      </div>
+    </div>
+  </div>
+
+  <div class="success" id="success-section">
+    <div class="success-icon">✓</div>
+    <h2>Request received</h2>
+    <p>We'll review your inquiry and follow up within 24 hours with scope and pricing. Check your email — we may have a few clarifying questions.</p>
+    <a href="/" id="success-back-link">← Back to LocalIntel</a>
+  </div>
+</main>
+
+<script>
+const RAILWAY = 'https://gsb-swarm-production.up.railway.app';
+
+// Pre-fill ZIP from query string (?zip=32082)
+const params = new URLSearchParams(location.search);
+if (params.get('zip')) document.getElementById('zip').value = params.get('zip');
+const ref = params.get('ref') || 'direct';
+
+// Update success back link to return to ZIP page if we came from one
+if (params.get('zip')) {
+  document.getElementById('success-back-link').href = `/zip/${params.get('zip')}`;
+  document.getElementById('success-back-link').textContent = `← Back to ${params.get('zip')} market page`;
+}
+
+document.getElementById('consult-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  const err = document.getElementById('error-msg');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  err.style.display = 'none';
+
+  const body = {
+    name       : document.getElementById('name').value.trim(),
+    email      : document.getElementById('email').value.trim(),
+    zip        : document.getElementById('zip').value.trim() || null,
+    intent     : document.getElementById('intent').value,
+    description: document.getElementById('description').value.trim() || null,
+    ref,
+  };
+
+  try {
+    const r = await fetch(`${RAILWAY}/api/local-intel/consult`, {
+      method : 'POST',
+      headers: {'Content-Type':'application/json'},
+      body   : JSON.stringify(body),
+    });
+    if (!r.ok) throw new Error('server error');
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('success-section').style.display = 'block';
+  } catch {
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Request Consultation →';
+  }
+});
+</script>
+</body>
+</html>

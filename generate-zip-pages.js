@@ -141,6 +141,11 @@ function stubHTML(z, seo) {
   <meta name="description" content="${esc(desc)}">
   <meta property="og:title" content="${esc(city)} (${esc(zip)}) — Local Business Intelligence">
   <meta property="og:description" content="${esc(desc)}">
+  <meta property="og:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
   <meta property="og:url" content="${url}">
   <link rel="canonical" href="${url}">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">

@@ -4,21 +4,25 @@
   <!-- Core pages -->
   <url>
     <loc>https://www.thelocalintel.com/</loc>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.thelocalintel.com/search.html</loc>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.thelocalintel.com/merchant.html</loc>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.thelocalintel.com/claim.html</loc>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -7389,17 +7393,195 @@
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+
+
+  <!-- Business pages (1 claimed business) -->
   <url>
-    <loc>https://www.thelocalintel.com/zip/_template</loc>
+    <loc>https://www.thelocalintel.com/biz/mcflamingo</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Neighborhood pages (36 Jacksonville neighborhoods) -->
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/argyle-forest-jacksonville</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
-
-
-  <!-- Business pages (1 claimed businesses) -->
   <url>
-    <loc>https://www.thelocalintel.com/biz/mcflamingo</loc>
+    <loc>https://www.thelocalintel.com/neighborhood/arlington-jacksonville</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/atlantic-beach-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/avondale-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/bartram-park-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/baymeadows-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/brooklyn-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/cedar-hills-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/deerwood-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/downtown-jacksonville-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/etown-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/fort-caroline-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/hodges-blvd-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/intracoastal-west-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/jacksonville-beach-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/kernan-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/lake-shore-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/lavilla-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/mandarin-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/mayport-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/murray-hill-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/neptune-beach-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/new-berlin-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/nocatee-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/northside-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/oakleaf-plantation-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/oceanway-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/ortega-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/regency-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/riverside-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/san-jose-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/san-marco-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/sandalwood-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/southbank-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/springfield-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.thelocalintel.com/neighborhood/westside-jacksonville</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

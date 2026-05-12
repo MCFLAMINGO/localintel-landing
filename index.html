@@ -389,6 +389,101 @@
       display: block;
     }
 
+    /* ── SLANG WIDGET ── */
+    .slang-widget {
+      max-width: 680px;
+      margin: 36px auto 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+    .slang-form {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+      flex-wrap: wrap;
+    }
+    .slang-input {
+      flex: 1;
+      min-width: 140px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 15px;
+      color: var(--text);
+      background: var(--bg);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .slang-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
+    }
+    .slang-input::placeholder { color: var(--text-3); }
+    .slang-submit {
+      padding: 12px 22px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      transition: background 0.18s, transform 0.1s, box-shadow 0.18s;
+      white-space: nowrap;
+    }
+    .slang-submit:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(22,163,74,0.25);
+    }
+    .slang-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .slang-helper {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+    .slang-tagline {
+      font-size: 15px;
+      font-weight: 600;
+      font-style: italic;
+      color: var(--accent-text);
+      margin-top: 10px;
+      padding: 6px 0 6px 12px;
+      border-left: 3px solid var(--accent);
+      display: inline-block;
+      text-align: left;
+    }
+    .slang-status {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent-text);
+      padding: 14px 0;
+      text-align: center;
+    }
+    .slang-status.error { color: #B91C1C; }
+    @keyframes slang-shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .slang-shake {
+      animation: slang-shake 0.4s ease;
+      border-color: #DC2626 !important;
+    }
+    @media (max-width: 540px) {
+      .slang-form { flex-direction: column; }
+      .slang-input, .slang-submit { width: 100%; }
+    }
+
     /* ── SECTION SHARED ── */
     .section {
       padding: 96px 0;
@@ -851,6 +946,18 @@
         </a>
 
         <p style="margin-top: 20px; margin-bottom: -12px; font-size: 14px; color: var(--text-2);">📍 <strong style="color: var(--text);">Make sure your business is on the map.</strong> LocalIntel uses OpenStreetMap to place your exact location. <a href="https://www.openstreetmap.org/edit" target="_blank" rel="noopener" style="color: var(--accent); font-weight: 600; text-decoration: underline;">Add or verify your pin on OSM →</a></p>
+
+        <div class="slang-widget" id="slangWidget">
+          <div id="slangFormWrap">
+            <form class="slang-form" id="slangForm" novalidate>
+              <input type="text" class="slang-input" id="slangInput" placeholder="Slang" aria-label="Local slang" autocomplete="off">
+              <input type="text" class="slang-input" id="realNameInput" placeholder="Real Name" aria-label="Real business name" autocomplete="off">
+              <button type="submit" class="slang-submit" id="slangSubmit">Submit</button>
+            </form>
+            <p class="slang-helper">Know a local nickname? e.g. Dunkans = Dunkin Donuts</p>
+            <p class="slang-tagline">Anyone can leave a legacy</p>
+          </div>
+        </div>
 
         <div class="hero-stats">
           <div class="hero-stat">
@@ -1567,6 +1674,76 @@
       el.style.transition = 'opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s, border-color 0.2s';
       observer.observe(el);
     });
+
+    // ── Slang submission widget ──
+    (function() {
+      const wrap = document.getElementById('slangFormWrap');
+      const form = document.getElementById('slangForm');
+      const slangInput = document.getElementById('slangInput');
+      const realNameInput = document.getElementById('realNameInput');
+      const submitBtn = document.getElementById('slangSubmit');
+      if (!form) return;
+
+      const ENDPOINT = 'https://gsb-swarm-production.up.railway.app/api/local-intel/slang';
+      const originalHTML = wrap.innerHTML;
+
+      function shake(el) {
+        el.classList.remove('slang-shake');
+        // force reflow to restart animation
+        void el.offsetWidth;
+        el.classList.add('slang-shake');
+        setTimeout(() => el.classList.remove('slang-shake'), 500);
+      }
+
+      function showStatus(message, isError) {
+        wrap.innerHTML = '<p class="slang-status' + (isError ? ' error' : '') + '">' + message + '</p>';
+      }
+
+      function reset() {
+        wrap.innerHTML = originalHTML;
+        // re-bind after innerHTML swap
+        bind();
+      }
+
+      function bind() {
+        const f = document.getElementById('slangForm');
+        if (!f) return;
+        f.addEventListener('submit', onSubmit);
+      }
+
+      async function onSubmit(e) {
+        e.preventDefault();
+        const slang = document.getElementById('slangInput');
+        const real = document.getElementById('realNameInput');
+        const btn = document.getElementById('slangSubmit');
+        const slangVal = slang.value.trim();
+        const realVal = real.value.trim();
+
+        let invalid = false;
+        if (!slangVal) { shake(slang); invalid = true; }
+        if (!realVal)  { shake(real);  invalid = true; }
+        if (invalid) return;
+
+        btn.disabled = true;
+        const submission = slangVal + ' = ' + realVal;
+
+        try {
+          const res = await fetch(ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ submission: submission, submittedBy: 'web' })
+          });
+          if (!res.ok) throw new Error('bad response');
+          showStatus('Thanks for the local intel');
+          setTimeout(reset, 3000);
+        } catch (err) {
+          showStatus("Couldn't save — try again", true);
+          setTimeout(reset, 2000);
+        }
+      }
+
+      bind();
+    })();
   </script>
 
 

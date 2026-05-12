@@ -48,6 +48,16 @@
       "source": "/quote",
       "destination": "/quote.html",
       "permanent": false
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html",
+      "permanent": false
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html",
+      "permanent": false
     }
   ]
 }

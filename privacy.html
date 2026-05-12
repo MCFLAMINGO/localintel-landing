@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — LocalIntel</title>
+  <meta name="description" content="LocalIntel Privacy Policy — how we collect, use, and protect information when you use our SMS and local discovery service.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://www.thelocalintel.com/privacy">
+  <meta property="og:title" content="Privacy Policy — LocalIntel">
+  <meta property="og:description" content="How LocalIntel collects, uses, and protects information.">
+  <meta property="og:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
+  <meta property="og:url" content="https://www.thelocalintel.com/privacy">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:#FFFFFF; --bg-card:#F9FAFB; --bg-dark:#111827;
+      --text:#111827; --text-2:#6B7280; --text-3:#9CA3AF;
+      --accent:#16A34A; --accent-hover:#15803D; --accent-light:#DCFCE7; --accent-text:#166534;
+      --border:#E5E7EB;
+      --radius-sm:6px; --radius:10px; --radius-lg:16px;
+      --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+      --max:760px; --nav-h:64px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+    body{font-family:var(--font);font-size:16px;line-height:1.65;color:var(--text);background:var(--bg)}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* Nav */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);background:rgba(255,255,255,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+    .nav-inner{max-width:1160px;margin:0 auto;padding:0 24px;height:100%;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;letter-spacing:-.4px;color:var(--text)}
+    .logo-dot{width:22px;height:22px;background:var(--accent);border-radius:50%;position:relative;flex-shrink:0}
+    .logo-dot::after{content:'';position:absolute;width:8px;height:8px;background:#fff;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
+    .nav-back{font-size:14px;color:var(--text-2);font-weight:500}
+    .nav-back:hover{color:var(--text);text-decoration:none}
+
+    /* Hero */
+    .hero{background:linear-gradient(135deg,#f0fdf4 0%,#fff 60%);border-bottom:1px solid var(--border);padding:calc(var(--nav-h) + 48px) 24px 40px}
+    .hero-inner{max-width:var(--max);margin:0 auto}
+    .eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-text);background:var(--accent-light);padding:4px 10px;border-radius:20px;margin-bottom:16px}
+    h1{font-size:clamp(28px,5vw,40px);font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:10px}
+    .last-updated{font-size:14px;color:var(--text-2)}
+
+    /* Body */
+    main{max-width:var(--max);margin:0 auto;padding:48px 24px 80px}
+    .doc h2{font-size:20px;font-weight:700;margin:36px 0 12px;color:var(--text);letter-spacing:-.01em}
+    .doc h2:first-child{margin-top:0}
+    .doc p{margin-bottom:14px;color:var(--text);line-height:1.7}
+    .doc ul{margin:0 0 16px 22px;color:var(--text);line-height:1.7}
+    .doc li{margin-bottom:6px}
+    .doc strong{color:var(--text);font-weight:600}
+    .callout{margin:18px 0;padding:16px 18px;background:var(--bg-card);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius);font-size:14.5px;color:var(--text-2);line-height:1.65}
+    .callout strong{color:var(--text)}
+    .operator{margin-top:14px;padding:14px 18px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);font-size:14px;color:var(--text-2);line-height:1.6}
+    .operator strong{color:var(--text)}
+
+    /* Footer */
+    footer{background:var(--bg-dark);color:#9CA3AF;padding:48px 0 32px}
+    .footer-container{max-width:1160px;margin:0 auto;padding:0 24px}
+    .footer-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:48px;margin-bottom:40px;flex-wrap:wrap}
+    .footer-brand .nav-logo{color:#fff;margin-bottom:12px}
+    .footer-brand p{font-size:14px;color:#6B7280;line-height:1.6;max-width:280px}
+    .footer-links{display:flex;gap:48px}
+    .footer-col h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#fff;margin-bottom:14px}
+    .footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+    .footer-col ul a{font-size:14px;color:#6B7280;transition:color .15s;text-decoration:none}
+    .footer-col ul a:hover{color:#D1FAE5;text-decoration:none}
+    .footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .footer-bottom p{font-size:13px;color:#4B5563}
+    .footer-bottom a{color:#6B7280;text-decoration:none}
+    .footer-bottom a:hover{color:#9CA3AF;text-decoration:none}
+
+    @media (max-width:720px){
+      .footer-inner{flex-direction:column;gap:36px}
+      .footer-links{gap:32px}
+    }
+    @media (max-width:480px){
+      .footer-links{flex-direction:column;gap:24px}
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="LocalIntel home">
+        <div class="logo-dot" aria-hidden="true"></div>
+        LocalIntel
+      </a>
+      <a href="/" class="nav-back">← Back to home</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Legal</div>
+      <h1>Privacy Policy</h1>
+      <p class="last-updated">Last updated: May 11, 2026</p>
+      <div class="operator">
+        <strong>Operator:</strong> MCFL Restaurant Holdings LLC<br>
+        880 A1A N Suite 12, Ponte Vedra Beach, FL 32082<br>
+        <a href="mailto:erik@mcflamingo.com">erik@mcflamingo.com</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="doc">
+    <p>This Privacy Policy describes how MCFL Restaurant Holdings LLC ("LocalIntel," "we," "us," or "our") collects, uses, and shares information when you interact with our website at <a href="https://www.thelocalintel.com">www.thelocalintel.com</a>, our SMS service, and related products (collectively, the "Service").</p>
+
+    <h2>1. Information We Collect</h2>
+    <p>We collect the following information when you use the Service:</p>
+    <ul>
+      <li><strong>Phone number</strong> — when you text LocalIntel or submit your number through a web form.</li>
+      <li><strong>Search queries and messages</strong> — the text content you send us (e.g., "best taco truck in 32082").</li>
+      <li><strong>ZIP code and approximate location</strong> — derived from your query or provided by you.</li>
+      <li><strong>Device and technical metadata</strong> — device type, browser, and similar diagnostic data.</li>
+      <li><strong>Timestamps</strong> — the date and time of your interactions with the Service.</li>
+    </ul>
+
+    <h2>2. How We Use Your Information</h2>
+    <p>We use the information we collect to:</p>
+    <ul>
+      <li>Route your queries to relevant local businesses and service providers.</li>
+      <li>Send SMS responses, confirmations, and follow-ups related to your request.</li>
+      <li>Improve intent matching, search quality, and the overall accuracy of our results.</li>
+      <li>Broadcast Requests for Quote (RFQs) to qualified service providers when you initiate a service request.</li>
+      <li>Operate, maintain, and improve the Service.</li>
+    </ul>
+
+    <h2>3. SMS Messaging</h2>
+    <p>By texting LocalIntel or submitting your phone number through a web form, you consent to receive SMS messages from us related to your queries and requests, including transactional messages, notifications, and follow-ups.</p>
+    <div class="callout">
+      <strong>SMS terms:</strong> Message and data rates may apply. Message frequency varies based on your interactions. Reply <strong>STOP</strong> to cancel. Text <strong>HELP</strong> for help. Msg &amp; data rates may apply.
+    </div>
+    <p>We will not share your mobile number or SMS opt-in data with third parties or affiliates for their marketing or promotional purposes. Carriers are not liable for delayed or undelivered messages.</p>
+
+    <h2>4. Data Sharing</h2>
+    <p>We share query and contact information with local businesses or service providers <strong>only when you initiate a transaction, request, or RFQ</strong> that requires such sharing to fulfill your request. We do not sell personal data to third parties.</p>
+    <p>We may share information with service providers that help us operate the Service (e.g., SMS carriers, hosting, analytics), bound by appropriate confidentiality and security obligations, and when required by law or to protect our rights.</p>
+
+    <h2>5. Data Retention</h2>
+    <ul>
+      <li><strong>Query logs:</strong> retained for 90 days.</li>
+      <li><strong>Call and message transcripts:</strong> retained for 30 days.</li>
+      <li>You may request deletion of your data at any time by emailing <a href="mailto:erik@mcflamingo.com">erik@mcflamingo.com</a>.</li>
+    </ul>
+
+    <h2>6. Your Choices</h2>
+    <p>You may opt out of SMS messaging at any time by replying <strong>STOP</strong> to any message from LocalIntel. You may request access to, correction of, or deletion of your personal information by emailing us at <a href="mailto:erik@mcflamingo.com">erik@mcflamingo.com</a>.</p>
+
+    <h2>7. Children's Privacy</h2>
+    <p>The Service is not directed to children under the age of 13, and we do not knowingly collect personal information from children.</p>
+
+    <h2>8. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. When we do, we will revise the "Last updated" date at the top of this page. Material changes will be communicated through the Service or by other reasonable means.</p>
+
+    <h2>9. Contact</h2>
+    <p>Questions about this Privacy Policy or our data practices? Contact us at <a href="mailto:erik@mcflamingo.com">erik@mcflamingo.com</a>.</p>
+    <p>MCFL Restaurant Holdings LLC<br>880 A1A N Suite 12, Ponte Vedra Beach, FL 32082</p>
+  </main>
+
+  <footer>
+    <div class="footer-container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="/" class="nav-logo" aria-label="LocalIntel home">
+            <div class="logo-dot" aria-hidden="true"></div>
+            LocalIntel
+          </a>
+          <p>Local business intelligence for Northeast Florida. Powered by state records, permits, and people who know the market.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>Platform</h4>
+            <ul>
+              <li><a href="/claim">Claim Your Listing</a></li>
+              <li><a href="/#how-it-works">How it Works</a></li>
+              <li><a href="/#examples">Live Examples</a></li>
+              <li><a href="/#pricing">Pricing</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Legal</h4>
+            <ul>
+              <li><a href="/privacy">Privacy Policy</a></li>
+              <li><a href="/terms">Terms of Service</a></li>
+              <li><a href="mailto:erik@mcflamingo.com">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 LocalIntel · MCFL Restaurant Holdings LLC · Ponte Vedra Beach, FL</p>
+        <p><a href="mailto:erik@mcflamingo.com">erik@mcflamingo.com</a></p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

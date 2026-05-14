@@ -831,6 +831,168 @@
     @media (max-width: 640px) {
       .btn-ask { font-size: 14px; padding: 12px 20px; }
     }
+
+    /* ── LIVE TRIAL WIDGET ── */
+    .li-trial-section {
+      padding: 64px 0 32px;
+      background: var(--bg);
+    }
+    #li-trial-widget {
+      max-width: 640px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+    #li-trial-widget h3 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    #li-trial-widget .li-sub {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 20px;
+    }
+    #li-trial-widget input[type="tel"],
+    #li-trial-widget textarea {
+      width: 100%;
+      font: inherit;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    #li-trial-widget textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+    #li-trial-widget input[type="tel"]:focus,
+    #li-trial-widget textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
+    }
+    #li-ask-btn, #li-subscribe-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 22px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 700;
+      background: var(--accent);
+      color: #fff;
+      transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+    }
+    #li-ask-btn:hover:not(:disabled),
+    #li-subscribe-btn:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(22,163,74,0.25);
+    }
+    #li-ask-btn:disabled { opacity: 0.65; cursor: not-allowed; }
+    #li-status {
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    #li-status.li-error { color: #b91c1c; }
+    #li-status.li-success { color: var(--accent-text); font-weight: 600; }
+    .li-answer-card {
+      margin-top: 18px;
+      padding: 18px 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .li-answer-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+    .li-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+    }
+    .li-badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent-text);
+      background: var(--accent-light);
+      border-radius: 20px;
+      padding: 4px 10px;
+    }
+    .li-trial-count {
+      font-size: 12px;
+      color: var(--text-2);
+      font-weight: 600;
+    }
+    .li-paywall {
+      margin-top: 18px;
+      padding: 20px;
+      background: #fff;
+      border: 1.5px solid var(--accent);
+      border-radius: var(--radius);
+    }
+    .li-paywall-heading {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .li-paywall-body {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 14px;
+      line-height: 1.55;
+    }
+    #li-payment-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    #li-payment-modal .li-modal-card {
+      background: #fff;
+      border-radius: 12px;
+      width: 440px;
+      max-width: 95vw;
+      overflow: hidden;
+      position: relative;
+    }
+    #li-close-modal {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 18px;
+      line-height: 1;
+      color: var(--text);
+      z-index: 2;
+    }
+    @media (max-width: 640px) {
+      #li-trial-widget { padding: 24px 20px; }
+      #li-trial-widget h3 { font-size: 20px; }
+    }
   </style>
 
   <!-- Structured data: Organization -->
@@ -980,6 +1142,37 @@
       </div>
     </section>
 
+    <!-- LIVE TRIAL WIDGET -->
+    <section class="li-trial-section" id="try-it">
+      <div class="container">
+        <div id="li-trial-widget">
+          <h3>Ask LocalIntel</h3>
+          <p class="li-sub">3 free questions. No account needed.</p>
+          <div id="li-form-step">
+            <input type="tel" id="li-phone" placeholder="Your phone number" autocomplete="tel" />
+            <textarea id="li-question" placeholder="Ask anything about St. Johns County business intelligence..." rows="3"></textarea>
+            <button id="li-ask-btn" type="button">Ask &rarr;</button>
+          </div>
+          <div id="li-answer-step" style="display:none;">
+            <div class="li-answer-card">
+              <div class="li-answer-text" id="li-answer-text"></div>
+              <div class="li-meta-row">
+                <span class="li-badge" id="li-confidence-badge">Data confidence: —</span>
+                <span class="li-trial-count" id="li-trial-count"></span>
+              </div>
+            </div>
+            <button id="li-ask-again-btn" type="button" style="margin-top:14px; background:transparent; color:var(--accent); font-weight:600; font-size:14px;">Ask another question &rarr;</button>
+          </div>
+          <div id="li-paywall-step" class="li-paywall" style="display:none;">
+            <div class="li-paywall-heading">You've used your 3 free questions.</div>
+            <div class="li-paywall-body">Subscribe for $9.99/mo for unlimited AI-powered local intelligence.</div>
+            <button id="li-subscribe-btn" type="button">Subscribe Now &rarr;</button>
+          </div>
+          <p id="li-status" style="display:none;"></p>
+        </div>
+      </div>
+    </section>
+
     <!-- HOW IT WORKS -->
     <section class="section" id="how-it-works" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
       <div class="container">
@@ -1048,15 +1241,8 @@
         <div class="section-label">Real queries, real answers</div>
         <h2 class="section-heading">What professionals are asking</h2>
         <p class="section-sub">From realtors to contractors, here's what local intelligence actually looks like in the field.</p>
+        <p class="section-sub" style="margin-bottom: 16px;"><a href="#try-it" style="color: var(--accent); font-weight: 600;">Try it live above &uarr;</a> &mdash; or browse the kinds of questions professionals bring to LocalIntel:</p>
         <div class="examples-grid">
-          <div class="example-card">
-            <span class="example-tag tag-realtor">Realtor</span>
-            <p class="example-query">"Which ZIP codes in St. Johns County have the most new business permits filed in the last 6 months?"</p>
-            <div class="example-answer">
-              <div class="example-answer-label">Answer preview</div>
-              Sign up to unlock real-time answers powered by live St. Johns County data. <a href="mailto:erik@mcflamingo.com">Get Early Access →</a>
-            </div>
-          </div>
           <div class="example-card">
             <span class="example-tag tag-health">Healthcare</span>
             <p class="example-query">"Are there any urgent care gaps in the Nocatee area? I'm evaluating a clinic expansion."</p>
@@ -1606,6 +1792,14 @@
     </section>
   </main>
 
+  <!-- LIVE TRIAL: payment modal -->
+  <div id="li-payment-modal" role="dialog" aria-modal="true" aria-label="Subscribe to LocalIntel">
+    <div class="li-modal-card">
+      <button id="li-close-modal" type="button" aria-label="Close">&times;</button>
+      <iframe id="li-surge-iframe" src="" width="100%" height="600" frameborder="0" allow="payment; clipboard-write" style="border:none; display:block;"></iframe>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer>
     <div class="container">
@@ -1743,6 +1937,189 @@
       }
 
       bind();
+    })();
+  </script>
+
+  <!-- LIVE TRIAL WIDGET SCRIPT -->
+  <script>
+    (function () {
+      var API_BASE = 'https://gsb-swarm-production.up.railway.app';
+      var SURGE_ORIGIN = 'https://surge.basalthq.com';
+
+      var phoneEl = document.getElementById('li-phone');
+      var qEl = document.getElementById('li-question');
+      var askBtn = document.getElementById('li-ask-btn');
+      var askAgainBtn = document.getElementById('li-ask-again-btn');
+      var subBtn = document.getElementById('li-subscribe-btn');
+      var statusEl = document.getElementById('li-status');
+      var formStep = document.getElementById('li-form-step');
+      var answerStep = document.getElementById('li-answer-step');
+      var paywallStep = document.getElementById('li-paywall-step');
+      var answerText = document.getElementById('li-answer-text');
+      var confidenceBadge = document.getElementById('li-confidence-badge');
+      var trialCount = document.getElementById('li-trial-count');
+      var modal = document.getElementById('li-payment-modal');
+      var iframe = document.getElementById('li-surge-iframe');
+      var closeModal = document.getElementById('li-close-modal');
+
+      var receiptId = null;
+      var isSubscriber = false;
+
+      function setStatus(msg, kind) {
+        statusEl.textContent = msg || '';
+        statusEl.className = '';
+        if (kind === 'error') statusEl.classList.add('li-error');
+        if (kind === 'success') statusEl.classList.add('li-success');
+        statusEl.style.display = msg ? 'block' : 'none';
+      }
+
+      function showFormOnly() {
+        formStep.style.display = 'block';
+        answerStep.style.display = 'none';
+        paywallStep.style.display = 'none';
+      }
+
+      function showAnswer(data) {
+        formStep.style.display = 'none';
+        answerStep.style.display = 'block';
+        answerText.textContent = data.answer || '';
+        if (typeof data.data_confidence === 'number') {
+          var pct = Math.round(data.data_confidence * (data.data_confidence <= 1 ? 100 : 1));
+          confidenceBadge.textContent = 'Data confidence: ' + pct + '%';
+          confidenceBadge.style.display = 'inline-block';
+        } else {
+          confidenceBadge.style.display = 'none';
+        }
+        if (data.is_subscriber) {
+          isSubscriber = true;
+          trialCount.textContent = 'Subscriber — unlimited questions';
+          paywallStep.style.display = 'none';
+        } else if (typeof data.trial_remaining === 'number') {
+          var n = data.trial_remaining;
+          trialCount.textContent = n === 1
+            ? '1 free question remaining'
+            : n + ' free questions remaining';
+          if (n <= 0) {
+            paywallStep.style.display = 'block';
+          } else {
+            paywallStep.style.display = 'none';
+          }
+        } else {
+          trialCount.textContent = '';
+        }
+      }
+
+      function showPaywall(msg) {
+        formStep.style.display = 'none';
+        answerStep.style.display = 'none';
+        paywallStep.style.display = 'block';
+        if (msg) setStatus(msg, 'error');
+      }
+
+      askBtn.addEventListener('click', async function () {
+        var phone = (phoneEl.value || '').trim();
+        var question = (qEl.value || '').trim();
+        setStatus('');
+        if (!phone) { setStatus('Please enter your phone number.', 'error'); phoneEl.focus(); return; }
+        if (!question) { setStatus('Please enter a question.', 'error'); qEl.focus(); return; }
+
+        askBtn.disabled = true;
+        askBtn.textContent = 'Thinking...';
+        try {
+          var res = await fetch(API_BASE + '/api/local-intel/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: phone, question: question })
+          });
+          var data = await res.json();
+          if (!data || data.ok === false) {
+            if (data && data.gated) {
+              showPaywall(data.message || '');
+            } else {
+              setStatus((data && data.message) || 'Something went wrong. Try again.', 'error');
+            }
+          } else if (data.gated) {
+            showPaywall(data.message || '');
+          } else {
+            showAnswer(data);
+          }
+        } catch (e) {
+          setStatus('Network error. Try again.', 'error');
+        } finally {
+          askBtn.disabled = false;
+          askBtn.textContent = 'Ask →';
+        }
+      });
+
+      askAgainBtn.addEventListener('click', function () {
+        qEl.value = '';
+        setStatus('');
+        showFormOnly();
+        qEl.focus();
+      });
+
+      subBtn.addEventListener('click', async function () {
+        var phone = (phoneEl.value || '').trim();
+        if (!phone) { setStatus('Enter your phone number to subscribe.', 'error'); phoneEl.focus(); return; }
+        subBtn.disabled = true;
+        var originalText = subBtn.textContent;
+        subBtn.textContent = 'Opening payment...';
+        try {
+          var res = await fetch(API_BASE + '/api/local-intel/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: phone })
+          });
+          var data = await res.json();
+          if (!data || !data.ok || !data.portalUrl) {
+            setStatus('Payment init failed. Try again.', 'error');
+            return;
+          }
+          receiptId = data.receiptId;
+          iframe.src = data.portalUrl;
+          modal.style.display = 'flex';
+        } catch (e) {
+          setStatus('Network error opening payment. Try again.', 'error');
+        } finally {
+          subBtn.disabled = false;
+          subBtn.textContent = originalText;
+        }
+      });
+
+      function hideModal() {
+        modal.style.display = 'none';
+        iframe.src = '';
+      }
+
+      closeModal.addEventListener('click', hideModal);
+
+      window.addEventListener('message', async function (event) {
+        if (event.origin !== SURGE_ORIGIN) return;
+        var msg = event.data || {};
+        if (msg.type === 'gateway-preferred-height' && typeof msg.height === 'number') {
+          iframe.height = msg.height;
+          return;
+        }
+        if (msg.type === 'gateway-card-success') {
+          var phone = (phoneEl.value || '').trim();
+          try {
+            await fetch(API_BASE + '/api/local-intel/subscription-confirm', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ phone: phone, receiptId: receiptId, token: msg.token })
+            });
+          } catch (e) {}
+          hideModal();
+          isSubscriber = true;
+          paywallStep.style.display = 'none';
+          showFormOnly();
+          setStatus("You're subscribed! Ask unlimited questions.", 'success');
+          return;
+        }
+        if (msg.type === 'gateway-card-cancel') {
+          hideModal();
+        }
+      });
     })();
   </script>
 

@@ -470,11 +470,12 @@
         </button>
       </div>
 
-      <div class="call-cta">
+      <div class="call-cta" style="display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:12px;">
         <a href="tel:+19045067476" class="call-link">
           <span class="call-pulse"></span>
           Skip the search — just call (904) 506-7476
         </a>
+        <a href="#" onclick="openAiChatModal(); return false;" style="font-size:13px; color:var(--accent, #16a34a); font-weight:600; text-decoration:none; white-space:nowrap; margin-left:16px;">Ask a deeper question →</a>
       </div>
 
     </div>
@@ -485,51 +486,7 @@
     <div class="thread" id="thread"></div>
     <div id="resultsArea"></div>
 
-    <div id="search-trial-widget" style="margin:32px auto; max-width:560px; background:#111; border:1px solid #333; border-radius:12px; padding:28px 24px;">
-      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#16a34a; margin-bottom:8px;">LocalIntel AI</div>
-      <h3 style="font-size:18px; font-weight:700; color:#fff; margin:0 0 8px;">Ask a deeper question</h3>
-      <p style="font-size:13px; color:#aaa; margin:0 0 16px;">3 free AI-powered answers. Ask about market gaps, concept viability, income levels, permits — anything about this market.</p>
-      <input type="tel" id="s-phone" placeholder="Your phone number" style="width:100%; box-sizing:border-box; padding:10px 14px; background:#1a1a1a; border:1px solid #333; border-radius:6px; color:#fff; font-size:14px; margin-bottom:10px;" />
-      <textarea id="s-question" placeholder="e.g. Can a smoothie QSR work in Nocatee? Is there room for another steakhouse in 32082?" rows="3" style="width:100%; box-sizing:border-box; padding:10px 14px; background:#1a1a1a; border:1px solid #333; border-radius:6px; color:#fff; font-size:14px; resize:vertical; margin-bottom:12px;"></textarea>
-      <button id="s-ask-btn" onclick="searchPageAsk()" style="width:100%; padding:12px; background:#16a34a; color:#fff; border:none; border-radius:6px; font-size:15px; font-weight:700; cursor:pointer;">Ask →</button>
-      <div id="s-answer" style="display:none; margin-top:16px;"></div>
-      <div id="s-paywall" style="display:none; margin-top:16px; text-align:center;">
-        <p style="color:#aaa; font-size:14px; margin:0 0 12px;">You've used your 3 free questions.</p>
-        <button onclick="window.location.href='/'" style="padding:10px 20px; background:transparent; border:1px solid #16a34a; color:#16a34a; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer;">Subscribe for $9.99/mo →</button>
-      </div>
-    </div>
   </div>
-
-  <script>
-    async function searchPageAsk() {
-      const phone = document.getElementById('s-phone').value.trim();
-      const question = document.getElementById('s-question').value.trim();
-      if (!phone || !question) { alert('Enter your phone number and question.'); return; }
-      const btn = document.getElementById('s-ask-btn');
-      btn.disabled = true; btn.textContent = 'Thinking...';
-      const res = await fetch('https://gsb-swarm-production.up.railway.app/api/local-intel/chat', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, question })
-      });
-      const data = await res.json();
-      btn.disabled = false; btn.textContent = 'Ask →';
-      if (data.gated) {
-        document.getElementById('s-paywall').style.display = 'block';
-        return;
-      }
-      const ans = document.getElementById('s-answer');
-      ans.style.display = 'block';
-      ans.innerHTML = `
-        <div style="background:#1a1a1a; border:1px solid #333; border-radius:8px; padding:16px;">
-          <div style="font-size:12px; color:#16a34a; font-weight:700; margin-bottom:8px;">AI Answer · Data confidence: ${data.data_confidence}%</div>
-          <p style="color:#cbd5e1; font-size:14px; margin:0 0 10px;">${data.answer}</p>
-          ${data.trial_remaining !== null ? `<div style="font-size:12px; color:#aaa;">${data.trial_remaining} free question${data.trial_remaining !== 1 ? 's' : ''} remaining</div>` : ''}
-        </div>`;
-      if (data.trial_remaining === 0) {
-        document.getElementById('s-paywall').style.display = 'block';
-      }
-    }
-  </script>
 
   <script>
     const SEARCH_URL = 'https://gsb-swarm-production.up.railway.app/api/local-intel/search';
@@ -1330,5 +1287,116 @@
       <div style="padding:8px 16px; font-size:11px; color:#999; text-align:center;">Powered by Surge · Secured by Basalt</div>
     </div>
   </div>
+
+  <!-- Ask a deeper question — smart chat modal -->
+  <div id="ai-chat-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:#111; border:1px solid #333; border-radius:16px; width:520px; max-width:95vw; padding:28px; position:relative; max-height:90vh; overflow-y:auto;">
+      <button onclick="closeAiChatModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#aaa;font-size:20px;cursor:pointer;line-height:1;">✕</button>
+
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#16a34a;margin-bottom:8px;">LocalIntel AI</div>
+      <h3 style="font-size:18px;font-weight:700;color:#fff;margin:0 0 6px;">Ask a deeper question</h3>
+      <p id="s-modal-subhead" style="font-size:13px;color:#aaa;margin:0 0 18px;">3 free AI-powered answers. No account needed.</p>
+
+      <div style="position:relative; margin-bottom:10px;">
+        <input type="tel" id="s-phone" placeholder="Your phone number"
+          style="width:100%;box-sizing:border-box;padding:10px 14px;background:#1a1a1a;border:1px solid #333;border-radius:6px;color:#fff;font-size:14px;"
+          onblur="checkSubscriberStatus()" />
+        <span id="s-sub-badge" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:11px; font-weight:700; color:#16a34a; background:#16a34a1a; border:1px solid #16a34a4d; border-radius:99px; padding:2px 8px;">Subscribed ✓</span>
+      </div>
+
+      <textarea id="s-question" placeholder="e.g. Can a smoothie QSR work in Nocatee? Is there room for another steakhouse in 32082?" rows="3"
+        style="width:100%;box-sizing:border-box;padding:10px 14px;background:#1a1a1a;border:1px solid #333;border-radius:6px;color:#fff;font-size:14px;resize:vertical;margin-bottom:12px;"></textarea>
+      <button id="s-ask-btn" onclick="searchPageAsk()" style="width:100%;padding:12px;background:#16a34a;color:#fff;border:none;border-radius:6px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:16px;">Ask →</button>
+
+      <div id="s-answer" style="display:none;"></div>
+      <div id="s-paywall" style="display:none;margin-top:16px;text-align:center;">
+        <p style="color:#aaa;font-size:14px;margin:0 0 12px;">You've used your 3 free questions.</p>
+        <a href="/" onclick="closeAiChatModal()" style="display:inline-block;padding:10px 20px;background:transparent;border:1px solid #16a34a;color:#16a34a;border-radius:6px;font-size:14px;font-weight:600;text-decoration:none;">Subscribe for $9.99/mo →</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openAiChatModal() {
+      const modal = document.getElementById('ai-chat-modal');
+      modal.style.display = 'flex';
+      const saved = localStorage.getItem('li_phone');
+      if (saved) {
+        document.getElementById('s-phone').value = saved;
+        checkSubscriberStatus();
+      }
+    }
+    function closeAiChatModal() {
+      document.getElementById('ai-chat-modal').style.display = 'none';
+    }
+    document.getElementById('ai-chat-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeAiChatModal();
+    });
+
+    async function checkSubscriberStatus() {
+      const phone = document.getElementById('s-phone').value.trim();
+      if (!phone || phone.length < 10) return;
+      localStorage.setItem('li_phone', phone);
+      try {
+        const res = await fetch(`https://gsb-swarm-production.up.railway.app/api/local-intel/subscriber-status?phone=${encodeURIComponent(phone)}`);
+        const data = await res.json();
+        const badge = document.getElementById('s-sub-badge');
+        const subhead = document.getElementById('s-modal-subhead');
+        if (data.is_subscriber) {
+          badge.style.display = 'inline-block';
+          subhead.textContent = 'Unlimited AI-powered answers. Ask anything.';
+        } else if (data.status === 'lapsed') {
+          badge.style.display = 'none';
+          subhead.textContent = 'Your subscription has lapsed. Subscribe to restore access.';
+        } else {
+          badge.style.display = 'none';
+          const rem = data.trial_remaining ?? 3;
+          subhead.textContent = `${rem} free question${rem !== 1 ? 's' : ''} remaining.`;
+        }
+      } catch(e) { /* silent fail */ }
+    }
+
+    async function searchPageAsk() {
+      const phone = document.getElementById('s-phone').value.trim();
+      const question = document.getElementById('s-question').value.trim();
+      if (!phone || !question) { alert('Enter your phone number and question.'); return; }
+      localStorage.setItem('li_phone', phone);
+      const btn = document.getElementById('s-ask-btn');
+      btn.disabled = true; btn.textContent = 'Thinking...';
+      try {
+        const res = await fetch('https://gsb-swarm-production.up.railway.app/api/local-intel/chat', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, question })
+        });
+        const data = await res.json();
+        btn.disabled = false; btn.textContent = 'Ask →';
+        if (data.gated) {
+          document.getElementById('s-paywall').style.display = 'block';
+          return;
+        }
+        const ans = document.getElementById('s-answer');
+        ans.style.display = 'block';
+        const entry = document.createElement('div');
+        entry.style.cssText = 'background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:14px;margin-bottom:10px;';
+        entry.innerHTML = `
+          <div style="font-size:11px;color:#16a34a;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Answer · ${data.data_confidence}% confidence</div>
+          <p style="color:#cbd5e1;font-size:14px;line-height:1.6;margin:0 0 8px;">${data.answer}</p>
+          ${data.trial_remaining !== null ? `<div style="font-size:11px;color:#aaa;">${data.trial_remaining} free question${data.trial_remaining !== 1 ? 's' : ''} remaining</div>` : ''}
+        `;
+        ans.appendChild(entry);
+        ans.scrollTop = ans.scrollHeight;
+        if (data.trial_remaining !== null) {
+          document.getElementById('s-modal-subhead').textContent = `${data.trial_remaining} free question${data.trial_remaining !== 1 ? 's' : ''} remaining.`;
+        }
+        if (data.trial_remaining === 0) {
+          document.getElementById('s-paywall').style.display = 'block';
+        }
+        document.getElementById('s-question').value = '';
+      } catch(e) {
+        btn.disabled = false; btn.textContent = 'Ask →';
+        alert('Something went wrong. Try again.');
+      }
+    }
+  </script>
 </body>
 </html>

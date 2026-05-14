@@ -678,6 +678,20 @@
       color: var(--accent);
       margin-bottom: 4px;
     }
+    .example-unlock-btn {
+      background: transparent;
+      border: 1px solid var(--accent, #16a34a);
+      color: var(--accent, #16a34a);
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .example-unlock-btn:hover {
+      background: rgba(22,163,74,0.1);
+    }
 
     /* ── PRICING ── */
     .pricing-grid {
@@ -1254,7 +1268,8 @@
             <p class="example-query">"Are there any urgent care gaps in the Nocatee area? I'm evaluating a clinic expansion."</p>
             <div class="example-answer">
               <div class="example-answer-label">Answer preview</div>
-              Sign up to unlock real-time answers powered by live St. Johns County data. <a href="mailto:erik@mcflamingo.com">Get Early Access →</a>
+              <p style="margin:0 0 10px; color:#cbd5e1; font-size:14px;">ZIP 32081 has 57 clinic-category businesses but only 2 urgent care facilities for a population of 41,000 — a ratio well below the 1:15,000 benchmark. Competitor gap score: 78/100...</p>
+              <button class="example-unlock-btn" onclick="openSubscribeModal()">Unlock full answer — $9.99/mo →</button>
             </div>
           </div>
           <div class="example-card">
@@ -1262,7 +1277,8 @@
             <p class="example-query">"What retail categories are underserved on the Southside of Jacksonville?"</p>
             <div class="example-answer">
               <div class="example-answer-label">Answer preview</div>
-              Sign up to unlock real-time answers powered by live St. Johns County data. <a href="mailto:erik@mcflamingo.com">Get Early Access →</a>
+              <p style="margin:0 0 10px; color:#cbd5e1; font-size:14px;">Southside ZIPs show strong gaps in specialty grocery, home goods, and pet services — all with opportunity scores above 70. Median HHI $89,400 supports mid-market retail pricing...</p>
+              <button class="example-unlock-btn" onclick="openSubscribeModal()">Unlock full answer — $9.99/mo →</button>
             </div>
           </div>
           <div class="example-card">
@@ -1270,7 +1286,8 @@
             <p class="example-query">"How many active licensed roofing contractors are operating in Duval County right now?"</p>
             <div class="example-answer">
               <div class="example-answer-label">Answer preview</div>
-              Sign up to unlock real-time answers powered by live St. Johns County data. <a href="mailto:erik@mcflamingo.com">Get Early Access →</a>
+              <p style="margin:0 0 10px; color:#cbd5e1; font-size:14px;">244 licensed roofing contractors active in Duval County per SunBiz + OSM cross-reference. 31 new business permits filed in the last 6 months. Concentration highest in 32257 and 32223...</p>
+              <button class="example-unlock-btn" onclick="openSubscribeModal()">Unlock full answer — $9.99/mo →</button>
             </div>
           </div>
           <div class="example-card">
@@ -1278,7 +1295,8 @@
             <p class="example-query">"What restaurant categories have the highest closure rate in Ponte Vedra Beach?"</p>
             <div class="example-answer">
               <div class="example-answer-label">Answer preview</div>
-              Sign up to unlock real-time answers powered by live St. Johns County data. <a href="mailto:erik@mcflamingo.com">Get Early Access →</a>
+              <p style="margin:0 0 10px; color:#cbd5e1; font-size:14px;">Fast casual and bar concepts show 3.2x higher turnover than upscale in 32082. Income profile (median HHI $121k) strongly favors concepts with avg check above $45. Upscale dining gap: 14 slots...</p>
+              <button class="example-unlock-btn" onclick="openSubscribeModal()">Unlock full answer — $9.99/mo →</button>
             </div>
           </div>
         </div>
@@ -2166,6 +2184,109 @@
     })();
   </script>
 
+
+  <!-- Subscription explain modal -->
+  <div id="subscribe-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:#111; border:1px solid #333; border-radius:16px; width:480px; max-width:95vw; padding:32px; position:relative;">
+      <button onclick="closeSubscribeModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:#aaa;font-size:20px;cursor:pointer;">✕</button>
+
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#16a34a;margin-bottom:12px;">LocalIntel Intelligence</div>
+      <h2 style="font-size:22px;font-weight:700;color:#fff;margin:0 0 12px;">$9.99/mo — AI answers grounded in real local data</h2>
+      <p style="color:#aaa;font-size:14px;margin:0 0 20px;">Ask any question about St. Johns County markets, businesses, permits, income levels, sector gaps, or concept viability. Answers are powered by live Postgres data — not generic AI guesses.</p>
+
+      <ul style="list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:10px;">
+        <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#cbd5e1;">
+          <span style="color:#16a34a;font-weight:700;margin-top:1px;">✓</span>
+          Unlimited questions about any ZIP in St. Johns County
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#cbd5e1;">
+          <span style="color:#16a34a;font-weight:700;margin-top:1px;">✓</span>
+          Grounded in 200k+ Florida businesses, IRS migration, Census, BLS, and permit data
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#cbd5e1;">
+          <span style="color:#16a34a;font-weight:700;margin-top:1px;">✓</span>
+          Concept viability, lease support math, sector gap analysis
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#cbd5e1;">
+          <span style="color:#16a34a;font-weight:700;margin-top:1px;">✓</span>
+          Ask via SMS anytime — no app required
+        </li>
+      </ul>
+
+      <button onclick="startSubscribeFlow()" style="width:100%;padding:14px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:16px;">
+        Subscribe for $9.99/mo →
+      </button>
+
+      <div style="border-top:1px solid #222;padding-top:20px;margin-top:4px;">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;">Also free: Create your Agent Wallet</div>
+        <p style="font-size:13px;color:#aaa;margin:0 0 12px;">No subscription needed. Your wallet lets AI agents dispatch tasks and pay for completed jobs on your behalf — automatically, 24/7. Powered by Tempo + pathUSD.</p>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input type="tel" id="modal-wallet-phone" placeholder="Your phone number" style="flex:1;padding:10px 14px;background:#1a1a1a;border:1px solid #333;border-radius:6px;color:#fff;font-size:14px;" />
+          <button onclick="createWalletFromModal()" id="modal-wallet-btn" style="padding:10px 16px;background:transparent;border:1px solid #16a34a;color:#16a34a;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">
+            Create Wallet →
+          </button>
+        </div>
+        <div id="modal-wallet-result" style="display:none;margin-top:12px;font-size:13px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openSubscribeModal() {
+      const m = document.getElementById('subscribe-modal');
+      m.style.display = 'flex';
+    }
+    function closeSubscribeModal() {
+      document.getElementById('subscribe-modal').style.display = 'none';
+    }
+    document.getElementById('subscribe-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeSubscribeModal();
+    });
+
+    function startSubscribeFlow() {
+      const trialPhone = document.getElementById('li-phone')?.value?.trim();
+      if (trialPhone) {
+        closeSubscribeModal();
+        document.getElementById('li-subscribe-btn')?.click();
+      } else {
+        closeSubscribeModal();
+        document.getElementById('try-it')?.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => document.getElementById('li-phone')?.focus(), 600);
+      }
+    }
+
+    async function createWalletFromModal() {
+      const phone = document.getElementById('modal-wallet-phone').value.trim();
+      if (!phone) { alert('Enter your phone number first.'); return; }
+
+      const btn = document.getElementById('modal-wallet-btn');
+      btn.disabled = true; btn.textContent = 'Creating...';
+
+      try {
+        const res = await fetch('https://gsb-swarm-production.up.railway.app/api/local-intel/create-agent-wallet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone })
+        });
+        const data = await res.json();
+
+        const result = document.getElementById('modal-wallet-result');
+        result.style.display = 'block';
+        if (data.ok) {
+          btn.style.display = 'none';
+          result.innerHTML = `<span style="color:#4ade80;">✓ Wallet created</span> <span style="font-family:monospace;font-size:11px;color:#aaa;word-break:break-all;">${data.wallet_address}</span><br><span style="color:#aaa;font-size:12px;">Linked to ${phone}. Agents can now route tasks and settle payments on your behalf.</span>`;
+        } else {
+          result.innerHTML = `<span style="color:#f87171;">Failed. Try again.</span>`;
+          btn.disabled = false; btn.style.display = 'inline-block'; btn.textContent = 'Create Wallet →';
+        }
+      } catch (e) {
+        const result = document.getElementById('modal-wallet-result');
+        result.style.display = 'block';
+        result.innerHTML = `<span style="color:#f87171;">Failed. Try again.</span>`;
+        btn.disabled = false; btn.style.display = 'inline-block'; btn.textContent = 'Create Wallet →';
+      }
+    }
+  </script>
 
 </body>
 </html>

@@ -1168,6 +1168,12 @@
             <div class="li-paywall-body">Subscribe for $9.99/mo for unlimited AI-powered local intelligence.</div>
             <button id="li-subscribe-btn" type="button">Subscribe Now &rarr;</button>
           </div>
+          <div id="li-wallet-prompt" style="display:none; margin-top:16px; padding:16px; border:1px solid #333; border-radius:8px;">
+            <p><strong>Create your Agent Wallet</strong></p>
+            <p style="font-size:14px; color:#aaa;">Your agent wallet lets LocalIntel dispatch tasks and pay for completed jobs on your behalf — automatically, 24/7. Powered by Tempo + pathUSD.</p>
+            <button id="li-create-wallet-btn">Create Agent Wallet &rarr;</button>
+            <div id="li-wallet-result" style="display:none; margin-top:12px;"></div>
+          </div>
           <p id="li-status" style="display:none;"></p>
         </div>
       </div>
@@ -2114,12 +2120,49 @@
           paywallStep.style.display = 'none';
           showFormOnly();
           setStatus("You're subscribed! Ask unlimited questions.", 'success');
+          var walletPrompt = document.getElementById('li-wallet-prompt');
+          if (walletPrompt) walletPrompt.style.display = 'block';
           return;
         }
         if (msg.type === 'gateway-card-cancel') {
           hideModal();
         }
       });
+
+      var createWalletBtn = document.getElementById('li-create-wallet-btn');
+      if (createWalletBtn) {
+        createWalletBtn.addEventListener('click', async function () {
+          var phone = (document.getElementById('li-phone').value || '').trim();
+          var btn = document.getElementById('li-create-wallet-btn');
+          btn.disabled = true; btn.textContent = 'Creating...';
+
+          var result = document.getElementById('li-wallet-result');
+          try {
+            var res = await fetch(API_BASE + '/api/local-intel/create-agent-wallet', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ phone: phone })
+            });
+            var data = await res.json();
+
+            if (data.ok) {
+              btn.style.display = 'none';
+              result.style.display = 'block';
+              result.innerHTML = '<p style="color:#4ade80;">&#10003; Agent wallet created</p>' +
+                '<p style="font-size:12px; font-family:monospace; word-break:break-all; color:#aaa;">' + data.wallet_address + '</p>' +
+                '<p style="font-size:13px; color:#aaa; margin-top:8px;">This address is linked to your phone number. LocalIntel agents can now dispatch tasks and settle payments on your behalf using pathUSD on the Tempo network.</p>';
+            } else {
+              result.style.display = 'block';
+              result.innerHTML = '<p style="color:#f87171;">Wallet creation failed. Try again later.</p>';
+              btn.disabled = false; btn.style.display = 'inline-block'; btn.textContent = 'Create Agent Wallet →';
+            }
+          } catch (e) {
+            result.style.display = 'block';
+            result.innerHTML = '<p style="color:#f87171;">Wallet creation failed. Try again later.</p>';
+            btn.disabled = false; btn.style.display = 'inline-block'; btn.textContent = 'Create Agent Wallet →';
+          }
+        });
+      }
     })();
   </script>
 

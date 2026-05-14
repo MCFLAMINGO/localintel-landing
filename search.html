@@ -484,7 +484,52 @@
   <div class="page-wrap">
     <div class="thread" id="thread"></div>
     <div id="resultsArea"></div>
+
+    <div id="search-trial-widget" style="margin:32px auto; max-width:560px; background:#111; border:1px solid #333; border-radius:12px; padding:28px 24px;">
+      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#16a34a; margin-bottom:8px;">LocalIntel AI</div>
+      <h3 style="font-size:18px; font-weight:700; color:#fff; margin:0 0 8px;">Ask a deeper question</h3>
+      <p style="font-size:13px; color:#aaa; margin:0 0 16px;">3 free AI-powered answers. Ask about market gaps, concept viability, income levels, permits — anything about this market.</p>
+      <input type="tel" id="s-phone" placeholder="Your phone number" style="width:100%; box-sizing:border-box; padding:10px 14px; background:#1a1a1a; border:1px solid #333; border-radius:6px; color:#fff; font-size:14px; margin-bottom:10px;" />
+      <textarea id="s-question" placeholder="e.g. Can a smoothie QSR work in Nocatee? Is there room for another steakhouse in 32082?" rows="3" style="width:100%; box-sizing:border-box; padding:10px 14px; background:#1a1a1a; border:1px solid #333; border-radius:6px; color:#fff; font-size:14px; resize:vertical; margin-bottom:12px;"></textarea>
+      <button id="s-ask-btn" onclick="searchPageAsk()" style="width:100%; padding:12px; background:#16a34a; color:#fff; border:none; border-radius:6px; font-size:15px; font-weight:700; cursor:pointer;">Ask →</button>
+      <div id="s-answer" style="display:none; margin-top:16px;"></div>
+      <div id="s-paywall" style="display:none; margin-top:16px; text-align:center;">
+        <p style="color:#aaa; font-size:14px; margin:0 0 12px;">You've used your 3 free questions.</p>
+        <button onclick="window.location.href='/'" style="padding:10px 20px; background:transparent; border:1px solid #16a34a; color:#16a34a; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer;">Subscribe for $9.99/mo →</button>
+      </div>
+    </div>
   </div>
+
+  <script>
+    async function searchPageAsk() {
+      const phone = document.getElementById('s-phone').value.trim();
+      const question = document.getElementById('s-question').value.trim();
+      if (!phone || !question) { alert('Enter your phone number and question.'); return; }
+      const btn = document.getElementById('s-ask-btn');
+      btn.disabled = true; btn.textContent = 'Thinking...';
+      const res = await fetch('https://gsb-swarm-production.up.railway.app/api/local-intel/chat', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, question })
+      });
+      const data = await res.json();
+      btn.disabled = false; btn.textContent = 'Ask →';
+      if (data.gated) {
+        document.getElementById('s-paywall').style.display = 'block';
+        return;
+      }
+      const ans = document.getElementById('s-answer');
+      ans.style.display = 'block';
+      ans.innerHTML = `
+        <div style="background:#1a1a1a; border:1px solid #333; border-radius:8px; padding:16px;">
+          <div style="font-size:12px; color:#16a34a; font-weight:700; margin-bottom:8px;">AI Answer · Data confidence: ${data.data_confidence}%</div>
+          <p style="color:#cbd5e1; font-size:14px; margin:0 0 10px;">${data.answer}</p>
+          ${data.trial_remaining !== null ? `<div style="font-size:12px; color:#aaa;">${data.trial_remaining} free question${data.trial_remaining !== 1 ? 's' : ''} remaining</div>` : ''}
+        </div>`;
+      if (data.trial_remaining === 0) {
+        document.getElementById('s-paywall').style.display = 'block';
+      }
+    }
+  </script>
 
   <script>
     const SEARCH_URL = 'https://gsb-swarm-production.up.railway.app/api/local-intel/search';

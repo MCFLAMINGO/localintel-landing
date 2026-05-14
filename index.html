@@ -975,6 +975,7 @@
       line-height: 1.55;
     }
     #li-payment-modal {
+      display: none;
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.8);
@@ -1817,7 +1818,7 @@
   </main>
 
   <!-- LIVE TRIAL: payment modal -->
-  <div id="li-payment-modal" role="dialog" aria-modal="true" aria-label="Subscribe to LocalIntel">
+  <div id="li-payment-modal" role="dialog" aria-modal="true" aria-label="Subscribe to LocalIntel" style="display:none;">
     <div class="li-modal-card">
       <button id="li-close-modal" type="button" aria-label="Close">&times;</button>
       <iframe id="li-surge-iframe" src="" width="100%" height="600" frameborder="0" allow="payment; clipboard-write" style="border:none; display:block;"></iframe>

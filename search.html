@@ -1294,24 +1294,35 @@
       <button onclick="closeAiChatModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#aaa;font-size:20px;cursor:pointer;line-height:1;">✕</button>
 
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#16a34a;margin-bottom:8px;">LocalIntel AI</div>
-      <h3 style="font-size:18px;font-weight:700;color:#fff;margin:0 0 6px;">Ask a deeper question</h3>
-      <p id="s-modal-subhead" style="font-size:13px;color:#aaa;margin:0 0 18px;">3 free AI-powered answers. No account needed.</p>
+      <h3 style="font-size:18px;font-weight:700;color:#fff;margin:0 0 6px;">Ask LocalIntel AI</h3>
+      <p style="font-size:13px;color:#cbd5e1;margin:0 0 14px;">Get deeper intelligence on any business, neighborhood, or market in Florida.</p>
+      <p id="s-modal-subhead" style="font-size:12px;color:#aaa;margin:0 0 14px;">3 free questions remaining — no signup needed</p>
 
+      <div style="margin-bottom:14px;">
+        <div style="font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Try asking</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <button type="button" onclick="setChatExample(this)" style="background:#1a1a1a;border:1px solid #333;color:#cbd5e1;font-size:12px;padding:6px 10px;border-radius:99px;cursor:pointer;text-align:left;">Which zip codes in St. Johns County are best for a wine bar?</button>
+          <button type="button" onclick="setChatExample(this)" style="background:#1a1a1a;border:1px solid #333;color:#cbd5e1;font-size:12px;padding:6px 10px;border-radius:99px;cursor:pointer;text-align:left;">What's the foot traffic like near 32082 on weekends?</button>
+          <button type="button" onclick="setChatExample(this)" style="background:#1a1a1a;border:1px solid #333;color:#cbd5e1;font-size:12px;padding:6px 10px;border-radius:99px;cursor:pointer;text-align:left;">Is 32081 a good area to open a med spa?</button>
+        </div>
+      </div>
+
+      <label for="s-phone" style="display:block;font-size:12px;color:#aaa;margin-bottom:4px;">Your mobile number (to save your conversation)</label>
       <div style="position:relative; margin-bottom:10px;">
-        <input type="tel" id="s-phone" placeholder="Your phone number"
+        <input type="tel" id="s-phone" placeholder="(555) 123-4567"
           style="width:100%;box-sizing:border-box;padding:10px 14px;background:#1a1a1a;border:1px solid #333;border-radius:6px;color:#fff;font-size:14px;"
           onblur="checkSubscriberStatus()" />
         <span id="s-sub-badge" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:11px; font-weight:700; color:#16a34a; background:#16a34a1a; border:1px solid #16a34a4d; border-radius:99px; padding:2px 8px;">Subscribed ✓</span>
       </div>
 
-      <textarea id="s-question" placeholder="e.g. Can a smoothie QSR work in Nocatee? Is there room for another steakhouse in 32082?" rows="3"
+      <textarea id="s-question" placeholder="Ask anything about Florida markets, businesses, or neighborhoods..." rows="3"
         style="width:100%;box-sizing:border-box;padding:10px 14px;background:#1a1a1a;border:1px solid #333;border-radius:6px;color:#fff;font-size:14px;resize:vertical;margin-bottom:12px;"></textarea>
       <button id="s-ask-btn" onclick="searchPageAsk()" style="width:100%;padding:12px;background:#16a34a;color:#fff;border:none;border-radius:6px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:16px;">Ask →</button>
 
       <div id="s-answer" style="display:none;"></div>
       <div id="s-paywall" style="display:none;margin-top:16px;text-align:center;">
         <p style="color:#aaa;font-size:14px;margin:0 0 12px;">You've used your 3 free questions.</p>
-        <a href="/" onclick="closeAiChatModal()" style="display:inline-block;padding:10px 20px;background:transparent;border:1px solid #16a34a;color:#16a34a;border-radius:6px;font-size:14px;font-weight:600;text-decoration:none;">Subscribe for $9.99/mo →</a>
+        <a href="/" onclick="closeAiChatModal()" style="display:inline-block;padding:10px 20px;background:transparent;border:1px solid #16a34a;color:#16a34a;border-radius:6px;font-size:14px;font-weight:600;text-decoration:none;">Unlock unlimited questions for $9.99/mo →</a>
       </div>
     </div>
   </div>
@@ -1328,6 +1339,11 @@
     }
     function closeAiChatModal() {
       document.getElementById('ai-chat-modal').style.display = 'none';
+    }
+    function setChatExample(el) {
+      const ta = document.getElementById('s-question');
+      ta.value = el.textContent;
+      ta.focus();
     }
     document.getElementById('ai-chat-modal').addEventListener('click', function(e) {
       if (e.target === this) closeAiChatModal();
@@ -1351,7 +1367,11 @@
         } else {
           badge.style.display = 'none';
           const rem = data.trial_remaining ?? 3;
-          subhead.textContent = `${rem} free question${rem !== 1 ? 's' : ''} remaining.`;
+          if (rem > 0) {
+            subhead.textContent = `${rem} free question${rem !== 1 ? 's' : ''} remaining — no signup needed`;
+          } else {
+            subhead.textContent = `You've used your 3 free questions.`;
+          }
         }
       } catch(e) { /* silent fail */ }
     }
@@ -1376,17 +1396,27 @@
         }
         const ans = document.getElementById('s-answer');
         ans.style.display = 'block';
+        const rawConf = data.confidence_score ?? data.confidence ?? data.data_confidence;
+        let confLabel = 'High';
+        if (typeof rawConf === 'number') {
+          const pct = rawConf <= 1 ? rawConf * 100 : rawConf;
+          confLabel = Math.round(pct) + '%';
+        }
+        const answerText = data.answer || data.response || data.text || data.message || '';
         const entry = document.createElement('div');
         entry.style.cssText = 'background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:14px;margin-bottom:10px;';
         entry.innerHTML = `
-          <div style="font-size:11px;color:#16a34a;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Answer · ${data.data_confidence}% confidence</div>
-          <p style="color:#cbd5e1;font-size:14px;line-height:1.6;margin:0 0 8px;">${data.answer}</p>
-          ${data.trial_remaining !== null ? `<div style="font-size:11px;color:#aaa;">${data.trial_remaining} free question${data.trial_remaining !== 1 ? 's' : ''} remaining</div>` : ''}
+          <div style="font-size:11px;color:#16a34a;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Answer · ${confLabel} confidence</div>
+          <p style="color:#cbd5e1;font-size:14px;line-height:1.6;margin:0 0 8px;">${answerText}</p>
+          ${data.trial_remaining != null ? `<div style="font-size:11px;color:#aaa;">${data.trial_remaining} free question${data.trial_remaining !== 1 ? 's' : ''} remaining</div>` : ''}
         `;
         ans.appendChild(entry);
         ans.scrollTop = ans.scrollHeight;
-        if (data.trial_remaining !== null) {
-          document.getElementById('s-modal-subhead').textContent = `${data.trial_remaining} free question${data.trial_remaining !== 1 ? 's' : ''} remaining.`;
+        if (data.trial_remaining != null) {
+          const tr = data.trial_remaining;
+          document.getElementById('s-modal-subhead').textContent = tr > 0
+            ? `${tr} free question${tr !== 1 ? 's' : ''} remaining — no signup needed`
+            : `You've used your 3 free questions.`;
         }
         if (data.trial_remaining === 0) {
           document.getElementById('s-paywall').style.display = 'block';

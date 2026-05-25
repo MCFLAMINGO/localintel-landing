@@ -22,42 +22,42 @@
     {
       "source": "/claim",
       "destination": "/claim.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/inbox",
       "destination": "/inbox.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/login",
       "destination": "/login.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/merchant",
       "destination": "/merchant.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/admin",
       "destination": "/admin.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/quote",
       "destination": "/quote.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/privacy",
       "destination": "/privacy.html",
-      "permanent": false
+      "permanent": true
     },
     {
       "source": "/terms",
       "destination": "/terms.html",
-      "permanent": false
+      "permanent": true
     }
   ]
 }

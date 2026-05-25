@@ -1,6 +1,12 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /admin.html
+Disallow: /merchant
 Disallow: /merchant.html
+Disallow: /inbox
+Disallow: /inbox.html
+Disallow: /login
+Disallow: /login.html
 
 Sitemap: https://www.thelocalintel.com/sitemap.xml

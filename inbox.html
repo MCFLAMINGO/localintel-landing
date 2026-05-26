@@ -2120,10 +2120,15 @@ function startMenuPoll() {
       const fresh = await apiFetch(`/inbox?token=${encodeURIComponent(_token)}`);
       if (fresh.menu_fetch_error) {
         clearInterval(_menuPollInterval);
-        statusEl.style.background  = 'rgba(239,68,68,0.08)';
-        statusEl.style.borderColor = 'rgba(239,68,68,0.3)';
-        statusEl.style.color       = 'var(--error)';
-        statusEl.innerHTML = `❌ Fetch failed: ${fresh.menu_fetch_error}<br><span style="color:var(--text-3);">Your text description will be used instead.</span>`;
+        const hasText = (document.getElementById('svc-text')?.value || '').trim().length > 10;
+        if (!hasText) {
+          statusEl.style.background  = 'rgba(245,158,11,0.08)';
+          statusEl.style.borderColor = 'rgba(245,158,11,0.3)';
+          statusEl.style.color       = '#f59e0b';
+          statusEl.innerHTML = `⚠️ URL couldn't be read — ${fresh.menu_fetch_error}. Add a text description below so agents have something to work with.`;
+        } else {
+          statusEl.style.display = 'none';
+        }
       } else if (fresh.menu_fetched_at) {
         clearInterval(_menuPollInterval);
         const ts = new Date(fresh.menu_fetched_at).toLocaleTimeString();
@@ -2247,11 +2252,15 @@ function prefillProfile(bizData) {
   // Show existing fetch status
   const statusEl = document.getElementById('menu-fetch-status');
   if (bizData.menu_fetch_error) {
-    statusEl.style.display     = 'block';
-    statusEl.style.background  = 'rgba(239,68,68,0.08)';
-    statusEl.style.borderColor = 'rgba(239,68,68,0.3)';
-    statusEl.style.color       = 'var(--error)';
-    statusEl.innerHTML = `❌ Last fetch failed: ${bizData.menu_fetch_error}<br><span style="color:var(--text-3);">Your text description will be used instead. Re-save to retry.</span>`;
+    // Only show if no text description fallback exists
+    const hasText = (bizData.services_text || '').trim().length > 10;
+    if (!hasText) {
+      statusEl.style.display     = 'block';
+      statusEl.style.background  = 'rgba(245,158,11,0.08)';
+      statusEl.style.borderColor = 'rgba(245,158,11,0.3)';
+      statusEl.style.color       = '#f59e0b';
+      statusEl.innerHTML = `⚠️ URL couldn't be read automatically. Add a text description below so agents know what you offer.`;
+    }
   } else if (bizData.menu_fetched_at) {
     const ts = new Date(bizData.menu_fetched_at).toLocaleTimeString();
     statusEl.style.display     = 'block';

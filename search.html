@@ -1391,6 +1391,15 @@
         });
         const data = await res.json();
         btn.disabled = false; btn.textContent = 'Ask →';
+        if (data.ok === false && data.error) {
+          const ans = document.getElementById('s-answer');
+          ans.style.display = 'block';
+          const errEntry = document.createElement('div');
+          errEntry.style.cssText = 'background:#1a1a1a;border:1px solid #ef4444;border-radius:8px;padding:14px;margin-bottom:10px;';
+          errEntry.innerHTML = `<p style="color:#ef4444;font-size:14px;margin:0;">${data.message || data.error}</p>`;
+          ans.appendChild(errEntry);
+          return;
+        }
         if (data.gated) {
           document.getElementById('s-paywall').style.display = 'block';
           return;

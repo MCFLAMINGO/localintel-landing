@@ -988,71 +988,236 @@
           <span id="hours-msg" style="margin-left:12px;font-size:12px;color:var(--success);"></span>
         </div>
 
-        <!-- Services + Menu -->
+        <!-- B124: Business type selector -->
         <div class="card" style="margin-bottom:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-            <span style="font-weight:600;font-size:15px;">Services &amp; Menu</span>
-            <span style="font-size:12px;color:var(--text-3);">What do you offer?</span>
-          </div>
-          <p style="font-size:13px;color:var(--text-3);margin:0 0 16px;">This is what agents see when matching jobs to your business. The more detail you provide, the better the match. If you have an online menu or service list, paste the URL and we'll read it automatically.</p>
-
-          <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Menu or services URL <span style="font-weight:400;color:var(--text-3);">(optional — we'll fetch it)</span></label>
-          <input id="svc-menu-url" type="url" placeholder="https://yoursite.com/menu" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
-
-          <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Describe what you offer <span style="font-weight:400;color:var(--text-3);">(in your own words)</span></label>
-          <textarea id="svc-text" rows="4" placeholder="e.g. We serve breakfast and lunch Tuesday–Sunday. Specialties: grilled fish tacos, housemade sauces, daily specials. Catering available for groups over 20." style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);resize:vertical;margin-bottom:14px;"></textarea>
-
-          <button onclick="saveServices()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;">Save</button>
-          <span id="svc-msg" style="margin-left:12px;font-size:12px;color:var(--success);"></span>
-
-          <!-- Menu fetch status -->
-          <div id="menu-fetch-status" style="display:none;margin-top:16px;padding:12px 14px;border-radius:8px;font-size:13px;border:1px solid var(--border);"></div>
-
-          <!-- Menu preview -->
-          <div id="menu-preview" style="display:none;margin-top:12px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-              <span style="font-size:13px;font-weight:600;color:var(--text-2);">Fetched menu items</span>
-              <button onclick="toggleMenuPreview()" style="background:none;border:none;color:var(--text-3);font-size:12px;cursor:pointer;" id="menu-preview-toggle">Hide ▲</button>
-            </div>
-            <div id="menu-items-list" style="display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;"></div>
+          <span style="font-weight:600;font-size:15px;">Business type</span>
+          <p style="font-size:13px;color:var(--text-3);margin:8px 0 16px;">Choose your type — the rest of your profile adapts to show exactly what agents need to route jobs to you.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="ov-industryTabs">
+            <button class="ov-ind-tab active" data-type="restaurant" onclick="ovSetIndustry('restaurant',this)">Restaurant / Retail</button>
+            <button class="ov-ind-tab" data-type="service" onclick="ovSetIndustry('service',this)">Service Provider</button>
+            <button class="ov-ind-tab" data-type="professional" onclick="ovSetIndustry('professional',this)">Professional</button>
+            <button class="ov-ind-tab" data-type="other" onclick="ovSetIndustry('other',this)">Other</button>
           </div>
         </div>
 
-        <!-- Agent skills -->
+        <!-- B124: MCP endpoint — top tier for all business types -->
         <div class="card" style="margin-bottom:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-            <span style="font-weight:600;font-size:15px;">Agent skills</span>
-            <span style="font-size:12px;color:var(--text-3);">How agents describe you</span>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+            <span style="font-weight:600;font-size:15px;">Agent endpoint</span>
+            <span style="font-size:11px;font-weight:700;background:rgba(139,92,246,0.15);color:#a78bfa;padding:2px 8px;border-radius:20px;">TOP TIER</span>
           </div>
-          <p style="font-size:13px;color:var(--text-3);margin:0 0 16px;">This is your agent-readable profile. The more complete, the more often you appear in RFQ broadcasts and agent search results.</p>
+          <p style="font-size:13px;color:var(--text-3);margin:0 0 14px;line-height:1.6;">The most powerful way to participate in the agent economy. Instead of LocalIntel interpreting your business for agents, your own server speaks directly to any AI assistant — showing your menu, booking appointments, accepting payment, or filing intake forms. You define exactly what agents can do.<br><br>Most businesses running their own website won't need Toast, Square, or any POS once their site has an endpoint. <a href="https://thelocalintel.com/mcp-setup" target="_blank" style="color:var(--accent)">Learn about LocalIntel Setup →</a></p>
+          <div class="ov-field-group">
+            <label class="ov-field-label" for="ov-mcpEndpoint">MCP endpoint URL</label>
+            <div class="ov-field-hint">Your server's agent integration URL — e.g. https://yourbusiness.com/mcp</div>
+            <div style="display:flex;gap:8px;">
+              <input type="url" class="ov-input" id="ov-mcpEndpoint" placeholder="https://yourbusiness.com/mcp" style="font-family:monospace;font-size:13px;flex:1">
+              <button class="ov-btn ov-btn-ghost" id="ov-mcpTestBtn" onclick="ovTestMcp()">Test</button>
+              <button class="ov-btn ov-btn-green" onclick="ovSaveMcp()">Save</button>
+            </div>
+            <span id="ov-mcpMsg" style="font-size:13px;margin-top:6px;display:block"></span>
+          </div>
+          <div id="ov-mcpToolsPanel" style="display:none;margin-top:12px;padding:12px 14px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:var(--radius);">
+            <div style="font-size:11px;font-weight:700;color:#a78bfa;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Discovered tools</div>
+            <div id="ov-mcpToolsList" style="font-size:13px;color:var(--text-2);line-height:1.8;font-family:monospace"></div>
+          </div>
+          <div style="margin-top:12px;padding:10px 14px;background:var(--bg-card-2);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--text-3);">
+            Don't have an endpoint yet? Start with one of the options below — you can add an endpoint anytime.
+          </div>
+        </div>
 
-          <!-- Industry type tabs -->
-          <div style="margin-bottom:18px">
-            <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Business type</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap" id="ov-industryTabs">
-              <button class="ov-ind-tab active" data-type="restaurant" onclick="ovSetIndustry('restaurant',this)">Restaurant / Retail</button>
-              <button class="ov-ind-tab" data-type="service" onclick="ovSetIndustry('service',this)">Service Provider</button>
-              <button class="ov-ind-tab" data-type="professional" onclick="ovSetIndustry('professional',this)">Professional</button>
-              <button class="ov-ind-tab" data-type="other" onclick="ovSetIndustry('other',this)">Other</button>
+        <!-- B124: Type-specific integration card -->
+        <div class="card" style="margin-bottom:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
+          <span style="font-weight:600;font-size:15px;" id="prof-integration-title">How agents transact with you</span>
+          <p style="font-size:13px;color:var(--text-3);margin:8px 0 16px;" id="prof-integration-sub">Choose how agents and customers can place orders, bids, or requests.</p>
+
+          <!-- RESTAURANT / RETAIL -->
+          <div id="prof-restaurant-section">
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+              <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                  <span style="font-size:15px">⚡</span>
+                  <span style="font-weight:600;font-size:13px">Surge catalog</span>
+                  <span style="font-size:11px;font-weight:700;background:rgba(22,163,74,0.15);color:var(--accent-text);padding:2px 7px;border-radius:20px;">FULLY AGENTIC</span>
+                </div>
+                <p style="font-size:12px;color:var(--text-3);margin:0 0 10px;line-height:1.5;">Agents can view your menu, place orders, and accept payment on your behalf — without the customer leaving their AI assistant. Your Surge catalog is your machine-readable storefront.</p>
+                <a href="https://surge.basalthq.com" target="_blank" class="ov-btn ov-btn-green" style="display:inline-block;text-decoration:none;font-size:12px;">Set up Surge catalog →</a>
+              </div>
+              <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                  <span style="font-size:15px">🔗</span>
+                  <span style="font-weight:600;font-size:13px">Connect POS (Toast, Square, Clover)</span>
+                  <span style="font-size:11px;font-weight:600;background:var(--bg-card-2);color:var(--text-2);padding:2px 7px;border-radius:20px;">READ ONLY</span>
+                </div>
+                <p style="font-size:12px;color:var(--text-3);margin:0 0 10px;line-height:1.5;">Agents can show your menu and send customers to your ordering link — but cannot place orders or accept payment on your behalf. A good bridge while you set up Surge.</p>
+                <div id="pos-already-connected" style="display:none;margin-bottom:10px;padding:10px 12px;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.3);border-radius:8px;font-size:13px;color:var(--success);">
+                  ✅ <span id="pos-connected-type"></span> connected. <button onclick="posReconnect()" style="background:none;border:none;color:var(--text-3);font-size:12px;cursor:pointer;text-decoration:underline;">Update</button>
+                </div>
+                <div id="pos-select-area">
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+                    <button class="pos-type-btn" data-pos="toast" onclick="selectPos('toast')">Toast</button>
+                    <button class="pos-type-btn" data-pos="square" onclick="selectPos('square')">Square</button>
+                    <button class="pos-type-btn" data-pos="clover" onclick="selectPos('clover')">Clover</button>
+                    <button class="pos-type-btn" data-pos="other" onclick="selectPos('other')">Other</button>
+                  </div>
+                </div>
+                <div id="pos-fields" style="display:none;">
+                  <div id="pos-toast-fields">
+                    <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Toast Client ID</label>
+                    <input id="pos-toast-client-id" type="text" placeholder="Your Toast API client ID" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:10px;">
+                    <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Toast Client Secret</label>
+                    <input id="pos-toast-client-secret" type="password" placeholder="Your Toast API client secret" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:10px;">
+                    <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Restaurant GUID <span style="font-weight:400;color:var(--text-3);">(from Toast admin)</span></label>
+                    <input id="pos-toast-guid" type="text" placeholder="e.g. abc123de-..." style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
+                  </div>
+                  <div id="pos-square-fields" style="display:none;">
+                    <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Square Access Token</label>
+                    <input id="pos-square-token" type="password" placeholder="Your Square API access token" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
+                  </div>
+                  <div id="pos-clover-fields" style="display:none;">
+                    <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Clover API Key</label>
+                    <input id="pos-clover-key" type="password" placeholder="Your Clover API key" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
+                  </div>
+                  <div id="pos-other-fields" style="display:none;">
+                    <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">API Key or Token</label>
+                    <input id="pos-other-key" type="password" placeholder="API key or access token" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:10px;">
+                    <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">System name</label>
+                    <input id="pos-other-name" type="text" placeholder="e.g. Lightspeed, Revel, TouchBistro" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
+                  </div>
+                  <button onclick="savePos()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;">Save &amp; Encrypt</button>
+                  <span id="pos-connected-badge" style="display:none;font-size:12px;color:var(--success);background:rgba(22,163,74,0.12);padding:2px 8px;border-radius:20px;margin-left:8px;">Connected</span>
+                  <span id="pos-msg" style="margin-left:12px;font-size:12px;color:var(--success);"></span>
+                </div>
+              </div>
+              <div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                  <span style="font-size:15px">📝</span>
+                  <span style="font-weight:600;font-size:13px">Menu URL or text description</span>
+                  <span style="font-size:11px;font-weight:600;background:var(--bg-card-2);color:var(--text-2);padding:2px 7px;border-radius:20px;">BASIC VISIBILITY</span>
+                </div>
+                <p style="font-size:12px;color:var(--text-3);margin:0 0 10px;line-height:1.5;">Paste your menu URL and we'll read it, or describe what you offer in plain text. Agents can describe your business and send customers to you but cannot transact on your behalf.</p>
+                <input id="svc-menu-url" type="url" placeholder="https://yoursite.com/menu" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:10px;">
+                <textarea id="svc-text" rows="3" placeholder="e.g. Fresh American food — salads, sandwiches, and healthy bowls. Dine-in and takeout. Open Tuesday–Sunday." style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);resize:vertical;margin-bottom:10px;"></textarea>
+                <button onclick="saveServices()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;">Save</button>
+                <span id="svc-msg" style="margin-left:10px;font-size:12px;color:var(--success);"></span>
+                <div id="menu-fetch-status" style="display:none;margin-top:12px;padding:10px 12px;border-radius:8px;font-size:13px;border:1px solid var(--border);"></div>
+                <div id="menu-preview" style="display:none;margin-top:10px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <span style="font-size:13px;font-weight:600;color:var(--text-2);">Fetched menu items</span>
+                    <button onclick="toggleMenuPreview()" style="background:none;border:none;color:var(--text-3);font-size:12px;cursor:pointer;" id="menu-preview-toggle">Hide ▲</button>
+                  </div>
+                  <div id="menu-items-list" style="display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="ov-field-group">
+              <label class="ov-field-label" for="ov-menuUrl">Override ordering URL <span style="font-weight:400;color:var(--text-3)">(optional)</span></label>
+              <div class="ov-field-hint">Replaces the default link agents show to customers.</div>
+              <div style="display:flex;gap:8px;">
+                <input type="text" class="ov-input" id="ov-menuUrl" placeholder="https://…">
+                <button class="ov-btn ov-btn-ghost" onclick="ovSaveMenuUrl()">Save</button>
+              </div>
+              <span id="ov-menuMsg" style="font-size:13px;margin-top:4px;"></span>
             </div>
           </div>
 
+          <!-- SERVICE PROVIDER -->
+          <div id="prof-service-section" style="display:none;">
+            <div style="border:1px solid rgba(22,163,74,0.3);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;background:rgba(22,163,74,0.04);">
+              <div style="font-size:13px;font-weight:700;margin-bottom:8px;">How the RFQ flow works</div>
+              <div style="font-size:12px;color:var(--text-3);line-height:1.9;">
+                1. A customer tells their AI assistant what they need<br>
+                2. LocalIntel broadcasts the job to matching businesses in your area<br>
+                3. You get a text with the job details — review it in your Jobs tab<br>
+                4. You send a quote — the customer confirms or declines<br>
+                5. On confirmation, payment settles via your chosen method
+              </div>
+            </div>
+            <div class="ov-field-group" id="ov-serviceListGroup">
+              <label class="ov-field-label">Your services &amp; pricing</label>
+              <div class="ov-field-hint" id="ov-serviceListHint">List each service — name, price, optional duration. Agents use this to match jobs and quote on your behalf.</div>
+              <div id="ov-serviceRows"></div>
+              <button onclick="ovAddServiceRow()" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0;margin-top:4px;">+ Add service</button>
+            </div>
+            <div class="ov-field-group" id="ov-responseTimeGroup">
+              <label class="ov-field-label" for="ov-responseTime">Typical response time</label>
+              <div class="ov-field-hint">e.g. "Same-day", "24–48 hours", "Next available appointment"</div>
+              <input type="text" class="ov-input" id="ov-responseTime" placeholder="e.g. Same-day">
+            </div>
+            <div class="ov-field-group" style="margin-top:4px;">
+              <label class="ov-field-label">How you get paid on confirmed jobs</label>
+              <div class="ov-field-hint">Surge = agent books and pays instantly. pathUSD = on-chain after RFQ win. Stripe = card payment on confirmation.</div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;" id="ov-settlementTiers">
+                <label class="ov-tier-row" data-tier="surge_catalog"><input type="radio" name="settlement_tier" value="surge_catalog" id="tier-surge"><div class="ov-tier-body"><div class="ov-tier-title">Surge catalog <span class="ov-tier-badge ov-tier-best">Instant payment</span></div><div class="ov-tier-desc">Fixed-price services — agents book and pay without a bid window. <a href="https://surge.basalthq.com" target="_blank" class="ov-tier-link">Set up Surge →</a></div></div></label>
+                <label class="ov-tier-row" data-tier="acp_wallet"><input type="radio" name="settlement_tier" value="acp_wallet" id="tier-acp"><div class="ov-tier-body"><div class="ov-tier-title">Crypto wallet (pathUSD) <span class="ov-tier-badge ov-tier-good">On-chain</span></div><div class="ov-tier-desc">Win an RFQ bid and settlement happens automatically on Tempo mainnet.</div><input type="text" class="ov-input" id="ov-acpWallet" placeholder="0x... EVM wallet address" style="margin-top:8px" onclick="event.stopPropagation()"></div></label>
+                <label class="ov-tier-row" data-tier="stripe"><input type="radio" name="settlement_tier" value="stripe" id="tier-stripe"><div class="ov-tier-body"><div class="ov-tier-title">Stripe <span class="ov-tier-badge ov-tier-neutral">Card payment</span></div><div class="ov-tier-desc">Payment link sent to customer on job confirmation.</div></div></label>
+                <label class="ov-tier-row" data-tier="none"><input type="radio" name="settlement_tier" value="none" id="tier-none" checked><div class="ov-tier-body"><div class="ov-tier-title">Not set yet</div><div class="ov-tier-desc">You'll receive job notifications — payment arranged manually.</div></div></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- PROFESSIONAL -->
+          <div id="prof-professional-section" style="display:none;">
+            <div style="border:1px solid rgba(139,92,246,0.3);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;background:rgba(139,92,246,0.04);">
+              <div style="font-size:13px;font-weight:700;margin-bottom:8px;">How the professional flow works</div>
+              <div style="font-size:12px;color:var(--text-3);line-height:1.9;">
+                1. An agent matches a client to your practice area and location<br>
+                2. The agent pre-fills your intake form with known client details<br>
+                3. The completed form arrives in your Jobs tab as a warm lead<br>
+                4. You review and schedule a consultation or send a quote<br>
+                5. Client confirms — payment settles on booking
+              </div>
+            </div>
+            <div class="ov-field-group">
+              <label class="ov-field-label">Client intake form</label>
+              <div class="ov-field-hint">Define the fields agents and clients fill out before you engage. Agents pre-fill everything they know — name, contact, matter type — so you receive qualified leads, not cold inquiries.</div>
+              <div id="prof-intake-rows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+              <button onclick="profAddIntakeField()" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0;">+ Add intake field</button>
+              <div style="margin-top:8px;font-size:12px;color:var(--text-3);">Default fields: Full name, Contact email, Phone, Matter description. Add custom fields for your practice area.</div>
+            </div>
+            <div class="ov-field-group">
+              <label class="ov-field-label">Services &amp; fees</label>
+              <div class="ov-field-hint">List services with fixed or starting fees. Agents use these to set client expectations before routing.</div>
+              <div id="ov-serviceRows-prof"></div>
+              <button onclick="ovAddServiceRow('','','','prof')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0;margin-top:4px;">+ Add service</button>
+            </div>
+            <div class="ov-field-group" style="margin-top:4px;">
+              <label class="ov-field-label">Payment on confirmed engagements</label>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;" id="ov-settlementTiers-prof">
+                <label class="ov-tier-row" data-tier="surge_catalog"><input type="radio" name="settlement_tier_prof" value="surge_catalog" id="tier-surge-prof"><div class="ov-tier-body"><div class="ov-tier-title">Surge <span class="ov-tier-badge ov-tier-best">Instant</span></div><div class="ov-tier-desc">Fixed-fee services (consultations, document prep) book and pay instantly. <a href="https://surge.basalthq.com" target="_blank" class="ov-tier-link">Set up Surge →</a></div></div></label>
+                <label class="ov-tier-row" data-tier="stripe"><input type="radio" name="settlement_tier_prof" value="stripe" id="tier-stripe-prof"><div class="ov-tier-body"><div class="ov-tier-title">Stripe <span class="ov-tier-badge ov-tier-neutral">Card</span></div><div class="ov-tier-desc">Payment link sent to client on engagement confirmation.</div></div></label>
+                <label class="ov-tier-row" data-tier="none"><input type="radio" name="settlement_tier_prof" value="none" id="tier-none-prof" checked><div class="ov-tier-body"><div class="ov-tier-title">Invoice manually</div><div class="ov-tier-desc">Handle payment outside LocalIntel. You'll still receive intake submissions and job notifications.</div></div></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- OTHER -->
+          <div id="prof-other-section" style="display:none;">
+            <div class="ov-field-group">
+              <label class="ov-field-label" for="svc-text-other">Describe what you offer</label>
+              <div class="ov-field-hint">Agents use this to match and describe your business to customers.</div>
+              <textarea class="ov-textarea" id="svc-text-other" rows="4" placeholder="Describe your business, what you sell or do, and how customers can engage with you."></textarea>
+            </div>
+            <div class="ov-field-group">
+              <div id="ov-serviceRows-other"></div>
+              <button onclick="ovAddServiceRow('','','','other')" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0;margin-top:4px;">+ Add item</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- B124: Search, discovery, area, save -->
+        <div class="card" style="margin-bottom:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
+          <span style="font-weight:600;font-size:15px;">Search &amp; discovery</span>
+          <p style="font-size:13px;color:var(--text-3);margin:8px 0 16px;">Help agents find you for the right jobs. These signals are used for matching — not shown directly to customers.</p>
+
           <div class="ov-field-group">
-            <label class="ov-field-label" for="ov-whatWeDo">What do you offer?</label>
-            <div class="ov-field-hint" id="ov-whatWeDoHint">One sentence describing your core service or product.</div>
+            <label class="ov-field-label" for="ov-whatWeDo">One-line description</label>
+            <div class="ov-field-hint" id="ov-whatWeDoHint">How agents summarise your business when describing you to customers.</div>
             <textarea class="ov-textarea" id="ov-whatWeDo" placeholder="e.g. Fresh American food — salads, sandwiches, and healthy bowls."></textarea>
           </div>
 
-          <!-- Service list rows (visible for service + professional) -->
-          <div class="ov-field-group" id="ov-serviceListGroup" style="display:none">
-            <label class="ov-field-label">Services &amp; pricing</label>
-            <div class="ov-field-hint" id="ov-serviceListHint">Add each service with name, price, and any minimum. Agents use this to match and price jobs.</div>
-            <div id="ov-serviceRows"></div>
-            <button onclick="ovAddServiceRow()" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:4px 0;margin-top:4px">+ Add service</button>
-          </div>
-
           <div class="ov-field-group">
-            <label class="ov-field-label">Specialties / search tags</label>
+            <label class="ov-field-label">Search tags</label>
             <div class="ov-field-hint">Press Enter or comma after each tag. Used for agent search matching and RFQ broadcasts.</div>
             <div class="ov-tag-wrap" id="ov-tagWrap" onclick="document.getElementById('ov-tagInput').focus()">
               <input class="ov-tag-ghost" id="ov-tagInput" placeholder="Add a tag…">
@@ -1065,122 +1230,27 @@
             <input type="text" class="ov-input" id="ov-priceRange" placeholder="e.g. $10–25">
           </div>
 
-          <div class="ov-field-group" id="ov-responseTimeGroup" style="display:none">
-            <label class="ov-field-label" for="ov-responseTime">Response / turnaround time</label>
-            <div class="ov-field-hint">e.g. "Same-day", "24 hours", "Next available appt"</div>
-            <input type="text" class="ov-input" id="ov-responseTime" placeholder="e.g. Same-day">
-          </div>
-
           <div class="ov-field-group">
             <label class="ov-field-label">Service area</label>
-            <div class="ov-field-hint">How far you'll travel for jobs. Add a ZIP override below to fine-tune.</div>
+            <div class="ov-field-hint">How far you'll travel or deliver. Add specific ZIPs below to fine-tune.</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px" id="ov-radiusTabs">
               <button class="ov-ind-tab active" data-radius="5" onclick="ovSetRadius('5',this)">5 mi</button>
               <button class="ov-ind-tab" data-radius="10" onclick="ovSetRadius('10',this)">10 mi</button>
               <button class="ov-ind-tab" data-radius="25" onclick="ovSetRadius('25',this)">25 mi</button>
               <button class="ov-ind-tab" data-radius="statewide" onclick="ovSetRadius('statewide',this)">Statewide</button>
             </div>
-            <label style="font-size:11px;font-weight:600;color:var(--text-3);display:block;margin-bottom:4px">ZIP override <span style="font-weight:400">(optional — comma-separated)</span></label>
-            <input type="text" class="ov-input" id="ov-serviceArea" placeholder="e.g. 32082, 32081">
+            <label style="font-size:11px;font-weight:600;color:var(--text-3);display:block;margin-bottom:4px;">ZIP override <span style="font-weight:400;">(optional — comma-separated)</span></label>
+            <input type="text" class="ov-input" id="ov-serviceArea" placeholder="e.g. 32082, 32081, 32084">
           </div>
 
-          <!-- Settlement tier -->
-          <div class="ov-field-group" style="margin-top:4px">
-            <label class="ov-field-label">How do you want to get paid?</label>
-            <div class="ov-field-hint">The more autonomous your setup, the higher you rank in RFQ routing. All options work — upgrade anytime.</div>
-            <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px" id="ov-settlementTiers">
-              <label class="ov-tier-row" data-tier="surge_catalog">
-                <input type="radio" name="settlement_tier" value="surge_catalog" id="tier-surge">
-                <div class="ov-tier-body">
-                  <div class="ov-tier-title">Surge catalog <span class="ov-tier-badge ov-tier-best">Highest priority</span></div>
-                  <div class="ov-tier-desc">List your services in Surge as fixed-price items. Agents book and pay instantly — no bid window needed. e.g. "Lawn mow + edge — $50"</div>
-                  <a href="https://surge.basalthq.com" target="_blank" class="ov-tier-link">Set up Surge catalog →</a>
-                </div>
-              </label>
-              <label class="ov-tier-row" data-tier="acp_wallet">
-                <input type="radio" name="settlement_tier" value="acp_wallet" id="tier-acp">
-                <div class="ov-tier-body">
-                  <div class="ov-tier-title">Crypto wallet (pathUSD) <span class="ov-tier-badge ov-tier-good">Priority</span></div>
-                  <div class="ov-tier-desc">Win an RFQ bid and settlement happens on-chain automatically. Bring your own EVM hot wallet or create one via Surge.</div>
-                  <input type="text" class="ov-input" id="ov-acpWallet" placeholder="0x... EVM wallet address" style="margin-top:8px" onclick="event.stopPropagation()">
-                </div>
-              </label>
-              <label class="ov-tier-row" data-tier="stripe">
-                <input type="radio" name="settlement_tier" value="stripe" id="tier-stripe">
-                <div class="ov-tier-body">
-                  <div class="ov-tier-title">Stripe <span class="ov-tier-badge ov-tier-neutral">Standard</span></div>
-                  <div class="ov-tier-desc">Traditional card payments. Lowest setup friction — great starting point. Upgrade to crypto anytime.</div>
-                </div>
-              </label>
-              <label class="ov-tier-row" data-tier="none">
-                <input type="radio" name="settlement_tier" value="none" id="tier-none" checked>
-                <div class="ov-tier-body">
-                  <div class="ov-tier-title">Not set yet</div>
-                  <div class="ov-tier-desc">You'll still receive RFQ SMS notifications — payment arranged manually. Set a method to enter the priority routing pool.</div>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <div class="ov-save-row" style="margin-top:14px">
-            <button class="ov-btn ov-btn-green" id="ov-saveSkillsBtn" onclick="ovSaveSkills()">Save agent skills</button>
-            <span id="ov-skillsMsg"></span>
-          </div>
-
-          <div class="ov-agent-preview" style="margin-top:14px">
+          <div class="ov-agent-preview" style="margin-top:14px;">
             <div class="ov-preview-lbl">Live agent description preview</div>
             <span id="ov-agentPreviewEdit" style="color:#6b7280">Fill in the fields above to see how agents will describe your business.</span>
           </div>
-        </div>
 
-        <!-- POS Connect -->
-        <div class="card" style="margin-bottom:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-            <span style="font-weight:600;font-size:15px;">Point of Sale Connect</span>
-            <span id="pos-connected-badge" style="display:none;font-size:12px;color:var(--success);background:rgba(22,163,74,0.12);padding:2px 8px;border-radius:20px;">Connected</span>
-          </div>
-          <p style="font-size:13px;color:var(--text-3);margin:0 0 16px;">Connect your POS so LocalIntel agents can see live menu items, pricing, and availability — without you having to update anything manually. Your credentials are encrypted and never shared.</p>
-
-          <!-- Already connected state -->
-          <div id="pos-already-connected" style="display:none;margin-bottom:16px;padding:12px 14px;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.3);border-radius:8px;font-size:13px;color:var(--success);">
-            ✅ <span id="pos-connected-type"></span> credentials saved and encrypted. <button onclick="posReconnect()" style="background:none;border:none;color:var(--text-3);font-size:12px;cursor:pointer;text-decoration:underline;">Update credentials</button>
-          </div>
-
-          <div id="pos-select-area">
-          <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:8px;">POS System</label>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
-            <button class="pos-type-btn" data-pos="toast" onclick="selectPos('toast')">Toast</button>
-            <button class="pos-type-btn" data-pos="square" onclick="selectPos('square')">Square</button>
-            <button class="pos-type-btn" data-pos="clover" onclick="selectPos('clover')">Clover</button>
-            <button class="pos-type-btn" data-pos="other" onclick="selectPos('other')">Other</button>
-          </div>
-          </div>
-
-          <div id="pos-fields" style="display:none;">
-            <div id="pos-toast-fields">
-              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Toast Client ID</label>
-              <input id="pos-toast-client-id" type="text" placeholder="Your Toast API client ID" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:10px;">
-              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Toast Client Secret</label>
-              <input id="pos-toast-client-secret" type="password" placeholder="Your Toast API client secret" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:10px;">
-              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Restaurant GUID <span style="font-weight:400;color:var(--text-3);">(from Toast admin)</span></label>
-              <input id="pos-toast-guid" type="text" placeholder="e.g. abc123de-..." style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
-            </div>
-            <div id="pos-square-fields" style="display:none;">
-              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Square Access Token</label>
-              <input id="pos-square-token" type="password" placeholder="Your Square API access token" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
-            </div>
-            <div id="pos-clover-fields" style="display:none;">
-              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">Clover API Key</label>
-              <input id="pos-clover-key" type="password" placeholder="Your Clover API key" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
-            </div>
-            <div id="pos-other-fields" style="display:none;">
-              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">API Key or Token</label>
-              <input id="pos-other-key" type="password" placeholder="API key or access token" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:10px;">
-              <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px;">System name</label>
-              <input id="pos-other-name" type="text" placeholder="e.g. Lightspeed, Revel, TouchBistro" style="width:100%;box-sizing:border-box;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text-1);margin-bottom:14px;">
-            </div>
-            <button onclick="savePos()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;">Save &amp; Encrypt</button>
-            <span id="pos-msg" style="margin-left:12px;font-size:12px;color:var(--success);"></span>
+          <div class="ov-save-row" style="margin-top:14px;">
+            <button class="ov-btn ov-btn-green" id="ov-saveSkillsBtn" onclick="ovSaveSkills()">Save profile</button>
+            <span id="ov-skillsMsg"></span>
           </div>
         </div>
 
@@ -1311,10 +1381,10 @@
             <label class="ov-field-label" for="ov-menuUrl">Override ordering URL <span style="font-weight:400;color:var(--text-3)">(optional)</span></label>
             <div class="ov-field-hint">Replaces the default ordering link shown to customers.</div>
             <div style="display:flex;gap:8px">
-              <input type="text" class="ov-input" id="ov-menuUrl" placeholder="https://…">
+              <input type="text" class="ov-input" id="ov-menuUrl-listing" placeholder="https://…">
               <button class="ov-btn ov-btn-ghost" onclick="ovSaveMenuUrl()">Save</button>
             </div>
-            <span id="ov-menuMsg" style="font-size:13px;margin-top:4px"></span>
+            <span id="ov-menuMsg-listing" style="font-size:13px;margin-top:4px"></span>
           </div>
         </div>
 
@@ -2239,36 +2309,30 @@ async function savePos() {
 
 function prefillProfile(bizData) {
   initHoursGrid(bizData.hours_json);
-  if (bizData.services_text) document.getElementById('svc-text').value       = bizData.services_text;
-  if (bizData.menu_url)      document.getElementById('svc-menu-url').value   = bizData.menu_url;
-  if (bizData.pos_type) {
-    // Show connected state — don't re-show empty fields
-    document.getElementById('pos-connected-badge').style.display = 'inline-block';
-    document.getElementById('pos-already-connected').style.display = 'block';
-    document.getElementById('pos-connected-type').textContent = bizData.pos_type.charAt(0).toUpperCase() + bizData.pos_type.slice(1);
-    document.getElementById('pos-select-area').style.display = 'none';
-    document.getElementById('pos-fields').style.display = 'none';
+  // MCP endpoint
+  if (bizData.mcp_endpoint) {
+    const mcpEl = document.getElementById('ov-mcpEndpoint');
+    if (mcpEl) mcpEl.value = bizData.mcp_endpoint;
   }
-  // Show existing fetch status
-  const statusEl = document.getElementById('menu-fetch-status');
-  if (bizData.menu_fetch_error) {
-    // Only show if no text description fallback exists
-    const hasText = (bizData.services_text || '').trim().length > 10;
-    if (!hasText) {
-      statusEl.style.display     = 'block';
-      statusEl.style.background  = 'rgba(245,158,11,0.08)';
-      statusEl.style.borderColor = 'rgba(245,158,11,0.3)';
-      statusEl.style.color       = '#f59e0b';
-      statusEl.innerHTML = `⚠️ URL couldn't be read automatically. Add a text description below so agents know what you offer.`;
-    }
-  } else if (bizData.menu_fetched_at) {
-    const ts = new Date(bizData.menu_fetched_at).toLocaleTimeString();
-    statusEl.style.display     = 'block';
-    statusEl.style.background  = 'rgba(22,163,74,0.08)';
-    statusEl.style.borderColor = 'rgba(22,163,74,0.3)';
-    statusEl.style.color       = 'var(--success)';
-    statusEl.innerHTML = `✅ Menu fetched successfully at ${ts}`;
-    if (bizData.services_json) renderMenuPreview(bizData.services_json);
+  // POS connected state
+  if (bizData.pos_type) {
+    const posAlready = document.getElementById('pos-already-connected');
+    const posType    = document.getElementById('pos-connected-type');
+    const posSelect  = document.getElementById('pos-select-area');
+    const posFields  = document.getElementById('pos-fields');
+    if (posAlready) posAlready.style.display = 'block';
+    if (posType)    posType.textContent = bizData.pos_type.charAt(0).toUpperCase() + bizData.pos_type.slice(1);
+    if (posSelect)  posSelect.style.display = 'none';
+    if (posFields)  posFields.style.display = 'none';
+  }
+  // Restore restaurant section fields
+  if (bizData.menu_url) {
+    const menuUrlEl = document.getElementById('svc-menu-url');
+    if (menuUrlEl) menuUrlEl.value = bizData.menu_url;
+  }
+  if (bizData.services_text) {
+    const svcTextEl = document.getElementById('svc-text');
+    if (svcTextEl) svcTextEl.value = bizData.services_text;
   }
 }
 
@@ -2543,6 +2607,113 @@ function ovSetIndustry(type, btn) {
     const labels = { restaurant: 'Restaurant / Retail', service: 'Service Provider', professional: 'Professional', other: 'Other' };
     indDisplay.textContent = labels[type] || 'Other';
   }
+  ovShowTypeSection(type);
+}
+
+function ovShowTypeSection(type) {
+  ['prof-restaurant-section','prof-service-section','prof-professional-section','prof-other-section'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  const map = {
+    restaurant:   'prof-restaurant-section',
+    service:      'prof-service-section',
+    professional: 'prof-professional-section',
+    other:        'prof-other-section',
+  };
+  const target = document.getElementById(map[type] || 'prof-other-section');
+  if (target) target.style.display = 'block';
+  // Update integration card title/subtitle
+  const titles = {
+    restaurant:   'How agents order from you',
+    service:      'How agents request your services',
+    professional: 'How agents and clients engage you',
+    other:        'How agents interact with you',
+  };
+  const subs = {
+    restaurant:   'Connect your menu so agents can place orders without a customer leaving their AI assistant.',
+    service:      'Set up your service catalog so agents can broadcast your bids to qualified jobs.',
+    professional: 'Build your intake form and service list so agents pre-qualify leads before routing them to you.',
+    other:        'Describe what you offer so agents can match you to the right requests.',
+  };
+  const titleEl = document.getElementById('prof-integration-title');
+  const subEl   = document.getElementById('prof-integration-sub');
+  if (titleEl) titleEl.textContent = titles[type] || titles.other;
+  if (subEl)   subEl.textContent   = subs[type]   || subs.other;
+}
+
+async function ovTestMcp() {
+  const url = (document.getElementById('ov-mcpEndpoint').value || '').trim();
+  const btn = document.getElementById('ov-mcpTestBtn');
+  const msg = document.getElementById('ov-mcpMsg');
+  const panel = document.getElementById('ov-mcpToolsPanel');
+  const list  = document.getElementById('ov-mcpToolsList');
+  if (!url) { msg.style.color = '#f59e0b'; msg.textContent = 'Enter an endpoint URL first.'; return; }
+  btn.disabled = true; btn.textContent = 'Testing…'; msg.textContent = '';
+  try {
+    const BASE = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+    const res  = await fetch(`${BASE}/mcp-probe?token=${encodeURIComponent(_token)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mcp_endpoint: url }),
+    });
+    const data = await res.json();
+    if (data.ok && Array.isArray(data.tools) && data.tools.length) {
+      panel.style.display = 'block';
+      list.innerHTML = data.tools.map(t => `<div><strong>${escHtml(t.name)}</strong>${t.description ? ' — ' + escHtml(t.description) : ''}</div>`).join('');
+      msg.style.color = 'var(--success)'; msg.textContent = `✓ Connected — ${data.tools.length} tool${data.tools.length !== 1 ? 's' : ''} discovered.`;
+    } else if (data.ok) {
+      panel.style.display = 'none';
+      msg.style.color = 'var(--success)'; msg.textContent = '✓ Endpoint reachable. No tools listed yet.';
+    } else {
+      panel.style.display = 'none';
+      msg.style.color = '#f59e0b'; msg.textContent = '⚠ ' + (data.error || 'Endpoint did not respond as expected.');
+    }
+  } catch(e) {
+    panel.style.display = 'none';
+    msg.style.color = '#ef4444'; msg.textContent = '✗ Could not reach endpoint: ' + e.message;
+  }
+  btn.disabled = false; btn.textContent = 'Test';
+}
+
+async function ovSaveMcp() {
+  const url = (document.getElementById('ov-mcpEndpoint').value || '').trim();
+  const msg = document.getElementById('ov-mcpMsg');
+  if (!url) { msg.style.color = '#f59e0b'; msg.textContent = 'Enter an endpoint URL first.'; return; }
+  msg.textContent = 'Saving…'; msg.style.color = '';
+  try {
+    const BASE = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+    await fetch(`${BASE}/agent-profile?token=${encodeURIComponent(_token)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mcp_endpoint: url }),
+    });
+    msg.style.color = 'var(--success)'; msg.textContent = '✓ Endpoint saved.';
+  } catch(e) {
+    msg.style.color = '#ef4444'; msg.textContent = '✗ ' + e.message;
+  }
+}
+
+function profAddIntakeField(label, required) {
+  const container = document.getElementById('prof-intake-rows');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'svc-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Field label" value="${escHtml(label||'')}" class="svc-name" style="flex:1">
+    <select class="svc-note" style="max-width:110px;background:var(--bg-input,#1a1a1a);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--text-1);">
+      <option value="text" selected>Short text</option>
+      <option value="textarea">Long text</option>
+      <option value="date">Date</option>
+      <option value="phone">Phone</option>
+      <option value="email">Email</option>
+    </select>
+    <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-2);white-space:nowrap">
+      <input type="checkbox" ${required ? 'checked' : ''}> Required
+    </label>
+    <button onclick="this.closest('.svc-row').remove()" title="Remove" style="background:none;border:none;color:var(--text-3);font-size:16px;cursor:pointer;padding:0 4px;">×</button>
+  `;
+  container.appendChild(row);
 }
 
 let _ovServiceRadius = '5';
@@ -2555,8 +2726,12 @@ function ovSetRadius(radius, btn) {
 }
 
 // ── Service rows ──────────────────────────────────────────────────────────────
-function ovAddServiceRow(name, price, note) {
-  const container = document.getElementById('ov-serviceRows');
+function ovAddServiceRow(name, price, note, scope) {
+  const containerId = scope === 'prof' ? 'ov-serviceRows-prof'
+    : scope === 'other' ? 'ov-serviceRows-other'
+    : 'ov-serviceRows';
+  const container = document.getElementById(containerId);
+  if (!container) return;
   const row = document.createElement('div');
   row.className = 'svc-row';
   row.innerHTML = `
@@ -2568,8 +2743,11 @@ function ovAddServiceRow(name, price, note) {
   container.appendChild(row);
 }
 
-function ovGetServiceRows() {
-  return [...document.querySelectorAll('#ov-serviceRows .svc-row')].map(row => ({
+function ovGetServiceRows(scope) {
+  const containerId = scope === 'prof' ? 'ov-serviceRows-prof'
+    : scope === 'other' ? 'ov-serviceRows-other'
+    : 'ov-serviceRows';
+  return [...document.querySelectorAll(`#${containerId} .svc-row`)].map(row => ({
     name:  row.querySelector('.svc-name')?.value.trim()  || '',
     price: row.querySelector('.svc-price')?.value.trim() || '',
     note:  row.querySelector('.svc-note')?.value.trim()  || '',
@@ -2578,8 +2756,11 @@ function ovGetServiceRows() {
 
 // ── Settlement tier restore ───────────────────────────────────────────────────
 function ovRestoreSettlementTier(tier, acp_wallet) {
-  const radio = document.querySelector(`input[name="settlement_tier"][value="${tier || 'none'}"]`);
-  if (radio) radio.checked = true;
+  // Restore both settlement_tier groups (service and professional)
+  ['settlement_tier', 'settlement_tier_prof'].forEach(name => {
+    const radio = document.querySelector(`input[name="${name}"][value="${tier || 'none'}"]`);
+    if (radio) radio.checked = true;
+  });
   if (acp_wallet) {
     const inp = document.getElementById('ov-acpWallet');
     if (inp) inp.value = acp_wallet;
@@ -2590,7 +2771,8 @@ async function ovSaveSkills() {
   const btn = document.getElementById('ov-saveSkillsBtn');
   const msg = document.getElementById('ov-skillsMsg');
   btn.disabled = true; msg.textContent = 'Saving…'; msg.className = '';
-  const selectedTier = document.querySelector('input[name="settlement_tier"]:checked')?.value || 'none';
+  const tierName    = _ovIndustryType === 'professional' ? 'settlement_tier_prof' : 'settlement_tier';
+  const selectedTier = document.querySelector(`input[name="${tierName}"]:checked`)?.value || 'none';
   const acp_wallet   = document.getElementById('ov-acpWallet')?.value.trim() || null;
   const services_json = {
     what_we_do:     document.getElementById('ov-whatWeDo').value.trim(),
@@ -2599,7 +2781,7 @@ async function ovSaveSkills() {
     response_time:  document.getElementById('ov-responseTime').value.trim(),
     service_area:   document.getElementById('ov-serviceArea').value.trim(),
     service_radius: _ovServiceRadius,
-    service_list:   ovGetServiceRows(),
+    service_list:   ovGetServiceRows(_ovIndustryType === 'professional' ? 'prof' : _ovIndustryType === 'other' ? 'other' : undefined),
   };
   try {
     // Save existing skills (legacy endpoint)
@@ -2698,7 +2880,11 @@ function ovRenderMenu(b, sm) {
   if (legacyUrl) {
     document.getElementById('ov-legacyPanel').style.display = 'block';
     document.getElementById('ov-legacyLink').innerHTML = `<a href="${escHtml(legacyUrl)}" target="_blank" style="font-size:13px;color:var(--accent-text);font-weight:600;word-break:break-all">${escHtml(legacyUrl)} →</a><div style="font-size:12px;color:var(--text-3);margin-top:4px">Visible to human customers only.</div>`;
-    document.getElementById('ov-menuUrl').value = legacyUrl;
+    // Sync to both the profile panel and My Listing tab URL fields
+    const urlEl1 = document.getElementById('ov-menuUrl');
+    const urlEl2 = document.getElementById('ov-menuUrl-listing');
+    if (urlEl1) urlEl1.value = legacyUrl;
+    if (urlEl2) urlEl2.value = legacyUrl;
   }
 }
 

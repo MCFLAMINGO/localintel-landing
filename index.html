@@ -1804,7 +1804,7 @@
           const res = await fetch(ENDPOINT, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ submission: submission, submittedBy: 'web' })
+            body: JSON.stringify({ term: slangVal, businessName: realVal, submittedBy: 'web' })
           });
           if (!res.ok) throw new Error('bad response');
           showStatus('Thanks for the local intel');

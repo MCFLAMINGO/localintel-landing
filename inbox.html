@@ -2309,10 +2309,22 @@ async function savePos() {
 
 function prefillProfile(bizData) {
   initHoursGrid(bizData.hours_json);
-  // MCP endpoint
+  // MCP endpoint + auto-populated tools
   if (bizData.mcp_endpoint) {
     const mcpEl = document.getElementById('ov-mcpEndpoint');
     if (mcpEl) mcpEl.value = bizData.mcp_endpoint;
+    const msg   = document.getElementById('ov-mcpMsg');
+    const panel = document.getElementById('ov-mcpToolsPanel');
+    const list  = document.getElementById('ov-mcpToolsList');
+    if (bizData.mcp_tools && Array.isArray(bizData.mcp_tools) && bizData.mcp_tools.length) {
+      if (msg)   { msg.style.color = 'var(--success)'; msg.textContent = `✓ Connected — ${bizData.mcp_tools.length} tool${bizData.mcp_tools.length !== 1 ? 's' : ''} discovered.`; }
+      if (list)  list.innerHTML = bizData.mcp_tools.map(t =>
+        `<div style="margin-bottom:4px"><strong style="color:var(--text-1)">${t.name}</strong>${t.description ? ' — ' + t.description : ''}</div>`
+      ).join('');
+      if (panel) panel.style.display = 'block';
+    } else if (msg) {
+      msg.style.color = 'var(--text-3)'; msg.textContent = 'Endpoint saved. Click Test to discover tools.';
+    }
   }
   // POS connected state
   if (bizData.pos_type) {

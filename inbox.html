@@ -2326,6 +2326,11 @@ function prefillProfile(bizData) {
       msg.style.color = 'var(--text-3)'; msg.textContent = 'Endpoint saved. Click Test to discover tools.';
     }
   }
+  // Restore industry type tab
+  if (bizData.industry_type) {
+    const tab = document.querySelector(`.ov-ind-tab[data-type="${bizData.industry_type}"]`);
+    if (tab) ovSetIndustry(bizData.industry_type, tab);
+  }
   // POS connected state
   if (bizData.pos_type) {
     const posAlready = document.getElementById('pos-already-connected');

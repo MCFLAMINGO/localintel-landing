@@ -5,7 +5,7 @@
   <link rel="canonical" href="https://www.thelocalintel.com/search">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LocalIntel — Search Businesses</title>
-  <meta name="description" content="Search 122,000+ verified Florida businesses by name, category, or ZIP code.">
+  <meta name="description" content="Search 600,000+ verified Florida businesses by name, category, or ZIP code.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -396,7 +396,7 @@
       <!-- Hero title — hidden when active -->
       <div class="hero-title">
         <h1>Search Florida Businesses</h1>
-        <p>122,000+ verified listings — ask anything in plain English</p>
+        <p><span id="search-biz-count">614,000+</span> verified listings — ask anything in plain English</p>
       </div>
 
       <!-- Filters always visible -->
@@ -818,7 +818,7 @@
           <div class="bubble-agent-body">
             <div class="thinking-bubble">
               <div class="spinner"></div>
-              <span>Searching 122,000+ businesses...</span>
+              <span>Searching <span id="search-biz-count-2">614,000+</span> businesses...</span>
             </div>
           </div>
         </div>`;
@@ -1205,6 +1205,19 @@
       if (zipEl && !zipEl.value) zipEl.value = '32082';
       document.getElementById('searchInput').value = 'Where should I eat in Ponte Vedra?';
       sendMessage();
+      // Pull live business count from platform-stats
+      fetch('https://gsb-swarm-production.up.railway.app/api/local-intel/platform-stats')
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          if (!d || !d.businesses) return;
+          const n = d.businesses;
+          const fmt = v => (v >= 1000 ? Math.floor(v/1000) + ',000+' : v + '+');
+          ['search-biz-count','search-biz-count-2'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = fmt(n);
+          });
+        })
+        .catch(() => {});
     });
 
     // ── Embedded Surge payment modal (iframe + PostMessage) ────────────────────

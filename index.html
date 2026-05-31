@@ -1000,10 +1000,10 @@
           <div id="slangFormWrap">
             <form class="slang-form" id="slangForm" novalidate>
               <input type="text" class="slang-input" id="slangInput" placeholder="Slang" aria-label="Local slang" autocomplete="off">
-              <input type="text" class="slang-input" id="realNameInput" placeholder="Real Name" aria-label="Real business name" autocomplete="off">
+              <input type="text" class="slang-input" id="realNameInput" placeholder="What is it?" aria-label="What does this nickname refer to?" autocomplete="off">
               <button type="submit" class="slang-submit" id="slangSubmit">Submit</button>
             </form>
-            <p class="slang-helper">Know a local nickname? e.g. Dunkans = Dunkin Donuts</p>
+            <p class="slang-helper">Nickname for anything local — a business, street, neighborhood, vibe. e.g. Dunkans = Dunkin Donuts, the strip = A1A, restaurant row = Ponte Vedra Blvd</p>
             <p class="slang-tagline">Anyone can leave a legacy</p>
           </div>
         </div>
@@ -1842,7 +1842,7 @@
           const res = await fetch(ENDPOINT, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ term: slangVal, businessName: realVal, submittedBy: 'web' })
+            body: JSON.stringify({ term: slangVal, description: realVal, submittedBy: 'web' })
           });
           if (!res.ok) throw new Error('bad response');
           showStatus('Thanks for the local intel');

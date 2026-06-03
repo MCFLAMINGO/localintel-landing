@@ -275,6 +275,42 @@
       display: inline-block; background: var(--accent); color: white;
       font-weight: 600; font-size: 14px; padding: 9px 20px; border-radius: 8px; margin-top: 4px;
     }
+    /* Contact collection widget (B147) */
+    .contact-widget {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .contact-widget-label {
+      font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom: 10px;
+    }
+    .contact-widget-row {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .contact-widget input {
+      flex: 1; min-width: 140px;
+      background: var(--bg-2); border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 9px 13px; font-size: 14px; color: var(--text);
+      outline: none; transition: border-color 0.15s;
+    }
+    .contact-widget input:focus { border-color: var(--accent); }
+    .contact-widget input::placeholder { color: var(--text-3); }
+    .contact-widget-submit {
+      background: var(--accent); color: white; border: none; cursor: pointer;
+      font-weight: 600; font-size: 14px; padding: 9px 18px; border-radius: 8px;
+      white-space: nowrap; transition: opacity 0.15s;
+    }
+    .contact-widget-submit:hover { opacity: 0.88; }
+    .contact-widget-submit:disabled { opacity: 0.5; cursor: default; }
+    .contact-widget-success {
+      font-size: 14px; color: var(--accent); font-weight: 600; margin-top: 8px;
+    }
+    /* Sub-category chip (B146) */
+    .subcat-chip {
+      display: inline-block; background: rgba(22,163,74,0.1); color: var(--accent);
+      font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 20px; margin-bottom: 8px;
+    }
 
     /* ORDER CARD */
     .order-card {
@@ -716,9 +752,12 @@
       const businesses = Array.isArray(result?.results) ? result.results : [];
       const narrative  = result?.narrative || result?.meta?.narrative || null;
       const notables   = result?.notable_businesses || [];
-      const isTask     = result?.type === 'service_request';
-      const isDeflect  = result?.type === 'out_of_scope';
-      const jobCode    = result?.job_code || null;
+      const isTask      = result?.type === 'service_request';
+      const isDeflect   = result?.type === 'out_of_scope';
+      const jobCode     = result?.job_code     || null;
+      const subLabel    = result?.sub_label    || null;   // B146
+      const isNarrowing = result?.is_narrowing || false;  // B146
+      const contactPrompt = result?.contact_prompt || false; // B147
 
       if (narrative || notables.length) {
         const spotlit = notables.filter(b => b.description || (b.tags && b.tags.length)).slice(0,3);
@@ -757,14 +796,29 @@
       }
 
       if (isTask) {
+        // B146: unique widget ID so multiple service requests on the page don't collide
+        const widgetId = 'cw-' + Date.now().toString(36);
+        const taskStatus = isNarrowing ? 'Narrowed to matching providers' : 'Request sent to matching providers';
+        const subcatChip = subLabel
+          ? `<div class="subcat-chip">${esc(subLabel)}</div>`
+          : '';
         narrativeHtml += `
-          <div class="agent-task-card">
+          <div class="agent-task-card" id="tc-${widgetId}">
             ${jobCode ? `<div class="task-job-id">Job ${esc(jobCode)}</div>` : ''}
-            <div class="task-status">Request sent to matching providers</div>
-            <div style="font-size:13px;color:var(--text-2);margin-bottom:12px;">
-              Providers have been notified. Call us and we'll connect you when someone responds.
+            ${subcatChip}
+            <div class="task-status">${taskStatus}</div>
+            <div class="contact-widget" id="${widgetId}">
+              <div class="contact-widget-label">Leave your contact info — we'll connect you with a provider:</div>
+              <div class="contact-widget-row">
+                <input type="email" placeholder="Email address" id="${widgetId}-email" />
+                <input type="tel"   placeholder="Phone (optional)" id="${widgetId}-phone" />
+                <button class="contact-widget-submit" id="${widgetId}-btn"
+                  onclick="submitContact('${widgetId}','${esc(jobCode||'')}','${esc(result.category||'')}','${esc(result.zip||'')}')">
+                  Connect me
+                </button>
+              </div>
+              <div class="contact-widget-success" id="${widgetId}-ok" style="display:none;"></div>
             </div>
-            <a href="tel:+19045067476" class="task-action-btn">Call (904) 506-7476</a>
           </div>`;
       }
 
@@ -793,6 +847,58 @@
     }
 
     // ── Update context ─────────────────────────────────────────────────────────
+    // ── Contact collection widget (B147) ─────────────────────────────────────────
+    async function submitContact(widgetId, jobCode, category, zip) {
+      const emailEl = document.getElementById(widgetId + '-email');
+      const phoneEl = document.getElementById(widgetId + '-phone');
+      const btnEl   = document.getElementById(widgetId + '-btn');
+      const okEl    = document.getElementById(widgetId + '-ok');
+
+      const email = (emailEl?.value || '').trim();
+      const phone = (phoneEl?.value || '').trim();
+
+      if (!email && !phone) {
+        if (emailEl) { emailEl.focus(); emailEl.style.borderColor = '#ef4444'; }
+        return;
+      }
+
+      btnEl.disabled = true;
+      btnEl.textContent = 'Sending...';
+
+      try {
+        const res = await fetch(API_BASE + '/rfq-contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-session-id': SESSION_ID },
+          body: JSON.stringify({
+            job_code: jobCode || null, category, zip,
+            email: email || null, phone: phone || null,
+          }),
+        });
+        if (res.ok) {
+          const row   = document.querySelector('#' + widgetId + ' .contact-widget-row');
+          const label = document.querySelector('#' + widgetId + ' .contact-widget-label');
+          if (row)   row.style.display   = 'none';
+          if (label) label.style.display = 'none';
+          okEl.style.display = 'block';
+          okEl.textContent = email
+            ? `Got it — we'll email you at ${email} when a provider responds.`
+            : `Got it — we'll text you at ${phone} when a provider responds.`;
+        } else {
+          btnEl.disabled = false;
+          btnEl.textContent = 'Connect me';
+          okEl.style.display = 'block';
+          okEl.style.color = '#ef4444';
+          okEl.textContent = 'Something went wrong — please try again.';
+        }
+      } catch (e) {
+        btnEl.disabled = false;
+        btnEl.textContent = 'Connect me';
+        okEl.style.display = 'block';
+        okEl.style.color = '#ef4444';
+        okEl.textContent = 'Something went wrong — please try again.';
+      }
+    }
+
     function updateContext(result, zip, cat) {
       if (zip) context.zip = zip;
       if (cat) context.category = cat;

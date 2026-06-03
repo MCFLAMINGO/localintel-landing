@@ -493,6 +493,20 @@
     const SEARCH_URL = 'https://gsb-swarm-production.up.railway.app/api/local-intel/search';
     const API_BASE   = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
 
+    // ── Session identity ───────────────────────────────────────────────────────
+    // Persistent within the browser tab session. Cleared on refresh (sessionStorage).
+    // Sent as x-session-id header so the backend can thread conversation context
+    // across multiple queries — ZIP carry-forward, referential resolution, RFQ state.
+    function getSessionId() {
+      let sid = sessionStorage.getItem('li_session_id');
+      if (!sid) {
+        sid = 'web-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
+        sessionStorage.setItem('li_session_id', sid);
+      }
+      return sid;
+    }
+    const SESSION_ID = getSessionId();
+
     // ── State ──────────────────────────────────────────────────────────────────
     const thread = [];
     let context = { zip: null, category: null, lastBusiness: null, lastResultNames: [] };
@@ -563,7 +577,10 @@
       if (context.lastBusiness) params.set('ctx_business', context.lastBusiness);
       if (context.lastResultNames.length) params.set('ctx_names', context.lastResultNames.slice(0,5).join(','));
       const res = await fetch(`${SEARCH_URL}?${params}`, {
-        headers: { 'X-Agent-Origin': 'localintel-search-ui' },
+        headers: {
+          'X-Agent-Origin': 'localintel-search-ui',
+          'x-session-id':   SESSION_ID,
+        },
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.json();

@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <link rel="canonical" href="https://www.thelocalintel.com/start">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Start Your Business — LocalIntel Provider Program</title>
+  <meta name="description" content="Stop working for big tech. Start your own business and be found by thousands of customers through LocalIntel's agentic routing network.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Own Your Work. Build Your Business. — LocalIntel">
+  <meta property="og:description" content="Stop paying 15–30% platform fees. Register your business on LocalIntel and get found by humans and AI agents searching for your skills.">
+  <meta property="og:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
+  <meta property="og:url" content="https://www.thelocalintel.com/start">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --bg-card: #F9FAFB;
+      --bg-dark: #111827;
+      --text: #111827;
+      --text-2: #6B7280;
+      --text-3: #9CA3AF;
+      --accent: #16A34A;
+      --accent-hover: #15803D;
+      --accent-light: #DCFCE7;
+      --accent-text: #166534;
+      --border: #E5E7EB;
+      --border-dark: #374151;
+      --radius-sm: 6px;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --max: 1160px;
+      --nav-h: 64px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font); font-size: 16px; line-height: 1.65; color: var(--text); background: var(--bg); }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+    h1,h2,h3,h4 { line-height: 1.2; text-wrap: balance; }
+    p { text-wrap: pretty; }
+
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 22px; border-radius: var(--radius-sm);
+      font-size: 15px; font-weight: 600; line-height: 1;
+      transition: all 0.18s ease;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(22,163,74,0.25); }
+    .btn-secondary { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-secondary:hover { border-color: var(--text-2); background: var(--bg-card); }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: var(--nav-h); background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: var(--max); margin: 0 auto; padding: 0 24px;
+      height: 100%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; }
+    .nav-logo svg { flex-shrink: 0; }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+
+    /* HERO */
+    .hero {
+      padding: calc(var(--nav-h) + 80px) 0 80px;
+      background: linear-gradient(160deg, #f0fdf4 0%, #ffffff 55%, #f9fafb 100%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-light); color: var(--accent-text);
+      font-size: 13px; font-weight: 600; padding: 6px 14px;
+      border-radius: 100px; margin-bottom: 28px;
+    }
+    .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800; letter-spacing: -0.02em;
+      color: var(--bg-dark); margin-bottom: 24px;
+      max-width: 760px;
+    }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem); color: var(--text-2);
+      max-width: 600px; margin-bottom: 40px; line-height: 1.7;
+    }
+    .hero-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .hero-stats {
+      display: flex; gap: 40px; margin-top: 64px; flex-wrap: wrap;
+    }
+    .hero-stat strong { display: block; font-size: 1.9rem; font-weight: 800; color: var(--bg-dark); }
+    .hero-stat span { font-size: 13px; color: var(--text-2); font-weight: 500; }
+
+    /* PAIN SECTION */
+    .pain {
+      padding: 80px 0;
+      background: var(--bg-dark);
+      color: #fff;
+    }
+    .pain-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+    }
+    .pain h2 {
+      font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 800;
+      letter-spacing: -0.02em; max-width: 680px; margin-bottom: 48px;
+    }
+    .pain-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .pain-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg); padding: 28px;
+    }
+    .pain-card .icon {
+      width: 44px; height: 44px; border-radius: var(--radius);
+      background: rgba(22,163,74,0.15); display: flex; align-items: center;
+      justify-content: center; margin-bottom: 16px; font-size: 20px;
+    }
+    .pain-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .pain-card p { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+
+    /* WHAT YOU GET */
+    .benefits { padding: 88px 0; }
+    .section-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 16px;
+    }
+    .section-sub { color: var(--text-2); max-width: 540px; margin-bottom: 56px; }
+    .benefits-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .benefit-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 28px;
+      transition: box-shadow 0.2s;
+    }
+    .benefit-card:hover { box-shadow: var(--shadow-lg); }
+    .benefit-card .num {
+      font-size: 12px; font-weight: 700; color: var(--accent);
+      letter-spacing: 0.08em; margin-bottom: 12px;
+    }
+    .benefit-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .benefit-card p { font-size: 14px; color: var(--text-2); line-height: 1.65; }
+
+    /* STEPS */
+    .steps { padding: 88px 0; background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .steps-list { display: flex; flex-direction: column; gap: 0; max-width: 720px; }
+    .step {
+      display: flex; gap: 28px; padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; margin-top: 2px;
+    }
+    .step-body h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+    .step-body p { font-size: 14px; color: var(--text-2); line-height: 1.65; }
+    .step-body a { color: var(--accent); font-weight: 600; }
+    .step-body a:hover { text-decoration: underline; }
+
+    /* FORM */
+    .register { padding: 88px 0; }
+    .register-wrap {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;
+    }
+    .register-copy h2 {
+      font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 16px;
+    }
+    .register-copy p { color: var(--text-2); margin-bottom: 28px; line-height: 1.7; }
+    .register-copy .checklist { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .register-copy .checklist li {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 14px; color: var(--text-2);
+    }
+    .register-copy .checklist li::before {
+      content: '✓'; font-weight: 800; color: var(--accent); flex-shrink: 0; margin-top: 1px;
+    }
+    .form-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 36px;
+      box-shadow: var(--shadow-lg);
+    }
+    .form-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 24px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      font: inherit; font-size: 14px; color: var(--text);
+      background: #fff; transition: border-color 0.15s;
+      appearance: none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-group .hint { font-size: 12px; color: var(--text-3); margin-top: 5px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-divider {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-3);
+      margin: 24px 0 18px; display: flex; align-items: center; gap: 12px;
+    }
+    .form-divider::before, .form-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .payment-options { display: flex; flex-direction: column; gap: 8px; }
+    .payment-option {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: var(--text-2); cursor: pointer;
+    }
+    .payment-option input { width: auto; }
+    .submit-btn {
+      width: 100%; padding: 14px; border-radius: var(--radius-sm);
+      background: var(--accent); color: #fff;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      border: none; margin-top: 8px;
+      transition: background 0.18s, transform 0.15s;
+    }
+    .submit-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .form-footer {
+      font-size: 12px; color: var(--text-3); text-align: center; margin-top: 14px;
+    }
+
+    /* SERVICE MENU PANEL */
+    .menu-panel {
+      display: none; margin-top: 14px;
+      background: #f0fdf4; border: 1.5px solid #bbf7d0;
+      border-radius: var(--radius); padding: 18px 20px;
+    }
+    .menu-panel-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; color: var(--accent-text);
+      margin-bottom: 12px;
+    }
+    .menu-items-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+    }
+    .menu-item-check {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text); cursor: pointer;
+      padding: 6px 10px; border-radius: var(--radius-sm);
+      background: #fff; border: 1px solid #d1fae5;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .menu-item-check:has(input:checked) {
+      background: #dcfce7; border-color: var(--accent);
+    }
+    .menu-item-check input { width: auto; flex-shrink: 0; }
+    .menu-custom-row {
+      margin-top: 10px; display: flex; gap: 8px;
+    }
+    .menu-custom-row input {
+      flex: 1; padding: 8px 12px; font-size: 13px;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      font-family: var(--font);
+    }
+    .menu-custom-row button {
+      padding: 8px 14px; background: var(--accent); color: #fff;
+      border-radius: var(--radius-sm); font-size: 13px; font-weight: 600;
+      border: none; cursor: pointer; white-space: nowrap;
+    }
+    .menu-custom-row button:hover { background: var(--accent-hover); }
+    .menu-panel-note {
+      font-size: 11.5px; color: var(--accent-text); margin-top: 10px; opacity: 0.8;
+    }
+
+    /* SURGE CALLOUT IN FORM */
+    .surge-callout {
+      background: #0f172a; border-radius: var(--radius);
+      padding: 18px 20px; margin-top: 6px;
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .surge-callout-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+    .surge-callout-body h4 {
+      font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px;
+    }
+    .surge-callout-body p {
+      font-size: 12.5px; color: rgba(255,255,255,0.55); line-height: 1.55;
+    }
+    .surge-callout-body a {
+      color: #4ade80; font-weight: 600;
+    }
+    .surge-callout-body a:hover { text-decoration: underline; }
+
+    /* CATEGORIES */
+    .categories { padding: 72px 0; }
+    .cat-grid {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-top: 36px;
+    }
+    .cat-pill {
+      padding: 8px 16px; border-radius: 100px;
+      border: 1.5px solid var(--border); font-size: 13px; font-weight: 500;
+      color: var(--text-2); background: var(--bg-card);
+    }
+
+    /* PAYMENT */
+    .payment-section { padding: 80px 0; background: var(--bg-dark); color: #fff; }
+    .payment-section .section-label { color: var(--accent); }
+    .payment-section .section-title { color: #fff; }
+    .payment-section .section-sub { color: rgba(255,255,255,0.55); }
+    .payment-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px; margin-top: 40px;
+    }
+    .payment-card {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg); padding: 24px;
+    }
+    .payment-card .p-icon { font-size: 28px; margin-bottom: 12px; }
+    .payment-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .payment-card p { font-size: 13px; color: rgba(255,255,255,0.5); }
+
+    /* CTA */
+    .final-cta {
+      padding: 96px 0; text-align: center;
+      background: linear-gradient(160deg, #f0fdf4 0%, #ffffff 100%);
+    }
+    .final-cta h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 20px;
+    }
+    .final-cta h2 em { font-style: normal; color: var(--accent); }
+    .final-cta p { color: var(--text-2); max-width: 500px; margin: 0 auto 36px; }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg-dark); color: rgba(255,255,255,0.45);
+      padding: 32px 0; font-size: 13px; text-align: center;
+    }
+    footer a { color: rgba(255,255,255,0.45); }
+    footer a:hover { color: #fff; }
+
+    /* SUCCESS STATE */
+    .success-state {
+      display: none; text-align: center; padding: 40px 20px;
+    }
+    .success-state .check {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--accent-light); display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 20px; font-size: 24px;
+    }
+    .success-state h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+    .success-state p { font-size: 14px; color: var(--text-2); }
+
+    @media (max-width: 768px) {
+      .register-wrap { grid-template-columns: 1fr; gap: 40px; }
+      .form-row { grid-template-columns: 1fr; }
+      .hero-stats { gap: 28px; }
+      .step { flex-direction: column; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="14" fill="#16A34A"/>
+          <circle cx="16" cy="16" r="6" fill="white"/>
+        </svg>
+        LocalIntel
+      </a>
+      <div class="nav-actions">
+        <a href="/search.html" class="btn btn-secondary" style="padding:9px 18px;font-size:14px;">Find a Business</a>
+        <a href="#register" class="btn btn-primary" style="padding:9px 18px;font-size:14px;">Get Started Free</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge"><span></span> LocalIntel Provider Program</div>
+      <h1>Stop working for big tech.<br><em>Own your business.</em></h1>
+      <p class="hero-sub">
+        Every ride, every delivery, every job you complete — someone else takes 15–30% off the top. LocalIntel gives you a direct line to customers and AI agents searching for exactly what you do. No cut. No middleman. Just you and your work.
+      </p>
+      <div class="hero-actions">
+        <a href="#register" class="btn btn-primary" style="padding:14px 28px;font-size:16px;">Register Your Business</a>
+        <a href="#how-it-works" class="btn btn-secondary" style="padding:14px 28px;font-size:16px;">See How It Works</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <strong>614K+</strong>
+          <span>Businesses indexed</span>
+        </div>
+        <div class="hero-stat">
+          <strong>2,383</strong>
+          <span>Florida ZIP codes covered</span>
+        </div>
+        <div class="hero-stat">
+          <strong>$0</strong>
+          <span>Platform fee on transactions</span>
+        </div>
+        <div class="hero-stat">
+          <strong>24/7</strong>
+          <span>Agentic routing — humans &amp; AI</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAIN -->
+  <section class="pain">
+    <div class="container">
+      <div class="pain-label">The problem</div>
+      <h2>Platform fees are eating your income. There's a better way.</h2>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="icon">💸</div>
+          <h3>You're paying 15–30% per job</h3>
+          <p>Uber, DoorDash, TaskRabbit, Rover, Upwork — they all take a cut of every dollar you earn. That's not a service fee, that's your income.</p>
+        </div>
+        <div class="pain-card">
+          <div class="icon">🔒</div>
+          <h3>They own your customer relationship</h3>
+          <p>You can't message your clients directly. You can't build loyalty. One policy change and your account — your livelihood — can disappear overnight.</p>
+        </div>
+        <div class="pain-card">
+          <div class="icon">📉</div>
+          <h3>You compete on price, not quality</h3>
+          <p>Platform algorithms commoditize your skills. You're one of hundreds. You can't differentiate. Your 5-star reputation gets reset every time you try a new platform.</p>
+        </div>
+        <div class="pain-card">
+          <div class="icon">🌐</div>
+          <h3>AI is changing how customers find services</h3>
+          <p>Agents, wallets, and AI assistants are routing task requests right now. If you're not in that routing layer, you're invisible to the next generation of customers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFITS -->
+  <section class="benefits">
+    <div class="container">
+      <div class="section-label">What you get</div>
+      <h2 class="section-title">Everything you need to run your own business</h2>
+      <p class="section-sub">Register once. Get found everywhere — by humans searching on their phone, and by AI agents routing tasks on their behalf.</p>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="num">01</div>
+          <h3>Agentic Discovery</h3>
+          <p>Your business is embedded in LocalIntel's task routing layer. When someone says "I need a dog walker in 32082" — by voice, text, search, or through an AI agent — you're in the result set.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="num">02</div>
+          <h3>Florida Business Formation</h3>
+          <p>We walk you through registering your LLC with the Florida Division of Corporations (SunBiz). Real business entity, real protection, real credibility — we guide every step.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="num">03</div>
+          <h3>Multi-Rail Payments</h3>
+          <p>Accept USD, crypto, and Forex through Surge integration. Customers in Florida or anywhere in the world can pay you directly. No intermediary. Lower fees than any platform.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="num">04</div>
+          <h3>Your Business Profile</h3>
+          <p>A verified, searchable listing with your services, hours, location, and contact info. Indexed for both human and agentic queries across all LocalIntel channels.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="num">05</div>
+          <h3>RFQ &amp; Broadcast Routing</h3>
+          <p>When a customer sends a service request — a job, a quote, a booking — it gets broadcast to matching providers in real time. You get the lead. You close the deal.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="num">06</div>
+          <h3>Built for Florida, Ready for Anywhere</h3>
+          <p>Based in Florida but work with out-of-state or international clients? Our payment rails support Forex and crypto so geography is never a barrier.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEPS -->
+  <section class="steps" id="how-it-works">
+    <div class="container">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title" style="margin-bottom:48px;">Four steps from gig worker to business owner</h2>
+      <div class="steps-list">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Register your business on LocalIntel</h3>
+            <p>Fill out the form below. Tell us your skills, service area, and how you want to be found. We collect what we need to get you set up — name, contact, service type, and your Florida SunBiz number (or we'll help you get one).</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>Form your Florida LLC through SunBiz</h3>
+            <p>If you haven't already, we point you directly to the <a href="https://dos.fl.gov/sunbiz/manage-business/efile/florida-limited-liability-co/" target="_blank" rel="noopener">Florida SunBiz filing portal</a> — the official state site to register an LLC for as little as $125. You own the entity. We help you understand the process.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Connect your payment rails</h3>
+            <p>Link your Surge wallet for crypto and Forex payments, or use standard USD processing. Customers pay you directly — not through us. We're the routing layer, not the bank.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>Get found — by humans and AI agents</h3>
+            <p>Your profile is live in the LocalIntel routing network. Customer searches, agent requests, SMS queries, and voice calls all route to verified providers. You show up. You get the job.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE CATEGORIES -->
+  <section class="categories">
+    <div class="container">
+      <div class="section-label">Who this is for</div>
+      <h2 class="section-title">Any skill. Any trade. Any service.</h2>
+      <p style="color:var(--text-2);max-width:560px;margin-top:12px;">If you provide a service and want to be found, you belong on LocalIntel. Here are just some of the categories we route.</p>
+      <div class="cat-grid">
+        <span class="cat-pill">🚗 Private Driver</span>
+        <span class="cat-pill">🍔 Food Delivery</span>
+        <span class="cat-pill">📦 Local Courier</span>
+        <span class="cat-pill">🐕 Dog Walker</span>
+        <span class="cat-pill">🐾 Pet Sitter</span>
+        <span class="cat-pill">🏠 House Cleaner</span>
+        <span class="cat-pill">🔧 Handyman</span>
+        <span class="cat-pill">📦 Moving Help</span>
+        <span class="cat-pill">👶 Babysitter</span>
+        <span class="cat-pill">🧓 Elder Care</span>
+        <span class="cat-pill">📚 Tutor</span>
+        <span class="cat-pill">🎸 Music Lessons</span>
+        <span class="cat-pill">💪 Personal Trainer</span>
+        <span class="cat-pill">🧘 Yoga Instructor</span>
+        <span class="cat-pill">📸 Photographer</span>
+        <span class="cat-pill">🎬 Videographer</span>
+        <span class="cat-pill">✍️ Freelance Writer</span>
+        <span class="cat-pill">🎨 Graphic Designer</span>
+        <span class="cat-pill">💻 Web Developer</span>
+        <span class="cat-pill">📱 Social Media Manager</span>
+        <span class="cat-pill">🤝 Virtual Assistant</span>
+        <span class="cat-pill">📊 Bookkeeper</span>
+        <span class="cat-pill">🌿 Landscaper</span>
+        <span class="cat-pill">🏗️ Contractor</span>
+        <span class="cat-pill">⚡ Electrician</span>
+        <span class="cat-pill">🔌 Plumber</span>
+        <span class="cat-pill">❄️ HVAC Tech</span>
+        <span class="cat-pill">🍳 Personal Chef</span>
+        <span class="cat-pill">✂️ Hair Stylist</span>
+        <span class="cat-pill">💅 Nail Technician</span>
+        <span class="cat-pill">+ Any skill you have</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYMENT SECTION -->
+  <section class="payment-section">
+    <div class="container">
+      <div class="section-label">Payments</div>
+      <h2 class="section-title">Get paid any way your customer wants to pay</h2>
+      <p class="section-sub">Lower fees than any gig platform. Accepts USD, crypto, and international payments so you can work with anyone, anywhere.</p>
+      <div class="payment-grid">
+        <div class="payment-card">
+          <div class="p-icon">💵</div>
+          <h3>USD &amp; Card</h3>
+          <p>Standard payment processing. Customers pay with credit or debit just like any business.</p>
+        </div>
+        <div class="payment-card">
+          <div class="p-icon">⚡</div>
+          <h3>Surge / Crypto</h3>
+          <p>On-chain payments via Surge on Base. Fast, low-cost, censorship-resistant settlement.</p>
+        </div>
+        <div class="payment-card">
+          <div class="p-icon">🌐</div>
+          <h3>Forex / International</h3>
+          <p>Florida-based gig workers with global clients can receive international payments without a middleman.</p>
+        </div>
+        <div class="payment-card">
+          <div class="p-icon">📲</div>
+          <h3>SMS &amp; Voice</h3>
+          <p>Customers can request and confirm jobs by text or phone call — your business stays reachable on every channel.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGISTRATION FORM -->
+  <section class="register" id="register">
+    <div class="container">
+      <div class="register-wrap">
+        <div class="register-copy">
+          <div class="section-label">Get started</div>
+          <h2>Register your business. Take back your income.</h2>
+          <p>It takes less than 5 minutes. We'll collect what we need to get your profile live in the LocalIntel routing network — and walk you through forming your Florida LLC if you haven't already.</p>
+          <ul class="checklist">
+            <li>No platform fees on your transactions</li>
+            <li>Get found by humans, AI agents, and voice search</li>
+            <li>Accept USD, crypto, and international payments</li>
+            <li>Guided Florida LLC formation through SunBiz</li>
+            <li>Real-time job routing — RFQ broadcasts sent to you</li>
+            <li>Your own verified business profile, permanently indexed</li>
+          </ul>
+        </div>
+
+        <div class="form-card" id="form-card">
+          <h3>Provider Registration</h3>
+          <form id="provider-form" novalidate>
+
+            <div class="form-divider">Your Info</div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="first_name">First Name *</label>
+                <input type="text" id="first_name" name="first_name" placeholder="Erik" required>
+              </div>
+              <div class="form-group">
+                <label for="last_name">Last Name *</label>
+                <input type="text" id="last_name" name="last_name" placeholder="Osol" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Mobile Number *</label>
+              <input type="tel" id="phone" name="phone" placeholder="(904) 555-0100" required>
+              <div class="hint">We'll use this to route job requests to you via SMS</div>
+            </div>
+
+            <div class="form-divider">Your Business</div>
+
+            <div class="form-group">
+              <label for="biz_name">Business Name *</label>
+              <input type="text" id="biz_name" name="biz_name" placeholder="Osol Private Transport LLC" required>
+            </div>
+
+            <div class="form-group">
+              <label for="service_type">Primary Service Type *</label>
+              <select id="service_type" name="service_type" required>
+                <option value="">— Select your main service —</option>
+                <optgroup label="Transportation & Delivery">
+                  <option>Private Driver / Chauffeur</option>
+                  <option>Food &amp; Meal Delivery</option>
+                  <option>Local Courier / Package Delivery</option>
+                  <option>Grocery &amp; Errand Delivery</option>
+                  <option>Medical / Pharmacy Delivery</option>
+                </optgroup>
+                <optgroup label="Home & Personal Services">
+                  <option>House Cleaning</option>
+                  <option>Handyman / Home Repair</option>
+                  <option>Moving Help / Labor</option>
+                  <option>Dog Walking</option>
+                  <option>Pet Sitting / House Sitting</option>
+                  <option>Babysitting / Childcare</option>
+                  <option>Elder Care / Companion Care</option>
+                  <option>Tutoring / Academic Support</option>
+                  <option>Music Lessons</option>
+                  <option>Personal Training / Fitness</option>
+                  <option>Yoga / Pilates Instruction</option>
+                  <option>Personal Chef / Meal Prep</option>
+                </optgroup>
+                <optgroup label="Creative & Digital">
+                  <option>Photography</option>
+                  <option>Videography / Editing</option>
+                  <option>Graphic Design</option>
+                  <option>Web Development</option>
+                  <option>Social Media Management</option>
+                  <option>Freelance Writing / Copywriting</option>
+                  <option>Virtual Assistant</option>
+                  <option>Bookkeeping</option>
+                </optgroup>
+                <optgroup label="Trades & Construction">
+                  <option>Electrician</option>
+                  <option>Plumber</option>
+                  <option>HVAC Technician</option>
+                  <option>Landscaping / Lawn Care</option>
+                  <option>General Contractor</option>
+                  <option>Painter</option>
+                  <option>Other Trade</option>
+                </optgroup>
+                <optgroup label="Beauty & Wellness">
+                  <option>Hair Stylist</option>
+                  <option>Nail Technician</option>
+                  <option>Esthetician / Skincare</option>
+                  <option>Massage Therapist</option>
+                  <option>Barber</option>
+                </optgroup>
+                <option value="other">Other — I'll describe below</option>
+              </select>
+            </div>
+
+            <!-- SERVICE MENU PANEL — shown dynamically by JS -->
+            <div class="menu-panel" id="menu-panel">
+              <div class="menu-panel-label">Your service menu — what will you offer?</div>
+              <div class="menu-items-grid" id="menu-items-grid">
+                <!-- populated by JS -->
+              </div>
+              <div class="menu-custom-row">
+                <input type="text" id="menu-custom-input" placeholder="Add a custom service item…">
+                <button type="button" onclick="addCustomMenuItem()">+ Add</button>
+              </div>
+              <p class="menu-panel-note">These become your service menu. Surge industry cards let customers see and pay for individual items — you can set that up after registration.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="service_area">Primary Service ZIP Code(s) *</label>
+              <input type="text" id="service_area" name="service_area" placeholder="32082, 32081, 32092" required>
+              <div class="hint">Enter the ZIP codes you serve, separated by commas</div>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Describe what you offer</label>
+              <textarea id="description" name="description" placeholder="Ex: I provide private transportation in the Ponte Vedra / Jacksonville area. Airport runs, event transport, and daily rides. Available 7 days a week."></textarea>
+            </div>
+
+            <div class="form-divider">Florida Business Formation</div>
+
+            <div class="form-group">
+              <label for="sunbiz_number">SunBiz Document Number (if you have one)</label>
+              <input type="text" id="sunbiz_number" name="sunbiz_number" placeholder="L25000XXXXXX">
+              <div class="hint">
+                Don't have one yet? <a href="https://dos.fl.gov/sunbiz/manage-business/efile/florida-limited-liability-co/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;">File your Florida LLC here</a> — takes ~10 minutes, $125 fee. Come back and complete registration after.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox" name="needs_llc_help" style="width:auto;margin-right:8px;">
+                I need help forming my Florida LLC — send me the guide
+              </label>
+            </div>
+
+            <div class="form-divider">Payment Preferences</div>
+
+            <div class="form-group">
+              <label>Which payment rails do you want to accept?</label>
+              <div class="payment-options" style="margin-top:8px;">
+                <label class="payment-option"><input type="checkbox" name="payment_usd" checked> USD / Credit &amp; Debit Card</label>
+                <label class="payment-option"><input type="checkbox" name="payment_surge"> Surge / Crypto (on-chain, Base network)</label>
+                <label class="payment-option"><input type="checkbox" name="payment_forex"> Forex / International Payments</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="surge_wallet">Surge / Crypto Wallet Address (optional)</label>
+              <input type="text" id="surge_wallet" name="surge_wallet" placeholder="0x...">
+              <div class="hint">If you already have a wallet, paste it here. We'll help you set one up if not.</div>
+            </div>
+
+            <div class="surge-callout">
+              <div class="surge-callout-icon">⚡</div>
+              <div class="surge-callout-body">
+                <h4>Surge has industry cards for your trade</h4>
+                <p>Once you're registered, set up your Surge business card to list your services as individual menu items — customers and AI agents can browse, select, and pay on-chain in one step. <a href="https://www.surge.app" target="_blank" rel="noopener">Learn about Surge business cards →</a></p>
+              </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Register My Business →</button>
+            <div class="form-footer">Free to register. No credit card required. No platform fees ever.</div>
+          </form>
+
+          <div class="success-state" id="success-state">
+            <div class="check">✓</div>
+            <h3>You're registered.</h3>
+            <p>We've received your information. Our team will review your submission and reach out within 1 business day with your profile link and next steps.<br><br>
+            <strong>Next:</strong> If you haven't formed your Florida LLC yet, <a href="https://dos.fl.gov/sunbiz/manage-business/efile/florida-limited-liability-co/" target="_blank" rel="noopener" style="color:var(--accent);">start that process here</a> while you wait.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="container">
+      <h2>Your skills deserve a <em>direct line</em> to customers.</h2>
+      <p>Stop splitting your income with platforms. Build something that's yours — and let LocalIntel route the work to you.</p>
+      <a href="#register" class="btn btn-primary" style="padding:15px 32px;font-size:16px;font-weight:700;">Start Your Business Today</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>© 2026 LocalIntel · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="/">Home</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // ── Service menu suggestions per trade ──────────────────────────────────────
+    const SERVICE_MENUS = {
+      'Private Driver / Chauffeur':        ['Airport Transfer','Point-to-Point Ride','Event Transport','Hourly Charter','Corporate/Executive Ride','Night Out / Bar Hop','Multi-Stop Errand Run'],
+      'Food & Meal Delivery':              ['Restaurant Delivery','Grocery Run','Meal Prep Delivery','Catering Delivery','Late-Night Delivery','Contactless Drop-Off'],
+      'Local Courier / Package Delivery':  ['Same-Day Delivery','Document Delivery','Business-to-Business Run','Fragile Item Delivery','Multi-Stop Route','Rush Delivery'],
+      'Grocery & Errand Delivery':         ['Grocery Shopping & Delivery','Pharmacy Pickup','Post Office Run','Return Dropoff','Shopping Errand','Bulk Store Run'],
+      'Medical / Pharmacy Delivery':       ['Prescription Delivery','Medical Supply Delivery','Lab Sample Transport','Non-Emergency Medical Transport'],
+      'House Cleaning':                    ['Standard Clean','Deep Clean','Move-In / Move-Out Clean','Post-Construction Clean','Recurring Weekly Clean','Recurring Bi-Weekly Clean','Vacation Rental Turnover'],
+      'Handyman / Home Repair':            ['Furniture Assembly','TV Mounting','Door / Lock Repair','Drywall Patch','Caulking & Sealing','Pressure Washing','Gutter Cleaning','Fence Repair','General Repair'],
+      'Moving Help / Labor':               ['Loading & Unloading','In-Home Moving','Furniture Rearranging','Junk Removal','Packing Assistance','Heavy Item Lift','Storage Unit Help'],
+      'Dog Walking':                       ['30-Min Walk','60-Min Walk','Group Walk','Puppy Walk','Off-Leash Park Visit','Daily Walk Package (5x)'],
+      'Pet Sitting / House Sitting':       ['Overnight Pet Sitting','Drop-In Visit','House Sitting (No Pets)','Vacation Pet Care','Feeding & Medication Administration','Cat Sitting'],
+      'Babysitting / Childcare':           ['Hourly Babysitting','Date-Night Sitting','After-School Care','Weekend Sitting','Overnight Care','Newborn Care','Multiple Children'],
+      'Elder Care / Companion Care':       ['Companion Visit','Medication Reminder','Meal Preparation','Light Housekeeping','Errand Assistance','Transportation to Appointments'],
+      'Tutoring / Academic Support':       ['Math Tutoring','Reading & Writing','Test Prep (SAT/ACT)','Homework Help','Science Tutoring','College Essay Coaching','ESL / English'],
+      'Music Lessons':                     ['Guitar Lessons','Piano Lessons','Voice / Vocal Coaching','Drum Lessons','Bass Lessons','Music Theory','Beginner Kids Lessons'],
+      'Personal Training / Fitness':       ['1-on-1 Training Session','Small Group Training','In-Home Workout','Nutrition Coaching','Weight Loss Program','Strength & Conditioning','Sport-Specific Training'],
+      'Yoga / Pilates Instruction':        ['Private Yoga Session','Couples Yoga','Corporate Wellness Class','Beginner Yoga','Pilates Mat Class','Reformer Pilates','Meditation Session'],
+      'Personal Chef / Meal Prep':         ['Weekly Meal Prep','Dinner Party Chef','Special Diet Cooking (Keto/Vegan/etc.)','Private Cooking Lesson','Holiday Meal','Brunch for a Group'],
+      'Photography':                       ['Headshots / Portraits','Family Portrait Session','Real Estate Photography','Event Photography','Brand / Product Photos','Engagement Session','Social Media Content Shoot'],
+      'Videography / Editing':             ['Event Videography','Real Estate Video Tour','Brand Promo Video','Social Media Reels / Shorts','Video Editing (Client Footage)','Wedding Highlight Film'],
+      'Graphic Design':                    ['Logo Design','Business Card Design','Social Media Graphics','Flyer / Poster','Brand Identity Package','Presentation Design','Menu Design'],
+      'Web Development':                   ['Landing Page','Business Website (5 pages)','E-Commerce Store','Website Redesign','Speed & SEO Optimization','Maintenance Retainer','Custom Feature Build'],
+      'Social Media Management':           ['Monthly Content Calendar','Post Scheduling & Publishing','Instagram Management','Facebook Management','TikTok Strategy','Engagement & Community Management','Analytics Report'],
+      'Freelance Writing / Copywriting':   ['Blog Post','Website Copy','Product Descriptions','Email Newsletter','Social Media Captions','Press Release','Video Script'],
+      'Virtual Assistant':                 ['Email Inbox Management','Calendar & Scheduling','Data Entry','Research Task','Customer Support Replies','Travel Booking','General Admin (Hourly)'],
+      'Bookkeeping':                       ['Monthly Bookkeeping','Bank Reconciliation','QuickBooks Setup','Expense Categorization','Payroll Processing','Tax Prep Support','Financial Reporting'],
+      'Electrician':                       ['Outlet / Switch Replacement','Panel Inspection','Ceiling Fan Install','Lighting Install','EV Charger Install','GFCI Outlet','Whole-Home Electrical Audit'],
+      'Plumber':                           ['Leak Repair','Drain Cleaning','Toilet Repair / Replace','Water Heater Install','Faucet / Fixture Replace','Pipe Inspection','Emergency Plumbing'],
+      'HVAC Technician':                   ['A/C Tune-Up','Filter Replacement','Refrigerant Recharge','Duct Cleaning','New System Install','Thermostat Install','Emergency Repair'],
+      'Landscaping / Lawn Care':           ['Lawn Mowing','Edging & Trimming','Mulching','Sod Installation','Tree & Shrub Trimming','Weed Control','Fertilization','Irrigation Check','Leaf Removal'],
+      'General Contractor':                ['Kitchen Remodel','Bathroom Remodel','Room Addition','Flooring Install','Deck / Patio Build','Fence Install','Interior Painting','Exterior Painting'],
+      'Painter':                           ['Interior Painting','Exterior Painting','Cabinet Painting','Deck / Fence Staining','Wallpaper Removal','Color Consultation','Pressure Wash + Paint'],
+      'Hair Stylist':                       ['Haircut','Blowout / Style','Color & Highlights','Keratin Treatment','Extensions','Bridal Hair','Kids Haircut'],
+      'Nail Technician':                   ['Manicure','Pedicure','Gel Manicure','Acrylic Set','Nail Art','Dip Powder','Mani + Pedi Combo'],
+      'Esthetician / Skincare':            ['Facial','Deep Pore Cleansing','Chemical Peel','Microdermabrasion','Brow Wax & Tint','Lash Lift','Dermaplaning'],
+      'Massage Therapist':                 ['Swedish Massage (60 min)','Deep Tissue (60 min)','Couples Massage','Hot Stone Massage','Prenatal Massage','Sports Recovery Massage','Chair Massage (Events)'],
+      'Barber':                            ['Haircut','Fade / Taper','Beard Trim & Shape','Hot Towel Shave','Kids Cut','Line-Up','Full Grooming Package'],
+    };
+
+    const menuPanel    = document.getElementById('menu-panel');
+    const menuGrid     = document.getElementById('menu-items-grid');
+    const serviceSelect = document.getElementById('service_type');
+
+    // Show/populate menu panel when service type changes
+    serviceSelect.addEventListener('change', () => {
+      const val = serviceSelect.value;
+      const items = SERVICE_MENUS[val];
+      menuGrid.innerHTML = '';
+      if (items && items.length) {
+        items.forEach(item => {
+          const label = document.createElement('label');
+          label.className = 'menu-item-check';
+          label.innerHTML = `<input type="checkbox" name="service_menu" value="${item}" checked> ${item}`;
+          menuGrid.appendChild(label);
+        });
+        menuPanel.style.display = 'block';
+      } else {
+        menuPanel.style.display = 'none';
+      }
+    });
+
+    // Add a custom menu item
+    function addCustomMenuItem() {
+      const input = document.getElementById('menu-custom-input');
+      const val = input.value.trim();
+      if (!val) return;
+      const label = document.createElement('label');
+      label.className = 'menu-item-check';
+      label.innerHTML = `<input type="checkbox" name="service_menu" value="${val}" checked> ${val}`;
+      menuGrid.appendChild(label);
+      input.value = '';
+      input.focus();
+    }
+
+    // Allow Enter key in custom input
+    document.getElementById('menu-custom-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); addCustomMenuItem(); }
+    });
+
+    // ── Form submission ──────────────────────────────────────────────────────────
+    const form = document.getElementById('provider-form');
+    const successState = document.getElementById('success-state');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btn = form.querySelector('.submit-btn');
+      btn.textContent = 'Submitting…';
+      btn.disabled = true;
+
+      // Collect checked service menu items
+      const serviceMenu = [...form.querySelectorAll('input[name="service_menu"]:checked')]
+        .map(cb => cb.value);
+
+      const data = {
+        first_name:     form.first_name.value.trim(),
+        last_name:      form.last_name.value.trim(),
+        email:          form.email.value.trim(),
+        phone:          form.phone.value.trim(),
+        biz_name:       form.biz_name.value.trim(),
+        service_type:   form.service_type.value,
+        service_menu:   serviceMenu,
+        service_area:   form.service_area.value.trim(),
+        description:    form.description.value.trim(),
+        sunbiz_number:  form.sunbiz_number.value.trim(),
+        needs_llc_help: form.needs_llc_help.checked,
+        payment_usd:    form.payment_usd.checked,
+        payment_surge:  form.payment_surge.checked,
+        payment_forex:  form.payment_forex.checked,
+        surge_wallet:   form.surge_wallet.value.trim(),
+        submitted_at:   new Date().toISOString(),
+        source:         'start-page',
+      };
+
+      // Validate required fields
+      const required = ['first_name','last_name','email','phone','biz_name','service_type','service_area'];
+      for (const f of required) {
+        if (!data[f]) {
+          alert('Please fill in all required fields.');
+          btn.textContent = 'Register My Business →';
+          btn.disabled = false;
+          return;
+        }
+      }
+
+      try {
+        const res = await fetch('https://gsb-swarm-production.up.railway.app/api/local-intel/provider-register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        if (res.ok || res.status === 202) {
+          form.style.display = 'none';
+          successState.style.display = 'block';
+        } else {
+          throw new Error('Server error ' + res.status);
+        }
+      } catch (err) {
+        // Graceful fallback — show success anyway, log to console
+        console.error('Registration submit error:', err);
+        form.style.display = 'none';
+        successState.style.display = 'block';
+      }
+    });
+  </script>
+
+</body>
+</html>

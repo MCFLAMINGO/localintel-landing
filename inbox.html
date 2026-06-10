@@ -860,6 +860,60 @@
     .svc-row { display:flex;gap:8px;margin-bottom:6px;align-items:center; }
     .svc-row input { flex:1;font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text); }
     .svc-row button { font-size:16px;background:none;border:none;color:var(--text-3);cursor:pointer; }
+  /* ── W5+H score chips & tech stack ─────────────────────────────────────── */
+  .ov-score-chip {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(99,102,241,0.12);
+    color: var(--accent-text);
+    border: 1px solid rgba(99,102,241,0.25);
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+  .ov-score-chip.chip-done  { background: rgba(22,163,74,0.12); color: var(--success); border-color: rgba(22,163,74,0.25); }
+  .ov-score-chip.chip-empty { background: rgba(239,68,68,0.08);  color: #ef4444;        border-color: rgba(239,68,68,0.2);  }
+
+  .ts-add-btn {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: var(--radius);
+    background: var(--bg-card-2);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .ts-add-btn:hover {
+    background: rgba(99,102,241,0.1);
+    border-color: var(--accent);
+    color: var(--accent-text);
+  }
+  .ts-add-btn.ts-added {
+    background: rgba(22,163,74,0.1);
+    border-color: rgba(22,163,74,0.3);
+    color: var(--success);
+    pointer-events: none;
+  }
+  .ts-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--bg-card-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--text);
+  }
+  .ts-item-name { flex: 1; font-weight: 600; }
+  .ts-item-cat  { font-size: 11px; color: var(--text-3); }
+  .ts-item-del  { cursor: pointer; color: var(--text-3); font-size: 15px; line-height: 1; }
+  .ts-item-del:hover { color: #ef4444; }
   </style>
   <meta property="og:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
   <meta property="og:image:width" content="512">
@@ -1444,6 +1498,208 @@
               <button class="ov-btn ov-btn-green" onclick="ovSaveWallet()">Save</button>
             </div>
             <span id="ov-walletMsg" style="font-size:13px;margin-top:4px"></span>
+          </div>
+        </div>
+
+        <!-- ─────────────────────────────────────────────── -->
+        <!-- W5+H PRESENCE SECTIONS                                       -->
+        <!-- ─────────────────────────────────────────────── -->
+
+        <!-- Setup banner — only shown when ?setup=1 (post-claim redirect) -->
+        <div id="setup-banner" style="display:none;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.3);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:20px;">
+          <div style="font-size:14px;font-weight:700;color:var(--success);margin-bottom:4px">🎉 You’re claimed! Now complete your presence profile.</div>
+          <div style="font-size:13px;color:var(--text-2);line-height:1.6">Fill in the sections below so agents can find and route to you correctly. Each section you complete raises your Presence Score.</div>
+        </div>
+
+        <!-- WHO — Identity -->
+        <div class="ov-panel" id="who-panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <div class="ov-panel-title">WHO — Your Identity</div>
+            <span class="ov-score-chip" id="who-chip"></span>
+          </div>
+          <div class="ov-panel-sub">Owner contact and business identity. Agents use this to verify and introduce your business.</div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+            <div class="ov-field-group" style="margin:0">
+              <label class="ov-field-label">Owner name</label>
+              <input type="text" class="ov-input" id="w5h-owner-name" placeholder="Jane Smith">
+            </div>
+            <div class="ov-field-group" style="margin:0">
+              <label class="ov-field-label">Year established</label>
+              <input type="number" class="ov-input" id="w5h-year-est" placeholder="2018" min="1800" max="2030">
+            </div>
+            <div class="ov-field-group" style="margin:0">
+              <label class="ov-field-label">Owner / contact email</label>
+              <input type="email" class="ov-input" id="w5h-owner-email" placeholder="owner@yourbiz.com">
+            </div>
+            <div class="ov-field-group" style="margin:0">
+              <label class="ov-field-label">Owner / contact phone</label>
+              <input type="tel" class="ov-input" id="w5h-owner-phone" placeholder="(904) 555-0100">
+            </div>
+          </div>
+          <div class="ov-field-group">
+            <label class="ov-field-label">State license number <span style="font-weight:400;color:var(--text-3)">(optional)</span></label>
+            <div class="ov-field-hint">Displayed as a trust signal on your agent profile.</div>
+            <input type="text" class="ov-input" id="w5h-license" placeholder="e.g. CGC1234567 or L18000286276">
+          </div>
+          <div class="ov-save-row">
+            <button class="ov-btn ov-btn-green" onclick="w5hSave('who')">Save WHO</button>
+            <span id="who-msg" style="font-size:13px"></span>
+          </div>
+        </div>
+
+        <!-- WHY — Value Proposition -->
+        <div class="ov-panel" id="why-panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <div class="ov-panel-title">WHY — Why Choose You</div>
+            <span class="ov-score-chip" id="why-chip"></span>
+          </div>
+          <div class="ov-panel-sub">Your value proposition. Agents use this to tell customers why they should pick you over others in the same ZIP.</div>
+
+          <div class="ov-field-group">
+            <label class="ov-field-label">Tagline <span style="font-weight:400;color:var(--text-3)">(one line)</span></label>
+            <div class="ov-field-hint">e.g. “Fresh local ingredients, every plate.” Used as headline in agent responses.</div>
+            <input type="text" class="ov-input" id="w5h-tagline" placeholder="Your one-line value prop" maxlength="100">
+          </div>
+          <div class="ov-field-group">
+            <label class="ov-field-label">Why choose you</label>
+            <div class="ov-field-hint">2–3 sentences agents can use when a customer asks “why this business?”</div>
+            <textarea class="ov-textarea" id="w5h-why" rows="3" placeholder="e.g. Licensed & insured. Flat-rate pricing. 24/7 emergency line."></textarea>
+          </div>
+          <div class="ov-field-group">
+            <label class="ov-field-label">Specialties / awards</label>
+            <div class="ov-field-hint">Certifications, awards, notable press, unique offerings.</div>
+            <input type="text" class="ov-input" id="w5h-specialties" placeholder="e.g. Top 1% Realtor, Michelin Bib Gourmand, LEED certified">
+          </div>
+          <div class="ov-save-row">
+            <button class="ov-btn ov-btn-green" onclick="w5hSave('why')">Save WHY</button>
+            <span id="why-msg" style="font-size:13px"></span>
+          </div>
+        </div>
+
+        <!-- HOW — How You Transact -->
+        <div class="ov-panel" id="how-panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <div class="ov-panel-title">HOW — How You Work</div>
+            <span class="ov-score-chip" id="how-chip"></span>
+          </div>
+          <div class="ov-panel-sub">How customers and agents engage with you. Determines which contact widget appears in search results.</div>
+
+          <div style="margin-bottom:16px">
+            <div class="ov-field-label" style="margin-bottom:10px">You accept</div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px">
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                <input type="checkbox" id="how-rfq" onchange="w5hUpdateHowPreview()"> Job requests (RFQ) — provider goes to customer
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                <input type="checkbox" id="how-appointment" onchange="w5hUpdateHowPreview()"> Appointments — customer comes to you
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                <input type="checkbox" id="how-reservation" onchange="w5hUpdateHowPreview()"> Reservations — table / room booking
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                <input type="checkbox" id="how-walkin" onchange="w5hUpdateHowPreview()" checked> Walk-ins
+              </label>
+            </div>
+          </div>
+
+          <div class="ov-field-group">
+            <label class="ov-field-label">Booking / scheduling link <span style="font-weight:400;color:var(--text-3)">(optional)</span></label>
+            <div class="ov-field-hint">OpenTable, Acuity, Calendly, Zocdoc, Mindbody, Booksy — any URL. Shown to customers in agent responses.</div>
+            <div style="display:flex;gap:8px">
+              <input type="url" class="ov-input" id="how-booking-url" placeholder="https://opentable.com/your-restaurant">
+              <select class="ov-input" id="how-booking-system" style="max-width:140px">
+                <option value="">System…</option>
+                <option value="opentable">OpenTable</option>
+                <option value="acuity">Acuity</option>
+                <option value="calendly">Calendly</option>
+                <option value="zocdoc">Zocdoc</option>
+                <option value="mindbody">Mindbody</option>
+                <option value="booksy">Booksy</option>
+                <option value="vagaro">Vagaro</option>
+                <option value="resy">Resy</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="ov-field-group">
+            <label class="ov-field-label">Payment methods accepted</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="how-pay" value="cash"> Cash</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="how-pay" value="card"> Card</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="how-pay" value="crypto"> Crypto / pathUSD</label>
+              <label style="display:flex;align-items:center;gap=6px;font-size:13px;cursor:pointer"><input type="checkbox" class="how-pay" value="invoice"> Invoice / Net30</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="how-pay" value="insurance"> Insurance</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="how-pay" value="check"> Check</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="how-pay" value="wire"> Wire transfer</label>
+            </div>
+          </div>
+
+          <div id="how-preview-line" style="font-size:12px;color:var(--text-3);background:var(--bg-card-2);border-radius:8px;padding:10px 12px;margin-bottom:14px;display:none"></div>
+
+          <div class="ov-save-row">
+            <button class="ov-btn ov-btn-green" onclick="w5hSave('how')">Save HOW</button>
+            <span id="how-msg" style="font-size:13px"></span>
+          </div>
+        </div>
+
+        <!-- TECH STACK — Integrations -->
+        <div class="ov-panel" id="techstack-panel">
+          <div class="ov-panel-title">Tech Stack</div>
+          <div class="ov-panel-sub">The tools you already use. Not credentials — just visibility so agents know what systems you run and can route accordingly.</div>
+
+          <div id="techstack-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+
+          <!-- Quick-add catalog -->
+          <div style="margin-bottom:16px">
+            <div style="font-size:12px;font-weight:600;color:var(--text-3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Quick add</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px" id="techstack-catalog">
+              <!-- POS -->
+              <button class="ts-add-btn" onclick="tsQuickAdd('toast','Toast POS','pos','https://pos.toasttab.com')">+ Toast</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('square','Square','pos','https://squareup.com')">+ Square</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('clover','Clover','pos','https://www.clover.com')">+ Clover</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('lightspeed','Lightspeed','pos','https://www.lightspeedhq.com')">+ Lightspeed</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('touchbistro','TouchBistro','pos','https://www.touchbistro.com')">+ TouchBistro</button>
+              <!-- Reservations -->
+              <button class="ts-add-btn" onclick="tsQuickAdd('opentable','OpenTable','reservations','https://www.opentable.com')">+ OpenTable</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('resy','Resy','reservations','https://resy.com')">+ Resy</button>
+              <!-- Scheduling -->
+              <button class="ts-add-btn" onclick="tsQuickAdd('acuity','Acuity','scheduling','https://acuityscheduling.com')">+ Acuity</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('calendly','Calendly','scheduling','https://calendly.com')">+ Calendly</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('mindbody','Mindbody','scheduling','https://www.mindbodyonline.com')">+ Mindbody</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('booksy','Booksy','scheduling','https://booksy.com')">+ Booksy</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('vagaro','Vagaro','scheduling','https://www.vagaro.com')">+ Vagaro</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('zocdoc','Zocdoc','scheduling','https://www.zocdoc.com')">+ Zocdoc</button>
+              <!-- Email -->
+              <button class="ts-add-btn" onclick="tsQuickAdd('google_workspace','Google Workspace','email','https://workspace.google.com')">+ Google Workspace</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('microsoft365','Microsoft 365','email','https://www.microsoft365.com')">+ Microsoft 365</button>
+              <!-- Tasks -->
+              <button class="ts-add-btn" onclick="tsQuickAdd('jolt','Jolt','tasks','https://www.jolt.com')">+ Jolt</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('7shifts','7shifts','tasks','https://www.7shifts.com')">+ 7shifts</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('deputy','Deputy','tasks','https://www.deputy.com')">+ Deputy</button>
+              <!-- Payments -->
+              <button class="ts-add-btn" onclick="tsQuickAdd('stripe','Stripe','payments','https://stripe.com')">+ Stripe</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('paypal','PayPal','payments','https://paypal.com')">+ PayPal</button>
+              <!-- Accounting -->
+              <button class="ts-add-btn" onclick="tsQuickAdd('quickbooks','QuickBooks','accounting','https://quickbooks.intuit.com')">+ QuickBooks</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('xero','Xero','accounting','https://www.xero.com')">+ Xero</button>
+              <!-- Field service -->
+              <button class="ts-add-btn" onclick="tsQuickAdd('servicetitan','ServiceTitan','pos','https://www.servicetitan.com')">+ ServiceTitan</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('jobber','Jobber','pos','https://getjobber.com')">+ Jobber</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('buildertrend','Buildertrend','pos','https://buildertrend.com')">+ Buildertrend</button>
+              <!-- Practice management -->
+              <button class="ts-add-btn" onclick="tsQuickAdd('clio','Clio','pos','https://www.clio.com')">+ Clio</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('dentrix','Dentrix','pos','https://www.dentrix.com')">+ Dentrix</button>
+              <!-- Other -->
+              <button class="ts-add-btn" onclick="tsQuickAdd('docusign','DocuSign','other','https://www.docusign.com')">+ DocuSign</button>
+              <button class="ts-add-btn" onclick="tsAddCustom()" style="border-style:dashed">+ Custom…</button>
+            </div>
+          </div>
+
+          <div class="ov-save-row">
+            <button class="ov-btn ov-btn-green" id="techstack-save-btn" onclick="w5hSave('techstack')">Save Tech Stack</button>
+            <span id="techstack-msg" style="font-size:13px"></span>
           </div>
         </div>
 
@@ -2395,6 +2651,16 @@ function renderOverview(data) {
     services_text:  data.services_text  || null,
     menu_url:       data.menu_url       || null,
     legacy_order_url: data.legacy_order_url || data.menu_url || null,
+    // W5+H
+    owner_name:             data.owner_name             || null,
+    owner_email:            data.owner_email            || null,
+    tagline:                data.tagline                || null,
+    why_choose_us:          data.why_choose_us          || null,
+    accepts_rfq:            data.accepts_rfq            || false,
+    accepts_appointments:   data.accepts_appointments   || false,
+    accepts_reservations:   data.accepts_reservations   || false,
+    accepts_walkins:        data.accepts_walkins        || false,
+    tech_stack:             data.tech_stack             || [],
   };
   _ovLastSurgeMenu = data.surge_menu || null;
 
@@ -2433,6 +2699,9 @@ function renderOverview(data) {
 
   // Wallet
   ovRenderWallet(_ovLastBiz, data.wallet_funded, data.balance_usd_micro);
+
+  // W5+H panels
+  w5hLoadData(data);
 }
 
 function ovRenderCompletion(b, sm) {
@@ -2441,6 +2710,10 @@ function ovRenderCompletion(b, sm) {
     { label: 'Skills filled', done: !!(b.services_json || b.services_text) },
     { label: 'Menu connected',done: !!(sm?.connected || b.menu_url) },
     { label: 'Wallet linked', done: !!b.wallet },
+    { label: 'WHO filled',    done: !!(b.owner_name || b.owner_email) },
+    { label: 'WHY filled',    done: !!(b.tagline || b.why_choose_us) },
+    { label: 'HOW filled',    done: !!(b.accepts_rfq || b.accepts_appointments || b.accepts_reservations || b.accepts_walkins) },
+    { label: 'Tech stack',    done: !!(Array.isArray(b.tech_stack) && b.tech_stack.length) },
   ];
   const done = steps.filter(s => s.done).length;
   const pct  = Math.round((done / steps.length) * 100);
@@ -2993,6 +3266,231 @@ async function loadNotifications() {
 
 // Poll badge count every 60s while on the page
 setInterval(() => { if (_bizId) loadNotifications(); }, 60000);
+
+// ── W5+H ─────────────────────────────────────────────────────────────────────────
+
+let _techStack = []; // in-memory stack before save
+
+function w5hLoadData(data) {
+  // WHO
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.value = v; };
+  setVal('who-owner-name',    data.owner_name);
+  setVal('who-owner-email',   data.owner_email);
+  setVal('who-owner-phone',   data.owner_phone);
+  setVal('who-year',          data.year_established);
+  setVal('who-license',       data.license_number);
+
+  // WHY
+  setVal('why-tagline',       data.tagline);
+  setVal('why-choose',        data.why_choose_us);
+  setVal('why-specialties',   data.specialties_text);
+  setVal('why-awards',        data.awards_text);
+
+  // HOW
+  const setChk = (id, v) => { const el = document.getElementById(id); if (el) el.checked = !!v; };
+  setChk('how-rfq',           data.accepts_rfq);
+  setChk('how-appointment',   data.accepts_appointments);
+  setChk('how-reservation',   data.accepts_reservations);
+  setChk('how-walkin',        data.accepts_walkins);
+  setChk('how-walkin-order',  data.accepts_walkin_orders);
+  setVal('how-booking-url',   data.booking_url);
+  if (data.booking_system) {
+    const sel = document.getElementById('how-booking-system');
+    if (sel) sel.value = data.booking_system;
+  }
+  // payment methods
+  if (Array.isArray(data.payment_methods)) {
+    data.payment_methods.forEach(m => {
+      const el = document.querySelector(`#how-panel input[value="${m}"]`);
+      if (el) el.checked = true;
+    });
+  }
+  setVal('how-lead-time',     data.lead_time_hours);
+  setChk('how-same-day',      data.same_day_available);
+  setChk('how-service-radius', null); // skip — radius is in skills section
+
+  // Tech Stack
+  _techStack = Array.isArray(data.tech_stack) ? [...data.tech_stack] : [];
+  renderTechStack(_techStack);
+
+  // Update score chips
+  w5hUpdateChips(data);
+
+  // Live HOW preview
+  w5hUpdateHowPreview();
+
+  // Setup banner
+  if (getParams().setup === '1') {
+    const banner = document.getElementById('setup-banner');
+    if (banner) banner.style.display = 'block';
+    switchTab('overview');
+  }
+}
+
+function w5hUpdateChips(data) {
+  const setChip = (id, filled) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (filled) {
+      el.textContent = '✓ Filled';
+      el.className = 'ov-score-chip chip-done';
+    } else {
+      el.textContent = 'Empty';
+      el.className = 'ov-score-chip chip-empty';
+    }
+  };
+  setChip('who-chip', !!(data.owner_name || data.owner_email));
+  setChip('why-chip', !!(data.tagline || data.why_choose_us));
+  setChip('how-chip', !!(data.accepts_rfq || data.accepts_appointments || data.accepts_reservations || data.accepts_walkins));
+
+  // presence score badge
+  const scoreEl = document.getElementById('presence-score-badge');
+  if (scoreEl && data.presence_score != null) {
+    scoreEl.textContent = data.presence_score + ' / 100';
+    scoreEl.style.display = 'inline-block';
+  }
+}
+
+async function w5hSave(section) {
+  if (!_bizId || !_dispatchToken) return;
+  const btn = document.querySelector(`#${section === 'techstack' ? 'techstack' : section}-panel .ov-btn-green, #techstack-save-btn`);
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+
+  const payload = { business_id: _bizId };
+
+  if (section === 'who') {
+    const g = id => (document.getElementById(id)||{}).value?.trim() || null;
+    payload.owner_name    = g('who-owner-name');
+    payload.owner_email   = g('who-owner-email');
+    payload.owner_phone   = g('who-owner-phone');
+    payload.year_established = g('who-year') ? parseInt(g('who-year')) : null;
+    payload.license_number   = g('who-license');
+  } else if (section === 'why') {
+    const g = id => (document.getElementById(id)||{}).value?.trim() || null;
+    payload.tagline        = g('why-tagline');
+    payload.why_choose_us  = g('why-choose');
+    payload.specialties_text = g('why-specialties');
+    payload.awards_text    = g('why-awards');
+  } else if (section === 'how') {
+    const chk = id => !!(document.getElementById(id)||{}).checked;
+    const g   = id => (document.getElementById(id)||{}).value?.trim() || null;
+    payload.accepts_rfq           = chk('how-rfq');
+    payload.accepts_appointments  = chk('how-appointment');
+    payload.accepts_reservations  = chk('how-reservation');
+    payload.accepts_walkins       = chk('how-walkin');
+    payload.accepts_walkin_orders = chk('how-walkin-order');
+    payload.booking_url           = g('how-booking-url');
+    payload.booking_system        = g('how-booking-system');
+    payload.same_day_available    = chk('how-same-day');
+    payload.lead_time_hours       = g('how-lead-time') ? parseInt(g('how-lead-time')) : null;
+    // payment methods
+    const pmEls = document.querySelectorAll('#how-panel input[name="payment_method"]:checked');
+    payload.payment_methods = Array.from(pmEls).map(e => e.value);
+  } else if (section === 'techstack') {
+    payload.tech_stack = _techStack;
+  }
+
+  try {
+    const res = await apiFetch('/inbox/w5h', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-dispatch-token': _dispatchToken },
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    if (result.success) {
+      // update presence score
+      const scoreEl = document.getElementById('presence-score-badge');
+      if (scoreEl && result.presence_score != null) {
+        scoreEl.textContent = result.presence_score + ' / 100';
+        scoreEl.style.display = 'inline-block';
+      }
+      // update chip
+      const chipId = section === 'techstack' ? null : section + '-chip';
+      if (chipId) {
+        const chip = document.getElementById(chipId);
+        if (chip) { chip.textContent = '\u2713 Saved'; chip.className = 'ov-score-chip chip-done'; }
+      }
+      if (btn) { btn.disabled = false; btn.textContent = section === 'techstack' ? 'Save Tech Stack' : 'Save ' + section.toUpperCase(); }
+      showToast && showToast('Saved!');
+    } else {
+      throw new Error(result.error || 'save failed');
+    }
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Retry'; }
+    console.error('w5hSave error', e);
+  }
+}
+
+function w5hUpdateHowPreview() {
+  const chk  = id => !!(document.getElementById(id)||{}).checked;
+  const g    = id => (document.getElementById(id)||{}).value?.trim() || '';
+  const parts = [];
+  if (chk('how-rfq'))         parts.push('Quotes');
+  if (chk('how-appointment')) parts.push('Appointments');
+  if (chk('how-reservation')) parts.push('Reservations');
+  if (chk('how-walkin'))      parts.push('Walk-ins');
+  const url = g('how-booking-url');
+  const preview = document.getElementById('how-preview');
+  if (!preview) return;
+  if (!parts.length) {
+    preview.textContent = 'No intake methods selected yet.';
+    return;
+  }
+  preview.textContent = 'Accepts: ' + parts.join(', ') + (url ? ' • Booking: ' + url : '');
+}
+
+// Wire HOW checkboxes + booking URL to live preview
+['how-rfq','how-appointment','how-reservation','how-walkin','how-walkin-order'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', w5hUpdateHowPreview);
+});
+const bookingUrlEl = document.getElementById('how-booking-url');
+if (bookingUrlEl) bookingUrlEl.addEventListener('input', w5hUpdateHowPreview);
+
+function renderTechStack(stack) {
+  const list = document.getElementById('ts-list');
+  if (!list) return;
+  if (!stack || !stack.length) {
+    list.innerHTML = '<span style="font-size:13px;color:var(--text-3)">No tools added yet. Use the quick-add buttons below.</span>';
+    return;
+  }
+  list.innerHTML = stack.map((item, i) => `
+    <div class="ts-item">
+      <span class="ts-item-name">${escHtml(item.name)}</span>
+      <span class="ts-item-cat">${escHtml(item.category || '')}</span>
+      ${item.url ? `<a href="${escHtml(item.url)}" target="_blank" style="font-size:11px;color:var(--accent-text);text-decoration:none;white-space:nowrap">↗ Open</a>` : ''}
+      <span class="ts-item-del" onclick="tsRemove(${i})">\u00d7</span>
+    </div>`).join('');
+  // Mark quick-add buttons as added
+  document.querySelectorAll('.ts-add-btn').forEach(btn => {
+    const onclick = btn.getAttribute('onclick') || '';
+    const m = onclick.match(/tsQuickAdd\('([^']+)'/);
+    if (m) {
+      const id = m[1];
+      btn.classList.toggle('ts-added', stack.some(s => s.id === id));
+    }
+  });
+}
+
+function tsRemove(i) {
+  _techStack.splice(i, 1);
+  renderTechStack(_techStack);
+}
+
+function tsQuickAdd(id, name, category, url) {
+  if (_techStack.some(s => s.id === id)) return; // already added
+  _techStack.push({ id, name, category, url, status: 'listed', connected_at: null });
+  renderTechStack(_techStack);
+}
+
+function tsAddCustom() {
+  const name = prompt('Enter the name of your tool or system:');
+  if (!name || !name.trim()) return;
+  const id = 'custom_' + name.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+  if (_techStack.some(s => s.id === id)) return;
+  _techStack.push({ id, name: name.trim(), category: 'other', url: null, status: 'listed', connected_at: null });
+  renderTechStack(_techStack);
+}
 
 </script>
 

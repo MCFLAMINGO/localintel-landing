@@ -1823,13 +1823,14 @@
           try { sessionStorage.removeItem('li_claim_state'); } catch(e) {}
           // Returning owner — verified identity, skip wallet step, go straight to inbox
           if (data.returning && data.inbox_url) {
-            window.location.href = data.inbox_url;
+            window.location.href = data.inbox_url + '&setup=1';
             return;
           }
           // Wire up inbox link if server returned dispatch_token
           if (data.inbox_url) {
             const inboxLink = document.getElementById('inbox-link');
-            if (inboxLink) { inboxLink.href = data.inbox_url; inboxLink.style.display = 'inline-block'; }
+            const setupUrl = data.inbox_url + '&setup=1';
+            if (inboxLink) { inboxLink.href = setupUrl; inboxLink.style.display = 'inline-block'; }
           }
           // Store verify response data for wallet panel
           state.verifyData = data;

@@ -758,6 +758,8 @@
       const subLabel    = result?.sub_label    || null;   // B146
       const isNarrowing = result?.is_narrowing || false;  // B146
       const contactPrompt = result?.contact_prompt || false; // B147
+      const ctaType   = result?.cta_type   || 'info';   // rfq | appointment | reservation | info
+      const ctaPrompt = result?.cta_prompt || null;      // question text from backend
 
       if (narrative || notables.length) {
         const spotlit = notables.filter(b => b.description || (b.tags && b.tags.length)).slice(0,3);
@@ -798,27 +800,60 @@
       if (isTask) {
         // B146: unique widget ID so multiple service requests on the page don't collide
         const widgetId = 'cw-' + Date.now().toString(36);
-        const taskStatus = isNarrowing ? 'Narrowed to matching providers' : 'Request sent to matching providers';
+
+        // CTA-type-aware status label
+        const taskStatus = isNarrowing
+          ? 'Narrowed to matching providers'
+          : ctaType === 'rfq'
+            ? 'Ready to send bid request'
+            : ctaType === 'appointment'
+              ? 'Ready to connect you'
+              : ctaType === 'reservation'
+                ? 'Ready to connect you'
+                : null;  // info type: no status label
+
+        // CTA-type-aware contact widget label
+        const contactLabel = ctaType === 'rfq'
+          ? 'Leave your contact info and we&#39;ll send your bid request to these providers:'
+          : ctaType === 'appointment'
+            ? 'Leave your contact info and we&#39;ll send your appointment request to the business:'
+            : ctaType === 'reservation'
+              ? 'Leave your info and we&#39;ll request a reservation on your behalf:'
+              : null;  // info: no widget
+
+        // CTA-type-aware button label
+        const btnLabel = ctaType === 'rfq'
+          ? 'Send Bid Request'
+          : ctaType === 'appointment'
+            ? 'Request Appointment'
+            : 'Connect me';
+
         const subcatChip = subLabel
           ? `<div class="subcat-chip">${esc(subLabel)}</div>`
           : '';
-        narrativeHtml += `
-          <div class="agent-task-card" id="tc-${widgetId}">
-            ${jobCode ? `<div class="task-job-id">Job ${esc(jobCode)}</div>` : ''}
-            ${subcatChip}
-            <div class="task-status">${taskStatus}</div>
+
+        // Only show the widget for actionable CTA types
+        const widgetHtml = contactLabel ? `
             <div class="contact-widget" id="${widgetId}">
-              <div class="contact-widget-label">Leave your contact info — we'll connect you with a provider:</div>
+              <div class="contact-widget-label">${contactLabel}</div>
               <div class="contact-widget-row">
                 <input type="email" placeholder="Email address" id="${widgetId}-email" />
                 <input type="tel"   placeholder="Phone (optional)" id="${widgetId}-phone" />
                 <button class="contact-widget-submit" id="${widgetId}-btn"
-                  onclick="submitContact('${widgetId}','${esc(jobCode||'')}','${esc(result.category||'')}','${esc(result.zip||'')}')">
-                  Connect me
+                  data-cta-type="${esc(ctaType)}"
+                  onclick="submitContact('${widgetId}','${esc(jobCode||'')}','${esc(result.category||'')}','${esc(result.zip||'')}','${esc(ctaType)}')">
+                  ${btnLabel}
                 </button>
               </div>
               <div class="contact-widget-success" id="${widgetId}-ok" style="display:none;"></div>
-            </div>
+            </div>` : '';
+
+        narrativeHtml += `
+          <div class="agent-task-card" id="tc-${widgetId}">
+            ${jobCode ? `<div class="task-job-id">Job ${esc(jobCode)}</div>` : ''}
+            ${subcatChip}
+            ${taskStatus ? `<div class="task-status">${taskStatus}</div>` : ''}
+            ${widgetHtml}
           </div>`;
       }
 
@@ -848,7 +883,7 @@
 
     // ── Update context ─────────────────────────────────────────────────────────
     // ── Contact collection widget (B147) ─────────────────────────────────────────
-    async function submitContact(widgetId, jobCode, category, zip) {
+    async function submitContact(widgetId, jobCode, category, zip, ctaType) {
       const emailEl = document.getElementById(widgetId + '-email');
       const phoneEl = document.getElementById(widgetId + '-phone');
       const btnEl   = document.getElementById(widgetId + '-btn');
@@ -870,7 +905,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-session-id': SESSION_ID },
           body: JSON.stringify({
-            job_code: jobCode || null, category, zip,
+            job_code: jobCode || null, category, zip, cta_type: ctaType || 'info',
             email: email || null, phone: phone || null,
           }),
         });
@@ -880,9 +915,15 @@
           if (row)   row.style.display   = 'none';
           if (label) label.style.display = 'none';
           okEl.style.display = 'block';
-          okEl.textContent = email
-            ? `Got it — we'll email you at ${email} when a provider responds.`
-            : `Got it — we'll text you at ${phone} when a provider responds.`;
+          const contact = email ? `emailed to ${email}` : `texted to ${phone}`;
+          const successMsg = ctaType === 'rfq'
+            ? `Your bid request has been logged. We'll reach out once a provider responds. Confirmation ${contact}.`
+            : ctaType === 'appointment'
+              ? `Your appointment request has been sent to the business. Confirmation ${contact}.`
+              : ctaType === 'reservation'
+                ? `Your reservation request has been sent. Confirmation ${contact}.`
+                : `Got it — we'll follow up at ${email || phone}.`;
+          okEl.textContent = successMsg;
         } else {
           btnEl.disabled = false;
           btnEl.textContent = 'Connect me';

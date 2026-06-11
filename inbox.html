@@ -914,7 +914,39 @@
   .ts-item-cat  { font-size: 11px; color: var(--text-3); }
   .ts-item-del  { cursor: pointer; color: var(--text-3); font-size: 15px; line-height: 1; }
   .ts-item-del:hover { color: #ef4444; }
-  </style>
+  
+    /* ── Requests dashboard cards ── */
+    .req-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+    .req-card.pending { border-left: 3px solid #f59e0b; }
+    .req-card.open    { border-left: 3px solid #3b82f6; }
+    .req-card.confirmed { border-left: 3px solid #16a34a; }
+    .req-card.declined  { border-left: 3px solid #dc2626; opacity: .7; }
+    .req-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .req-card-title  { font-size: 14px; font-weight: 700; color: var(--text); }
+    .req-card-meta   { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+    .req-card-desc   { font-size: 13px; color: var(--text-2); line-height: 1.5; margin-bottom: 12px; }
+    .req-status-pill { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; flex-shrink: 0; }
+    .req-status-pill.pending  { background: #FEF3C7; color: #92400E; }
+    .req-status-pill.open     { background: #DBEAFE; color: #1E40AF; }
+    .req-status-pill.confirmed{ background: #D1FAE5; color: #065F46; }
+    .req-status-pill.declined { background: #FEE2E2; color: #991B1B; }
+    .req-status-pill.notified { background: #EDE9FE; color: #5B21B6; }
+    .req-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .req-btn      { font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 8px; border: none; cursor: pointer; transition: opacity .15s; }
+    .req-btn:hover { opacity: .85; }
+    .req-btn-green  { background: #16a34a; color: #fff; }
+    .req-btn-blue   { background: #3b82f6; color: #fff; }
+    .req-btn-red    { background: #dc2626; color: #fff; }
+    .req-btn-ghost  { background: var(--bg-3,#e5e7eb); color: var(--text-2); }
+    .req-form-row   { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; align-items: flex-end; }
+    .req-form-row input, .req-form-row textarea {
+      font-size: 13px; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--bg-input, #fff); color: var(--text); flex: 1; min-width: 120px;
+    }
+    .req-form-row textarea { min-height: 56px; resize: vertical; }
+    .req-ics-link { font-size: 12px; color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; }
+
+    </style>
   <meta property="og:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
   <meta property="og:image:width" content="512">
   <meta property="og:image:height" content="512">
@@ -975,6 +1007,30 @@
       </div>
 
       <!-- ═══ NOTIFICATIONS TAB ═══ -->
+      <div class="tab-panel" id="tab-requests">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <h2 style="font-size:17px;font-weight:700;margin:0 0 2px;">Incoming Requests</h2>
+            <p id="req-subtitle" style="font-size:13px;color:var(--text-3);margin:0;">Job quotes, appointments, and reservations</p>
+          </div>
+          <button onclick="loadRequests()" style="font-size:12px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer;color:var(--text-2);">Refresh</button>
+        </div>
+
+        <!-- RFQ section -->
+        <div id="req-rfq-section" style="display:none;margin-bottom:28px;">
+          <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:10px;">Job Quotes (RFQ)</div>
+          <div id="req-rfq-list"></div>
+        </div>
+
+        <!-- Appointments / Reservations section -->
+        <div id="req-appt-section" style="display:none;margin-bottom:28px;">
+          <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:10px;">Appointments &amp; Reservations</div>
+          <div id="req-appt-list"></div>
+        </div>
+
+        <p id="req-empty" style="color:var(--text-3);font-size:14px;">No requests yet. Customers who find you via search or SMS can request appointments and submit job quotes here.</p>
+      </div><!-- /tab-requests -->
+
       <div class="tab-panel" id="tab-notifications">
         <div class="inbox-header">
           <div class="inbox-header-left">
@@ -996,6 +1052,7 @@
       <div class="tab-bar">
         <button class="tab-btn active" id="tab-jobs-btn" onclick="switchTab('jobs')">Open Jobs</button>
         <button class="tab-btn" id="tab-overview-btn" onclick="switchTab('overview')">My Listing</button>
+        <button class="tab-btn" id="tab-requests-btn" onclick="switchTab('requests')">Requests <span id="req-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;margin-left:4px;vertical-align:middle">0</span></button>
         <button class="tab-btn" id="tab-notifications-btn" onclick="switchTab('notifications')">Alerts <span id="notif-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;margin-left:4px;vertical-align:middle">0</span></button>
       </div>
 
@@ -2636,6 +2693,9 @@ function switchTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('tab-' + tab + '-btn').classList.add('active');
   if (tab === 'notifications') loadNotifications();
+  if (tab === 'requests') loadRequests();
+  // Pre-load request count for badge
+  setTimeout(() => { if (_token && document.getElementById('tab-requests-btn')) loadRequests(); }, 1500);
 }
 
 function renderOverview(data) {
@@ -3543,6 +3603,179 @@ function tsAddCustom() {
   _techStack.push({ id, name: name.trim(), category: 'other', url: null, status: 'listed', connected_at: null });
   renderTechStack(_techStack);
   w5hSave('techstack').catch(console.error);
+}
+
+
+// ── Requests Dashboard ────────────────────────────────────────────────────────
+async function loadRequests() {
+  if (!_token) return;
+  document.getElementById('req-empty').style.display = 'none';
+  try {
+    const res  = await apiFetch(`/inbox/requests?token=${encodeURIComponent(_token)}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'load failed');
+    const rfqs  = data.rfqs  || [];
+    const appts = data.appointments || [];
+    const total = data.total_pending || 0;
+    const badge = document.getElementById('req-badge');
+    if (badge) { badge.style.display = total > 0 ? '' : 'none'; badge.textContent = total; }
+    const sub = document.getElementById('req-subtitle');
+    if (sub) sub.textContent = total > 0
+      ? `${total} pending action${total !== 1 ? 's' : ''} — review and respond below`
+      : 'All caught up — no pending requests.';
+    const rfqSec  = document.getElementById('req-rfq-section');
+    const rfqList = document.getElementById('req-rfq-list');
+    if (rfqs.length > 0) { rfqSec.style.display = ''; rfqList.innerHTML = rfqs.map(r => renderRfqCard(r)).join(''); }
+    else { rfqSec.style.display = 'none'; }
+    const apptSec  = document.getElementById('req-appt-section');
+    const apptList = document.getElementById('req-appt-list');
+    if (appts.length > 0) { apptSec.style.display = ''; apptList.innerHTML = appts.map(a => renderApptCard(a)).join(''); }
+    else { apptSec.style.display = 'none'; }
+    if (rfqs.length === 0 && appts.length === 0) document.getElementById('req-empty').style.display = '';
+  } catch (e) {
+    console.error('[loadRequests]', e);
+    const el = document.getElementById('req-empty');
+    if (el) { el.textContent = 'Could not load requests. Try again.'; el.style.display = ''; }
+  }
+}
+
+function renderRfqCard(r) {
+  const isPending  = r.status === 'open' && !r.bid_id;
+  const isDeclined = r.bid_status === 'declined';
+  const isBid      = r.bid_id && !isDeclined;
+  const statusClass = isDeclined ? 'declined' : isBid ? 'confirmed' : 'open';
+  const statusLabel = isDeclined ? 'Declined' : isBid ? `Bid: $${Number(r.quote_usd||0).toLocaleString()}` : 'New Request';
+  const budget   = r.budget_usd ? `Budget: $${Number(r.budget_usd).toLocaleString()}` : 'Budget: open';
+  const customer = [r.customer_email, r.customer_phone].filter(Boolean).join(' · ') || 'Anonymous';
+  return `<div class="req-card ${statusClass}" id="rfq-card-${escHtml(r.rfq_id)}">
+    <div class="req-card-header">
+      <div>
+        <div class="req-card-title">${escHtml(r.category || r.job_type || 'Job Request')}</div>
+        <div class="req-card-meta">${timeAgo(r.created_at)} · ${escHtml(customer)} · ${escHtml(budget)}</div>
+      </div>
+      <span class="req-status-pill ${statusClass}">${escHtml(statusLabel)}</span>
+    </div>
+    <div class="req-card-desc">${escHtml((r.description||'').slice(0,300))}</div>
+    ${isPending ? `
+    <div class="req-form-row" id="rfq-form-${r.rfq_id}">
+      <input type="number" id="rfq-price-${r.rfq_id}" placeholder="Your quote ($)" min="0" step="0.01" style="max-width:140px;">
+      <input type="text" id="rfq-avail-${r.rfq_id}" placeholder="When can you do it? e.g. Tuesday AM">
+      <textarea id="rfq-note-${r.rfq_id}" placeholder="Notes or questions for the customer..." style="width:100%;box-sizing:border-box;"></textarea>
+    </div>
+    <div class="req-actions">
+      <button class="req-btn req-btn-green" onclick="submitRfqBid('${r.rfq_id}')">Submit Quote</button>
+      <button class="req-btn req-btn-ghost" onclick="declineRfq('${r.rfq_id}')">Not Available</button>
+    </div>` : isBid ? `
+    <div class="req-actions">
+      <a href="https://www.thelocalintel.com/rfq.html?token=${escHtml(r.magic_token||'')}" target="_blank" class="req-btn req-btn-blue" style="text-decoration:none;">View Customer Status →</a>
+    </div>
+    ${r.bid_note ? `<div style="font-size:12px;color:var(--text-3);margin-top:8px;">Your note: ${escHtml(r.bid_note)}</div>` : ''}` : ''}
+  </div>`;
+}
+
+function renderApptCard(a) {
+  const isPending   = a.status === 'pending' || a.status === 'notified';
+  const isConfirmed = a.status === 'confirmed';
+  const isDeclined  = a.status === 'declined';
+  const typeLabel   = a.request_type === 'reservation' ? 'Reservation' : 'Appointment';
+  const customer    = [a.customer_name, a.customer_email, a.customer_phone].filter(Boolean).join(' · ') || 'Anonymous';
+  const statusClass = isConfirmed ? 'confirmed' : isDeclined ? 'declined' : 'pending';
+  const statusLabel = isConfirmed ? 'Confirmed' : isDeclined ? 'Declined' : 'Pending';
+  const API_BASE_ICS = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+  return `<div class="req-card ${statusClass}" id="appt-card-${escHtml(a.id)}">
+    <div class="req-card-header">
+      <div>
+        <div class="req-card-title">${escHtml(typeLabel)} Request</div>
+        <div class="req-card-meta">${timeAgo(a.created_at)} · ${escHtml(customer)}</div>
+      </div>
+      <span class="req-status-pill ${statusClass}">${escHtml(statusLabel)}</span>
+    </div>
+    ${a.description ? `<div class="req-card-desc">${escHtml(a.description.slice(0,300))}</div>` : ''}
+    ${a.preferred_time ? `<div style="font-size:13px;color:var(--text-2);margin-bottom:8px;">Requested: <strong>${escHtml(a.preferred_time)}</strong></div>` : ''}
+    ${a.party_size ? `<div style="font-size:13px;color:var(--text-2);margin-bottom:8px;">Party size: <strong>${a.party_size}</strong></div>` : ''}
+    ${isPending ? `
+    <div class="req-form-row" id="appt-form-${a.id}">
+      <input type="datetime-local" id="appt-time-${a.id}" title="Set a scheduled time (optional)">
+      <input type="text" id="appt-note-${a.id}" placeholder="Note to customer: address, prep info, parking...">
+    </div>
+    <div class="req-actions">
+      <button class="req-btn req-btn-green" onclick="confirmAppt('${a.id}','${a.request_type}')">Confirm ${escHtml(typeLabel)}</button>
+      <button class="req-btn req-btn-red" onclick="declineAppt('${a.id}','${a.request_type}')">Decline</button>
+    </div>` : isConfirmed ? `
+    <div class="req-actions">
+      ${a.appointment_id ? `<a href="${API_BASE_ICS}/inbox/requests/appointment/${a.appointment_id}/calendar.ics" class="req-ics-link">📅 Add to Calendar (.ics)</a>` : ''}
+    </div>
+    ${a.response_text ? `<div style="font-size:12px;color:var(--text-3);margin-top:8px;">Your note: ${escHtml(a.response_text)}</div>` : ''}` : ''}
+  </div>`;
+}
+
+async function submitRfqBid(rfq_id) {
+  const price = document.getElementById(`rfq-price-${rfq_id}`)?.value;
+  const avail = document.getElementById(`rfq-avail-${rfq_id}`)?.value || '';
+  const note  = document.getElementById(`rfq-note-${rfq_id}`)?.value || '';
+  const btn   = document.querySelector(`#rfq-card-${rfq_id} .req-btn-green`);
+  if (btn) { btn.disabled = true; btn.textContent = 'Submitting…'; }
+  try {
+    const res = await apiFetch('/inbox/requests/rfq/' + rfq_id + '/respond', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: _token, action: 'bid', quote_usd: price ? parseFloat(price) : null, note, availability_text: avail }),
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error);
+    showToast && showToast('Quote submitted — customer notified.');
+    loadRequests();
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Submit Quote'; }
+    showToast && showToast('Error: ' + e.message, true);
+  }
+}
+
+async function declineRfq(rfq_id) {
+  const note = document.getElementById(`rfq-note-${rfq_id}`)?.value || '';
+  const res = await apiFetch('/inbox/requests/rfq/' + rfq_id + '/respond', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ token: _token, action: 'decline', note }),
+  });
+  if (res.ok) { showToast && showToast('Declined.'); loadRequests(); }
+}
+
+async function confirmAppt(id, type) {
+  const timeVal = document.getElementById(`appt-time-${id}`)?.value;
+  const noteVal = document.getElementById(`appt-note-${id}`)?.value || null;
+  const scheduled_for = timeVal ? new Date(timeVal).toISOString() : null;
+  const btn = document.querySelector(`#appt-card-${id} .req-btn-green`);
+  if (btn) { btn.disabled = true; btn.textContent = 'Confirming…'; }
+  try {
+    const res = await apiFetch('/inbox/requests/appointment/' + id + '/respond', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ token: _token, action: 'confirm', scheduled_for, response_text: noteVal }),
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error);
+    showToast && showToast('Confirmed — customer emailed with calendar link.');
+    loadRequests();
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Confirm'; }
+    showToast && showToast('Error: ' + e.message, true);
+  }
+}
+
+async function declineAppt(id) {
+  const noteVal = document.getElementById(`appt-note-${id}`)?.value || null;
+  const res = await apiFetch('/inbox/requests/appointment/' + id + '/respond', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ token: _token, action: 'decline', response_text: noteVal }),
+  });
+  if (res.ok) { showToast && showToast('Declined — customer notified.'); loadRequests(); }
+}
+
+function timeAgo(ts) {
+  if (!ts) return '';
+  const diff = (Date.now() - new Date(ts)) / 1000;
+  if (diff < 60)    return 'just now';
+  if (diff < 3600)  return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
 }
 
 </script>

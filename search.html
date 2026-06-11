@@ -409,6 +409,17 @@
       .bubble-user-inner { max-width: 90%; }
       .filter-select { min-width: 90px; font-size: 12px; }
     }
+  
+    /* ── Search card CTAs ── */
+    .result-cta { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; transition: opacity .15s; margin-top: 8px; }
+    .result-cta:hover { opacity: .85; }
+    .result-cta-wallet  { background: #7C3AED; color: #fff; }
+    .result-cta-rfq     { background: #16a34a; color: #fff; }
+    .result-cta-book    { background: #2563eb; color: #fff; }
+    .result-cta-reserve { background: #0891b2; color: #fff; }
+    .result-cta-order   { background: #ea580c; color: #fff; }
+    .result-cta-call    { background: var(--bg-2,#f3f4f6); color: var(--text,#111); border: 1px solid var(--border,#e5e7eb); }
+
   </style>
   <meta property="og:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
   <meta property="og:image:width" content="512">
@@ -622,6 +633,54 @@
       return res.json();
     }
 
+
+    // ── Smart CTA per action_type ──────────────────────────────────────────────
+    function renderCardCta(biz) {
+      const wallet   = biz.wallet;
+      const bookUrl  = biz.booking_url;
+      const website  = biz.website;
+      const hasRfq   = biz.accepts_rfq;
+      const hasAppt  = biz.accepts_appointments;
+      const hasResv  = biz.accepts_reservations;
+      const hasMeal  = biz.menu_url || (biz.category||'').includes('restaurant') || (biz.category||'').includes('cafe');
+      const phone    = (biz.phone||'').replace(/\D/g,'');
+      const bizId    = biz.business_id || biz.id;
+
+      // Wallet → agent-routed RFQ (highest priority)
+      if (wallet && bizId) {
+        return `<a href="https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(biz.category||'')}" class="result-cta result-cta-wallet">⚡ Request Quote</a>`;
+      }
+      // Reservations (restaurant/hotel)
+      if (hasResv && bookUrl) {
+        return `<a href="${esc(bookUrl)}" target="_blank" rel="noopener" class="result-cta result-cta-reserve">📅 Reserve</a>`;
+      }
+      // Booking/appointment URL
+      if ((hasAppt || bookUrl) && bookUrl) {
+        return `<a href="${esc(bookUrl)}" target="_blank" rel="noopener" class="result-cta result-cta-book">📅 Book</a>`;
+      }
+      // RFQ (accepts quotes)
+      if (hasRfq && bizId) {
+        return `<a href="https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(biz.category||'')}" class="result-cta result-cta-rfq">Request Quote</a>`;
+      }
+      // Food order
+      if (hasMeal && (biz.menu_url || website)) {
+        return `<a href="${esc(biz.menu_url || website)}" target="_blank" rel="noopener" class="result-cta result-cta-order">Order →</a>`;
+      }
+      // Website
+      if (website) {
+        return `<a href="${esc(website)}" target="_blank" rel="noopener" class="result-cta result-cta-book">Visit Site →</a>`;
+      }
+      // Unclaimed — route through LocalIntel
+      if (bizId) {
+        return `<a href="https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(biz.category||'')}" class="result-cta result-cta-rfq">Request via LocalIntel</a>`;
+      }
+      // Fallback: call
+      if (phone) {
+        return `<a href="tel:${phone}" class="result-cta result-cta-call">📞 Call</a>`;
+      }
+      return '';
+    }
+
     // ── Render a business card ─────────────────────────────────────────────────
     function renderCard(biz) {
       const icon    = getIcon(biz.category || biz.category_group);
@@ -672,6 +731,7 @@
             <div class="result-status${claimed?' claimed':''}">
               ${claimed ? '✓ Claimed' : 'Unclaimed'}
             </div>
+            ${renderCardCta(biz)}
             <a href="${mapUrl}" target="_blank" rel="noopener"
                style="display:inline-block;margin-top:6px;font-size:11px;color:var(--accent);font-weight:600;">
               Map →

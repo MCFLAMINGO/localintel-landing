@@ -1538,7 +1538,7 @@
             </div>
           </div>
           <div class="ov-field-group">
-            <label class="ov-field-label">State license number <span style="font-weight:400;color:var(--text-3)">(optional)</span></label>
+            <label class="ov-field-label">State license number <span id="license-optional-tag" style="font-weight:400;color:var(--text-3)"></span></label>
             <div class="ov-field-hint">Displayed as a trust signal on your agent profile.</div>
             <input type="text" class="ov-input" id="w5h-license" placeholder="e.g. CGC1234567 or L18000286276">
           </div>
@@ -1656,43 +1656,43 @@
             <div style="font-size:12px;font-weight:600;color:var(--text-3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Quick add</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px" id="techstack-catalog">
               <!-- POS -->
-              <button class="ts-add-btn" onclick="tsQuickAdd('toast','Toast POS','pos','https://pos.toasttab.com')">+ Toast</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('square','Square','pos','https://squareup.com')">+ Square</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('clover','Clover','pos','https://www.clover.com')">+ Clover</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('lightspeed','Lightspeed','pos','https://www.lightspeedhq.com')">+ Lightspeed</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('touchbistro','TouchBistro','pos','https://www.touchbistro.com')">+ TouchBistro</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('toast','Toast POS','pos','https://pos.toasttab.com',this)">+ Toast</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('square','Square','pos','https://squareup.com',this)">+ Square</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('clover','Clover','pos','https://www.clover.com',this)">+ Clover</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('lightspeed','Lightspeed','pos','https://www.lightspeedhq.com',this)">+ Lightspeed</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('touchbistro','TouchBistro','pos','https://www.touchbistro.com',this)">+ TouchBistro</button>
               <!-- Reservations -->
-              <button class="ts-add-btn" onclick="tsQuickAdd('opentable','OpenTable','reservations','https://www.opentable.com')">+ OpenTable</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('resy','Resy','reservations','https://resy.com')">+ Resy</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('opentable','OpenTable','reservations','https://www.opentable.com',this)">+ OpenTable</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('resy','Resy','reservations','https://resy.com',this)">+ Resy</button>
               <!-- Scheduling -->
-              <button class="ts-add-btn" onclick="tsQuickAdd('acuity','Acuity','scheduling','https://acuityscheduling.com')">+ Acuity</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('calendly','Calendly','scheduling','https://calendly.com')">+ Calendly</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('mindbody','Mindbody','scheduling','https://www.mindbodyonline.com')">+ Mindbody</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('booksy','Booksy','scheduling','https://booksy.com')">+ Booksy</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('vagaro','Vagaro','scheduling','https://www.vagaro.com')">+ Vagaro</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('zocdoc','Zocdoc','scheduling','https://www.zocdoc.com')">+ Zocdoc</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('acuity','Acuity','scheduling','https://acuityscheduling.com',this)">+ Acuity</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('calendly','Calendly','scheduling','https://calendly.com',this)">+ Calendly</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('mindbody','Mindbody','scheduling','https://www.mindbodyonline.com',this)">+ Mindbody</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('booksy','Booksy','scheduling','https://booksy.com',this)">+ Booksy</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('vagaro','Vagaro','scheduling','https://www.vagaro.com',this)">+ Vagaro</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('zocdoc','Zocdoc','scheduling','https://www.zocdoc.com',this)">+ Zocdoc</button>
               <!-- Email -->
-              <button class="ts-add-btn" onclick="tsQuickAdd('google_workspace','Google Workspace','email','https://workspace.google.com')">+ Google Workspace</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('microsoft365','Microsoft 365','email','https://www.microsoft365.com')">+ Microsoft 365</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('google_workspace','Google Workspace','email','https://workspace.google.com',this)">+ Google Workspace</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('microsoft365','Microsoft 365','email','https://www.microsoft365.com',this)">+ Microsoft 365</button>
               <!-- Tasks -->
-              <button class="ts-add-btn" onclick="tsQuickAdd('jolt','Jolt','tasks','https://www.jolt.com')">+ Jolt</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('7shifts','7shifts','tasks','https://www.7shifts.com')">+ 7shifts</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('deputy','Deputy','tasks','https://www.deputy.com')">+ Deputy</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('jolt','Jolt','tasks','https://www.jolt.com',this)">+ Jolt</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('7shifts','7shifts','tasks','https://www.7shifts.com',this)">+ 7shifts</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('deputy','Deputy','tasks','https://www.deputy.com',this)">+ Deputy</button>
               <!-- Payments -->
-              <button class="ts-add-btn" onclick="tsQuickAdd('stripe','Stripe','payments','https://stripe.com')">+ Stripe</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('paypal','PayPal','payments','https://paypal.com')">+ PayPal</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('stripe','Stripe','payments','https://stripe.com',this)">+ Stripe</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('paypal','PayPal','payments','https://paypal.com',this)">+ PayPal</button>
               <!-- Accounting -->
-              <button class="ts-add-btn" onclick="tsQuickAdd('quickbooks','QuickBooks','accounting','https://quickbooks.intuit.com')">+ QuickBooks</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('xero','Xero','accounting','https://www.xero.com')">+ Xero</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('quickbooks','QuickBooks','accounting','https://quickbooks.intuit.com',this)">+ QuickBooks</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('xero','Xero','accounting','https://www.xero.com',this)">+ Xero</button>
               <!-- Field service -->
-              <button class="ts-add-btn" onclick="tsQuickAdd('servicetitan','ServiceTitan','pos','https://www.servicetitan.com')">+ ServiceTitan</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('jobber','Jobber','pos','https://getjobber.com')">+ Jobber</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('buildertrend','Buildertrend','pos','https://buildertrend.com')">+ Buildertrend</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('servicetitan','ServiceTitan','pos','https://www.servicetitan.com',this)">+ ServiceTitan</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('jobber','Jobber','pos','https://getjobber.com',this)">+ Jobber</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('buildertrend','Buildertrend','pos','https://buildertrend.com',this)">+ Buildertrend</button>
               <!-- Practice management -->
-              <button class="ts-add-btn" onclick="tsQuickAdd('clio','Clio','pos','https://www.clio.com')">+ Clio</button>
-              <button class="ts-add-btn" onclick="tsQuickAdd('dentrix','Dentrix','pos','https://www.dentrix.com')">+ Dentrix</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('clio','Clio','pos','https://www.clio.com',this)">+ Clio</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('dentrix','Dentrix','pos','https://www.dentrix.com',this)">+ Dentrix</button>
               <!-- Other -->
-              <button class="ts-add-btn" onclick="tsQuickAdd('docusign','DocuSign','other','https://www.docusign.com')">+ DocuSign</button>
+              <button class="ts-add-btn" onclick="tsQuickAdd('docusign','DocuSign','other','https://www.docusign.com',this)">+ DocuSign</button>
               <button class="ts-add-btn" onclick="tsAddCustom()" style="border-style:dashed">+ Custom…</button>
             </div>
           </div>
@@ -3309,6 +3309,25 @@ function w5hLoadData(data) {
   setChk('how-same-day',      data.same_day_available);
   setChk('how-service-radius', null); // skip — radius is in skills section
 
+  // License field — required for licensed trades, optional for others
+  const LICENSED_CATS = ['electrician','plumber','handyman','dental','dentist','legal','lawyer',
+                         'real_estate','realtor','landscaping','contractor','hvac','roofing',
+                         'pest_control','insurance','accounting','accountant'];
+  const cat = (data.category || '').toLowerCase();
+  const licTag = document.getElementById('license-optional-tag');
+  if (licTag) {
+    const required = LICENSED_CATS.some(c => cat.includes(c));
+    licTag.textContent = required ? '(required for your industry)' : '(optional)';
+    licTag.style.color = required ? 'var(--accent)' : 'var(--text-3)';
+  }
+
+  // Pre-fill license with sunbiz_id if license_number is empty
+  const licEl = document.getElementById('w5h-license');
+  if (licEl && !data.license_number && data.sunbiz_id) {
+    licEl.value = data.sunbiz_id;
+    licEl.placeholder = 'Sunbiz ID (pre-filled from claim)';
+  }
+
   // Tech Stack
   _techStack = Array.isArray(data.tech_stack) ? [...data.tech_stack] : [];
   renderTechStack(_techStack);
@@ -3410,7 +3429,15 @@ async function w5hSave(section) {
         const chip = document.getElementById(chipId);
         if (chip) { chip.textContent = '\u2713 Saved'; chip.className = 'ov-score-chip chip-done'; }
       }
-      if (btn) { btn.disabled = false; btn.textContent = section === 'techstack' ? 'Save Tech Stack' : 'Save ' + section.toUpperCase(); }
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '✓ Saved';
+        btn.style.background = '#16a34a';
+        setTimeout(() => {
+          btn.textContent = section === 'techstack' ? 'Save Tech Stack' : 'Save ' + section.toUpperCase();
+          btn.style.background = '';
+        }, 2000);
+      }
       showToast && showToast('Saved!');
     } else {
       throw new Error(result.error || 'save failed');
@@ -3477,10 +3504,35 @@ function tsRemove(i) {
   renderTechStack(_techStack);
 }
 
-function tsQuickAdd(id, name, category, url) {
-  if (_techStack.some(s => s.id === id)) return; // already added
+function tsQuickAdd(id, name, category, url, triggerBtn) {
+  if (_techStack.some(s => s.id === id)) {
+    // already added — flash the button to confirm
+    if (triggerBtn) {
+      triggerBtn.textContent = '✓ Added';
+      triggerBtn.classList.add('ts-added');
+    }
+    return;
+  }
   _techStack.push({ id, name, category, url, status: 'listed', connected_at: null });
   renderTechStack(_techStack);
+  // auto-save immediately
+  if (triggerBtn) {
+    triggerBtn.textContent = 'Saving…';
+    triggerBtn.disabled = true;
+    triggerBtn.classList.add('ts-added');
+  }
+  w5hSave('techstack').then(() => {
+    if (triggerBtn) {
+      triggerBtn.disabled = false;
+      triggerBtn.textContent = '✓ ' + name;
+    }
+  }).catch(() => {
+    if (triggerBtn) {
+      triggerBtn.disabled = false;
+      triggerBtn.textContent = '+ ' + name;
+      triggerBtn.classList.remove('ts-added');
+    }
+  });
 }
 
 function tsAddCustom() {
@@ -3490,6 +3542,7 @@ function tsAddCustom() {
   if (_techStack.some(s => s.id === id)) return;
   _techStack.push({ id, name: name.trim(), category: 'other', url: null, status: 'listed', connected_at: null });
   renderTechStack(_techStack);
+  w5hSave('techstack').catch(console.error);
 }
 
 </script>

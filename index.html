@@ -1574,11 +1574,12 @@
                  'stat-businesses-long','stat-zips-explore','hero-zip-inline'].forEach(id => {
                   const el = document.getElementById(id);
                   if (!el) return;
-                  if (id === 'stat-businesses') el.textContent = fmt(data.businesses);
+                  const bizCount = typeof data.businesses === 'object' ? parseInt(data.businesses.total_active || 0) : data.businesses;
+                  if (id === 'stat-businesses') el.textContent = fmt(bizCount);
                   else if (id === 'stat-zips' || id === 'stat-zips-explore' || id === 'hero-zip-inline')
-                    el.textContent = data.zips.toLocaleString('en-US');
-                  else if (id === 'hero-biz-badge') el.textContent = fmtFull(data.businesses);
-                  else if (id === 'stat-businesses-long') el.textContent = fmtFull(data.businesses);
+                    el.textContent = data.zips ? data.zips.toLocaleString('en-US') : '';
+                  else if (id === 'hero-biz-badge') el.textContent = fmtFull(bizCount);
+                  else if (id === 'stat-businesses-long') el.textContent = fmtFull(bizCount);
                 });
 
                 // Region badges — use total count and split proportionally via ZIP query

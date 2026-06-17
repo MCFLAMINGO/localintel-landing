@@ -355,11 +355,11 @@ const BENCHMARKS = [
 ];
 
 const TIER = {
-  high:     {lbl:'Significant Opportunity', sub:'Meaningfully undersupplied relative to market size.',       cls:'urgent'   },
-  medium:   {lbl:'Moderate Opportunity',    sub:'Room for new concepts — moderate competition expected.',    cls:'moderate' },
-  low:      {lbl:'Slight Opportunity',      sub:'Minor gap — niche or specialty concepts may find footing.', cls:'slight'   },
-  balanced: {lbl:'Balanced Market',         sub:'Supply roughly matches demand for this sector.',             cls:'balanced' },
-  saturated:{lbl:'Competitive Market',      sub:'Well-supplied — existing operators face pricing pressure.',  cls:'saturated'},
+  high:     {lbl:'Underserved',      sub:'Supply is meaningfully below demand for this market size.',      cls:'urgent'   },
+  medium:   {lbl:'Room to Grow',     sub:'Moderate gap — new concepts may find footing.',                  cls:'moderate' },
+  low:      {lbl:'Slight Gap',       sub:'Minor gap — niche or specialty operators may benefit.',          cls:'slight'   },
+  balanced: {lbl:'Balanced',         sub:'Supply roughly matches demand for this sector.',                  cls:'balanced' },
+  saturated:{lbl:'Competitive',      sub:'Well-supplied — existing operators face pricing pressure.',       cls:'saturated'},
 };
 
 // Maturity-adjusted thresholds — mature markets need larger gaps to signal opportunity
@@ -390,6 +390,16 @@ function renderGaps(gaps) {
   const grid = document.getElementById('gap-grid');
   const show = gaps.filter(g => g.tier !== 'balanced').slice(0, 8);
   if (!show.length) { grid.innerHTML = '<p class="gap-loading">Sector data loading…</p>'; return; }
+
+  // ── Data quality gate — if most sectors show actual=0, data is sparse ──
+  const zeroCount  = gaps.filter(g => g.actual === 0).length;
+  const totalSectors = gaps.length;
+  if (zeroCount > totalSectors * 0.5) {
+    grid.innerHTML = '<p class="gap-loading" style="color:#f59e0b;">Sector data is still being indexed for this ZIP. Check back soon.</p>';
+    // Log to console so operators can see which ZIPs need attention
+    console.warn('[LocalIntel gap-engine] DATA INCOMPLETE — ZIP has ' + zeroCount + '/' + totalSectors + ' sectors with zero businesses. oracle sector_breakdown may not be refreshed for this ZIP.');
+    return;
+  }
   document.getElementById('gap-sub').textContent =
     show.filter(g => g.gapPct > 0).length + ' undersupplied sectors detected across ' + show.length + ' industries analyzed. Full breakdown available to verified business owners.';
   grid.innerHTML = show.map(g => {

@@ -401,7 +401,7 @@ function renderGaps(gaps) {
       <div class="gc-sub">${t.sub}</div>
       <div class="gc-gate">
         <span class="gc-gate-lbl">Detailed data available</span>
-        <a href="/claim.html" class="gc-gate-btn">See Full Report →</a>
+        <button onclick="openSubscribeModal()" class="gc-gate-btn" style="background:none;border:none;cursor:pointer;">See Full Report →</button>
       </div>
     </div>`;
   }).join('');
@@ -503,6 +503,81 @@ async function loadIndustryData() {
   }
 }
 loadIndustryData();
+</script>
+
+<!-- Surge Subscribe Modal -->
+<div id="subscribe-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:#111;border:1px solid #333;border-radius:16px;width:480px;max-width:95vw;padding:32px;position:relative;">
+    <button onclick="closeSubscribeModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:#aaa;font-size:20px;cursor:pointer;">✕</button>
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#16a34a;margin-bottom:12px;">LocalIntel Intelligence</div>
+    <h2 style="font-size:22px;font-weight:700;color:#fff;margin:0 0 12px;">$9.99/mo — Full sector gap reports</h2>
+    <p style="color:#aaa;font-size:14px;margin:0 0 20px;">Get complete gap scores, demand signals, and AI-grounded market analysis for every sector in this ZIP — powered by live Postgres data.</p>
+    <ul style="list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:10px;">
+      <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#cbd5e1;"><span style="color:#16a34a;font-weight:700;">✓</span> Full gap scores for every sector</li>
+      <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#cbd5e1;"><span style="color:#16a34a;font-weight:700;">✓</span> Demand, supply, and viability metrics</li>
+      <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#cbd5e1;"><span style="color:#16a34a;font-weight:700;">✓</span> AI answers grounded in 200k+ FL businesses</li>
+      <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#cbd5e1;"><span style="color:#16a34a;font-weight:700;">✓</span> Permit trends, census, IRS migration data</li>
+    </ul>
+    <div style="margin-bottom:16px;">
+      <input type="tel" id="sub-phone" placeholder="Your phone number" style="width:100%;box-sizing:border-box;padding:12px 14px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px;margin-bottom:12px;" />
+      <button onclick="startZipSubscribeFlow()" id="sub-btn" style="width:100%;padding:14px;background:#16a34a;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;">Subscribe for $9.99/mo →</button>
+    </div>
+    <div id="sub-surge-wrap" style="display:none;margin-top:16px;">
+      <iframe id="sub-surge-iframe" src="" width="100%" height="520" frameborder="0" allow="payment;clipboard-write" style="border:none;border-radius:8px;"></iframe>
+    </div>
+    <div id="sub-result" style="display:none;margin-top:16px;font-size:14px;color:#16a34a;text-align:center;"></div>
+  </div>
+</div>
+
+<script>
+function openSubscribeModal() {
+  document.getElementById('subscribe-modal').style.display = 'flex';
+}
+function closeSubscribeModal() {
+  document.getElementById('subscribe-modal').style.display = 'none';
+}
+document.getElementById('subscribe-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeSubscribeModal();
+});
+
+async function startZipSubscribeFlow() {
+  const phone = document.getElementById('sub-phone').value.trim();
+  if (!phone) { alert('Enter your phone number to subscribe.'); return; }
+  const btn = document.getElementById('sub-btn');
+  btn.disabled = true; btn.textContent = 'Loading...';
+  try {
+    const res = await fetch(RAILWAY + '/api/local-intel/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone })
+    });
+    const data = await res.json();
+    if (!data.ok || !data.portalUrl) throw new Error(data.error || 'Subscribe failed');
+    document.getElementById('sub-surge-wrap').style.display = 'block';
+    document.getElementById('sub-surge-iframe').src = data.portalUrl;
+    btn.style.display = 'none';
+    // Listen for payment success
+    window.addEventListener('message', function onMsg(e) {
+      if (e.origin !== 'https://surge.basalthq.com') return;
+      if (e.data?.event === 'gateway-card-success') {
+        window.removeEventListener('message', onMsg);
+        fetch(RAILWAY + '/api/local-intel/subscription-confirm', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, receiptId: data.receiptId })
+        }).then(() => {
+          document.getElementById('sub-surge-wrap').style.display = 'none';
+          const r = document.getElementById('sub-result');
+          r.style.display = 'block';
+          r.textContent = 'Subscribed! Full reports now unlocked.';
+        });
+      }
+    });
+  } catch(e) {
+    btn.disabled = false; btn.textContent = 'Subscribe for $9.99/mo →';
+    alert('Error: ' + e.message);
+  }
+}
 </script>
 </body>
 </html>

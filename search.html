@@ -634,49 +634,82 @@
     }
 
 
+    // ── Category inference sets (mirrors categoryMap.js) ──────────────────────
+    // Used when business has no DB flags set (unclaimed). Best-effort from category alone.
+    const RFQ_CATS = new Set([
+      'plumber','plumbing','electrician','hvac','handyman','roofing','landscaping',
+      'painting','pest_control','locksmith','flooring','pool_service','moving',
+      'general_contractor','contractor','concrete','cleaning','dry_cleaning','towing','catering',
+    ]);
+    const APPT_CATS = new Set([
+      'beauty','beauty_salon','hairdresser','barbershop','hair_chain','nail_salon','nails',
+      'spa_massage','massage','spa','cosmetics','tattoo','pet_grooming','optician',
+      'clinic','dentist','dental','doctors','urgent_care','hospital','healthcare',
+      'veterinary','plastic_surgery','dermatology','medical_spa','aesthetics','pharmacy',
+      'gym','gym_chain','fitness_centre','sports_centre','fitness','childcare',
+      'accounting','tax_advisor','financial_advisor','law_firm','legal','insurance',
+      'insurance_agency','real_estate','real_estate_agency','estate_agent',
+    ]);
+    const RESV_CATS = new Set([
+      'restaurant','fast_food','casual_dining','fine_dining','cafe','coffee_chain','bakery',
+      'pizza','bar','pub','sports_bar','brewery','bar_dining','seafood','mexican','bbq',
+      'steakhouse','sandwich','fast_casual_mexican','deli','ice_cream','dessert',
+      'hotel','upscale_hotel','budget_hotel',
+    ]);
+
     // ── Smart CTA per action_type ──────────────────────────────────────────────
     function renderCardCta(biz) {
       const wallet   = biz.wallet;
       const bookUrl  = biz.booking_url;
       const website  = biz.website;
-      const hasRfq   = biz.accepts_rfq;
-      const hasAppt  = biz.accepts_appointments;
-      const hasResv  = biz.accepts_reservations;
-      const hasMeal  = biz.menu_url || (biz.category||'').includes('restaurant') || (biz.category||'').includes('cafe');
       const phone    = (biz.phone||'').replace(/\D/g,'');
       const bizId    = biz.business_id || biz.id;
+      const cat      = (biz.category||'').toLowerCase();
+      const claimed  = !!(biz.claimed_at || biz.wallet);
+
+      // DB flags take priority when set; fall back to category inference
+      const hasRfq   = biz.accepts_rfq  != null ? biz.accepts_rfq  : RFQ_CATS.has(cat);
+      const hasAppt  = biz.accepts_appointments != null ? biz.accepts_appointments : APPT_CATS.has(cat);
+      const hasResv  = biz.accepts_reservations != null ? biz.accepts_reservations : RESV_CATS.has(cat);
+      const hasMeal  = biz.menu_url || RESV_CATS.has(cat);
 
       // Wallet → agent-routed RFQ (highest priority)
       if (wallet && bizId) {
         return `<a href="https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(biz.category||'')}" class="result-cta result-cta-wallet">⚡ Request Quote</a>`;
       }
-      // Reservations (restaurant/hotel)
-      if (hasResv && bookUrl) {
-        return `<a href="${esc(bookUrl)}" target="_blank" rel="noopener" class="result-cta result-cta-reserve">📅 Reserve</a>`;
+      // Reservations
+      if (hasResv) {
+        const dest = bookUrl || website || `https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(cat)}`;
+        const target = (bookUrl || website) ? 'target="_blank" rel="noopener"' : '';
+        return `<a href="${esc(dest)}" ${target} class="result-cta result-cta-reserve">📅 Reserve</a>`;
       }
-      // Booking/appointment URL
-      if ((hasAppt || bookUrl) && bookUrl) {
-        return `<a href="${esc(bookUrl)}" target="_blank" rel="noopener" class="result-cta result-cta-book">📅 Book</a>`;
+      // Appointment
+      if (hasAppt) {
+        const dest = bookUrl || website || `https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(cat)}`;
+        const target = (bookUrl || website) ? 'target="_blank" rel="noopener"' : '';
+        return `<a href="${esc(dest)}" ${target} class="result-cta result-cta-book">📅 Book Appt</a>`;
       }
-      // RFQ (accepts quotes)
+      // RFQ
       if (hasRfq && bizId) {
-        return `<a href="https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(biz.category||'')}" class="result-cta result-cta-rfq">Request Quote</a>`;
+        return `<a href="https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(cat)}" class="result-cta result-cta-rfq">Request Quote</a>`;
       }
-      // Food order
-      if (hasMeal && (biz.menu_url || website)) {
-        return `<a href="${esc(biz.menu_url || website)}" target="_blank" rel="noopener" class="result-cta result-cta-order">Order →</a>`;
+      // Food / menu order
+      if (hasMeal) {
+        const dest = biz.menu_url || website || `https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(cat)}`;
+        const target = (biz.menu_url || website) ? 'target="_blank" rel="noopener"' : '';
+        return `<a href="${esc(dest)}" ${target} class="result-cta result-cta-order">Order →</a>`;
       }
       // Website
       if (website) {
         return `<a href="${esc(website)}" target="_blank" rel="noopener" class="result-cta result-cta-book">Visit Site →</a>`;
       }
-      // Unclaimed — route through LocalIntel
-      if (bizId) {
-        return `<a href="https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(biz.category||'')}" class="result-cta result-cta-rfq">Request via LocalIntel</a>`;
-      }
-      // Fallback: call
+      // Phone call
       if (phone) {
         return `<a href="tel:${phone}" class="result-cta result-cta-call">📞 Call</a>`;
+      }
+      // Final fallback
+      if (bizId) {
+        return `<a href="https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(cat)}" class="result-cta result-cta-rfq">Contact</a>`;
       }
       return '';
     }
@@ -732,6 +765,7 @@
               ${claimed ? '✓ Claimed' : 'Unclaimed'}
             </div>
             ${renderCardCta(biz)}
+            ${!claimed && bizId ? `<a href="https://www.thelocalintel.com/claim.html?biz=${esc(bizId)}" style="display:block;margin-top:5px;font-size:10px;color:var(--text-3);text-align:center;text-decoration:none;" title="Own this business? Claim it to manage your listing.">Is this yours? <span style="color:var(--accent);">Claim &amp; correct →</span></a>` : ''}
             <a href="${mapUrl}" target="_blank" rel="noopener"
                style="display:inline-block;margin-top:6px;font-size:11px;color:var(--accent);font-weight:600;">
               Map →

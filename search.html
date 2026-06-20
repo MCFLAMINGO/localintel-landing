@@ -312,6 +312,32 @@
       padding: 3px 9px; border-radius: 20px; margin-bottom: 8px;
     }
 
+    /* Detected-category chip — shown in agent bubble when NL category is resolved */
+    .detected-cat-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.25);
+      color: var(--accent); font-size: 11px; font-weight: 700;
+      letter-spacing: .04em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+    }
+
+    /* Example query chips row */
+    .example-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; padding: 10px 0 4px;
+    }
+    .example-chip {
+      cursor: pointer;
+      background: rgba(22,163,74,0.07); border: 1px solid rgba(22,163,74,0.2);
+      color: var(--text-2); font-size: 12px; font-weight: 500;
+      padding: 5px 12px; border-radius: 20px;
+      transition: background .15s, color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .example-chip:hover {
+      background: rgba(22,163,74,0.15); border-color: var(--accent); color: var(--accent);
+    }
+
     /* ORDER CARD */
     .order-card {
       background: white;
@@ -518,6 +544,18 @@
         </button>
       </div>
 
+      <!-- Natural-language example query chips -->
+      <div class="example-chips" id="exampleChips">
+        <button class="example-chip" onclick="runExampleQuery('my toilet is leaking')">my toilet is leaking</button>
+        <button class="example-chip" onclick="runExampleQuery('need a haircut today')">need a haircut today</button>
+        <button class="example-chip" onclick="runExampleQuery('good sushi near me')">good sushi near me</button>
+        <button class="example-chip" onclick="runExampleQuery('my AC is broken')">my AC is broken</button>
+        <button class="example-chip" onclick="runExampleQuery('I need a lawyer')">I need a lawyer</button>
+        <button class="example-chip" onclick="runExampleQuery('pizza delivery in Ponte Vedra')">pizza delivery</button>
+        <button class="example-chip" onclick="runExampleQuery('someone to cut my grass')">someone to cut my grass</button>
+        <button class="example-chip" onclick="runExampleQuery('best coffee shop nearby')">best coffee nearby</button>
+      </div>
+
       <div class="call-cta" style="display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:12px;">
         <a href="tel:+19045067476" class="call-link">
           <span class="call-pulse"></span>
@@ -568,8 +606,18 @@
       header.classList.remove('idle');
       header.classList.add('active');
       document.body.classList.add('search-active');
+      // Hide example chips once user starts searching
+      const chips = document.getElementById('exampleChips');
+      if (chips) chips.style.display = 'none';
       // Scroll to very top so sticky header locks into place immediately
       window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    // ── Example query chips — fills input and fires search ─────────────────────
+    function runExampleQuery(text) {
+      const input = document.getElementById('searchInput');
+      if (input) input.value = text;
+      sendMessage();
     }
 
     // ── Utilities ──────────────────────────────────────────────────────────────
@@ -856,6 +904,12 @@
       const ctaType   = result?.cta_type   || 'info';   // rfq | appointment | reservation | info
       const ctaPrompt = result?.cta_prompt || null;      // question text from backend
 
+      // Detected-category chip — shown when backend resolved NL query to a category
+      const detectedCat = result?.detected_cat || null;
+      const detectedCatChip = detectedCat
+        ? `<div class="detected-cat-chip">${getIcon(detectedCat)} ${esc(detectedCat.replace(/_/g,' '))}</div>`
+        : '';
+
       if (narrative || notables.length) {
         const spotlit = notables.filter(b => b.description || (b.tags && b.tags.length)).slice(0,3);
         const spotlightHtml = spotlit.map(b => {
@@ -875,6 +929,7 @@
         narrativeHtml = `
           <div class="agent-narrative">
             <div class="label"><span class="label-dot"></span> LocalIntel</div>
+            ${detectedCatChip}
             ${mainText ? `<div>${mainText}</div>` : ''}
             ${spotlightHtml}
           </div>`;

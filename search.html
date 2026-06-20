@@ -718,6 +718,7 @@
     function renderCard(biz) {
       const icon    = getIcon(biz.category || biz.category_group);
       const claimed = biz.claimed || biz.claimed_at || biz.wallet;
+      const bizId   = biz.business_id || biz.id || null;
       const cat     = biz.category || biz.category_group || '';
       const addr    = [biz.address, biz.city].filter(Boolean).join(', ');
       const full    = addr ? `${addr}, FL ${biz.zip||''}` : (biz.zip ? `${biz.zip}, FL` : '');

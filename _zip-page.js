@@ -694,6 +694,77 @@
         renderPermits(null);
       }
 
+      // ── Schema.org structured data injection ────────────────────────────
+      // Injected after live data loads so values are accurate, not static.
+      // 1. FAQPage — from oracle top_questions (high Google rich-result value)
+      // 2. LocalBusiness — represents LocalIntel as the data provider for this ZIP
+      // 3. Dataset — replaces the static stub in the HTML head
+      try {
+        const schemas = [];
+
+        // FAQPage from oracle top_questions
+        if (tqs.length >= 2) {
+          schemas.push({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: tqs.map(q => ({
+              '@type':          'Question',
+              name:             q.question,
+              acceptedAnswer:   { '@type': 'Answer', text: q.answer },
+            })),
+          });
+        }
+
+        // LocalBusiness — LocalIntel as the intelligence hub for this ZIP
+        schemas.push({
+          '@context': 'https://schema.org',
+          '@type':    'LocalBusiness',
+          name:       `LocalIntel — ${NAME} Business Intelligence`,
+          description: `Agentic business intelligence for ${NAME}, FL ${ZIP}. ` +
+            `${biz ? biz + ' verified businesses' : 'Hundreds of businesses'} indexed. ` +
+            `${pop ? 'Population ' + pop.toLocaleString() + '.' : ''} ` +
+            `${hhi ? 'Median income $' + hhi.toLocaleString() + '.' : ''}`,
+          url:        `https://www.thelocalintel.com/zip/${ZIP}`,
+          areaServed: {
+            '@type': 'PostalAddress',
+            postalCode:      ZIP,
+            addressLocality: NAME,
+            addressRegion:   'FL',
+            addressCountry:  'US',
+          },
+          knowsAbout: mi.dominant_sector
+            ? mi.dominant_sector.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+            : 'Local Business Services',
+        });
+
+        // Dataset — full ZIP intelligence record
+        schemas.push({
+          '@context':       'https://schema.org',
+          '@type':          'Dataset',
+          name:             `${NAME} (${ZIP}) Business Intelligence`,
+          description:      `${biz || '?'} verified businesses in ${NAME}, FL ${ZIP}. ` +
+            `Top sectors: ${mi.dominant_sector || 'various'}. ` +
+            `Population ${pop ? pop.toLocaleString() : '—'}, median income ${hhi ? '$' + hhi.toLocaleString() : '—'}.`,
+          url:              `https://www.thelocalintel.com/zip/${ZIP}`,
+          provider:         { '@type': 'Organization', name: 'LocalIntel' },
+          spatialCoverage:  { '@type': 'Place', name: `${NAME}, ${COUNTY} County, FL ${ZIP}` },
+          temporalCoverage: new Date().toISOString().slice(0, 10),
+          keywords:         [
+            `${NAME} businesses`, `${ZIP} local services`, `${COUNTY} County FL`,
+            'local intelligence', 'agentic routing', 'Florida business data',
+          ],
+        });
+
+        // Remove any existing ld+json from the stub and inject fresh
+        document.querySelectorAll('script[type="application/ld+json"]').forEach(el => el.remove());
+        schemas.forEach(schema => {
+          const s = document.createElement('script');
+          s.type = 'application/ld+json';
+          s.textContent = JSON.stringify(schema);
+          document.head.appendChild(s);
+        });
+      } catch (_) { /* schema injection is best-effort */ }
+
       initMap();
     } catch(e) {
       document.getElementById('gap-grid').innerHTML  = '<p class="loading-msg">Unable to load live data.</p>';

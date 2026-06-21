@@ -73,6 +73,11 @@
       "source": "/terms",
       "destination": "/terms.html",
       "permanent": true
+    },
+    {
+      "source": "/start",
+      "destination": "/start.html",
+      "permanent": true
     }
   ]
 }

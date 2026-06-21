@@ -721,8 +721,10 @@
       const hasResv  = biz.accepts_reservations != null ? biz.accepts_reservations : RESV_CATS.has(cat);
       const hasMeal  = biz.menu_url || RESV_CATS.has(cat);
 
-      // Wallet → agent-routed RFQ (highest priority)
-      if (wallet && bizId) {
+      // Wallet → agent-routed RFQ — but NOT for browsable/dining categories.
+      // A restaurant with a wallet should surface Reserve/Order, not Request Quote.
+      const _isServiceCat = !RESV_CATS.has(cat) && !APPT_CATS.has(cat);
+      if (wallet && bizId && _isServiceCat) {
         return `<a href="https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(biz.category||'')}" class="result-cta result-cta-wallet">⚡ Request Quote</a>`;
       }
       // Reservations

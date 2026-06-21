@@ -715,10 +715,12 @@
       const cat      = (biz.category||'').toLowerCase();
       const claimed  = !!(biz.claimed_at || biz.wallet);
 
-      // DB flags take priority when set; fall back to category inference
+      // DB flags are the source of truth — no category inference for reservations/appointments.
+      // A business must explicitly opt in (accepts_reservations=true) before we surface a
+      // reservation CTA. Category alone is not enough.
       const hasRfq   = biz.accepts_rfq  != null ? biz.accepts_rfq  : RFQ_CATS.has(cat);
-      const hasAppt  = biz.accepts_appointments != null ? biz.accepts_appointments : APPT_CATS.has(cat);
-      const hasResv  = biz.accepts_reservations != null ? biz.accepts_reservations : RESV_CATS.has(cat);
+      const hasAppt  = biz.accepts_appointments === true;  // explicit opt-in only
+      const hasResv  = biz.accepts_reservations === true;  // explicit opt-in only
       const hasMeal  = biz.menu_url || RESV_CATS.has(cat);
 
       // Wallet → agent-routed RFQ — but NOT for browsable/dining categories.

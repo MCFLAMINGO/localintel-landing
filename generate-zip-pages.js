@@ -79,18 +79,19 @@ function stubHTML(z, seo) {
 
   const topCatsStr = topCategories.join(', ');
 
-  // Title + description: enriched when we have business_count, else generic
+  // Title + description: service-intent first for Google, market data preserved in body
   let title, desc;
+  const topCatHuman = topCatsStr
+    ? topCatsStr.split(',').slice(0,2).map(s => s.trim().replace(/_/g,' ')).join(' and ')
+    : 'local services';
   if (businessCount !== null) {
-    title = `${city} (${zip}) — ${fmtNum(businessCount)} Local Businesses | LocalIntel`;
-    const parts = [`${fmtNum(businessCount)} verified businesses in ${city}, FL ${zip}.`];
-    if (topCatsStr) parts.push(`Top sectors: ${topCatsStr}.`);
-    if (population !== null) parts.push(`Population ${fmtNum(population)}${medianIncome !== null ? `, median income $${fmtNum(medianIncome)}` : ''}.`);
-    parts.push('Local business intelligence by LocalIntel.');
-    desc = parts.join(' ');
+    title = `Find Local Services in ${city}, FL ${zip} | Restaurants, Plumbers & More — LocalIntel`;
+    desc  = `Looking for a restaurant, plumber, doctor, or local service in ${city}, FL? LocalIntel connects you with ${fmtNum(businessCount)} verified businesses in ${zip}` +
+            (topCatsStr ? ` — including ${topCatHuman}` : '') +
+            `. Tell us what you need and we’ll find who can help.`;
   } else {
-    title = `${city} (${zip}) Business Intelligence — LocalIntel`;
-    desc  = `Live business intelligence for ${city}, FL ${zip}. Market gaps, sector signals, permits, and income data for ${county} County.`;
+    title = `Find Local Services in ${city}, FL ${zip} — LocalIntel`;
+    desc  = `Looking for a restaurant, plumber, doctor, landscaper, or any local service in ${city}, FL ${zip}? LocalIntel routes your request to verified local businesses in ${county} County.`;
   }
 
   const schema = JSON.stringify({
@@ -139,7 +140,7 @@ function stubHTML(z, seo) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(desc)}">
-  <meta property="og:title" content="${esc(city)} (${esc(zip)}) — Local Business Intelligence">
+  <meta property="og:title" content="Find Local Services in ${esc(city)}, FL ${esc(zip)} — LocalIntel">
   <meta property="og:description" content="${esc(desc)}">
   <meta property="og:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
   <meta property="og:image:width" content="512">

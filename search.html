@@ -726,10 +726,19 @@
         return `<a href="https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(biz.category||'')}" class="result-cta result-cta-wallet">⚡ Request Quote</a>`;
       }
       // Reservations
+      // Priority: booking_url (direct) → phone call → LocalIntel intake form
+      // LocalIntel is the conduit — we only collect info when no direct path exists
       if (hasResv) {
-        const dest = bookUrl || website || `https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(cat)}`;
-        const target = (bookUrl || website) ? 'target="_blank" rel="noopener"' : '';
-        return `<a href="${esc(dest)}" ${target} class="result-cta result-cta-reserve">📅 Reserve</a>`;
+        if (bookUrl) {
+          return `<a href="${esc(bookUrl)}" target="_blank" rel="noopener" class="result-cta result-cta-reserve">📅 Reserve</a>`;
+        }
+        if (phone) {
+          return `<a href="tel:${phone}" class="result-cta result-cta-call">📞 Call to Reserve</a>`;
+        }
+        // No direct path — use LocalIntel intake as lightweight booking calendar
+        if (bizId) {
+          return `<a href="https://www.thelocalintel.com/quote.html?business_id=${esc(bizId)}&category=${esc(cat)}&type=reservation" class="result-cta result-cta-reserve">Request Reservation</a>`;
+        }
       }
       // Appointment
       if (hasAppt) {

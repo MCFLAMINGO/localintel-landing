@@ -958,18 +958,16 @@
             ? 'Ready to send bid request'
             : ctaType === 'appointment'
               ? 'Ready to connect you'
-              : ctaType === 'reservation'
-                ? 'Ready to connect you'
-                : null;  // info type: no status label
+              : null;  // reservation + info: no status label — direct to business
 
         // CTA-type-aware contact widget label
+        // reservation intentionally excluded — LocalIntel is a conduit, not a reservation agent.
+        // The business card's own Reserve button (renderCardCta) links directly to booking_url or phone.
         const contactLabel = ctaType === 'rfq'
           ? 'Leave your contact info and we&#39;ll send your bid request to these providers:'
           : ctaType === 'appointment'
             ? 'Leave your contact info and we&#39;ll send your appointment request to the business:'
-            : ctaType === 'reservation'
-              ? 'Leave your info and we&#39;ll request a reservation on your behalf:'
-              : null;  // info: no widget
+            : null;  // reservation + info: no widget — direct to business
 
         // CTA-type-aware button label
         const btnLabel = ctaType === 'rfq'

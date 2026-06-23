@@ -12,7 +12,7 @@
  * {
  *   "zip":               "32256",
  *   "city_name":         "Southside Jacksonville",
- *   "region":            "Northeast Florida",
+ *   "region":            "Florida",
  *   "city_blurb":        "Live business intelligence for ...",
  *   "biz_count":         "794",
  *   "population":        "51,638",
@@ -65,7 +65,7 @@ function buildPage(cfg) {
   const tokens = {
     '{{ZIP}}':               cfg.zip,
     '{{CITY_NAME}}':         cfg.city_name,
-    '{{REGION}}':            cfg.region            || 'Northeast Florida',
+    '{{REGION}}':            cfg.region            || 'Florida',
     '{{CITY_BLURB}}':        cfg.city_blurb,
     '{{BIZ_COUNT}}':         cfg.biz_count,
     '{{POPULATION}}':        cfg.population,
@@ -111,8 +111,8 @@ const ZIP_CONFIGS = {
   '32082': {
     zip: '32082',
     city_name: 'Ponte Vedra Beach',
-    region: 'Northeast Florida',
-    city_blurb: "Live business intelligence for one of Northeast Florida's most affluent coastal communities. Market gaps, sector signals, and commercial data updated continuously.",
+    region: 'Florida',
+    city_blurb: "Live business intelligence for one of Florida's most affluent coastal communities. Market gaps, sector signals, and commercial data updated continuously.",
     biz_count: '675',
     population: '28,697',
     pop_fallback: 28697,
@@ -146,7 +146,7 @@ const ZIP_CONFIGS = {
   '32081': {
     zip: '32081',
     city_name: 'Nocatee',
-    region: 'Northeast Florida',
+    region: 'Florida',
     city_blurb: "Live business intelligence for Nocatee — one of the fastest-growing master-planned communities in the US. Market gaps, sector signals, and commercial data updated continuously.",
     biz_count: '1,153',
     population: '24,368',
@@ -182,7 +182,7 @@ const ZIP_CONFIGS = {
   '32250': {
     zip: '32250',
     city_name: 'Jacksonville Beach',
-    region: 'Northeast Florida',
+    region: 'Florida',
     city_blurb: 'Live business intelligence for Jacksonville Beach — a vibrant coastal city with a dense restaurant and retail corridor along Beach Boulevard and 3rd Street. Market gaps, sector signals, and commercial data updated continuously.',
     biz_count: '1,238',
     population: '30,080',
@@ -216,7 +216,7 @@ const ZIP_CONFIGS = {
   '32266': {
     zip: '32266',
     city_name: 'Neptune Beach',
-    region: 'Northeast Florida',
+    region: 'Florida',
     city_blurb: 'Live business intelligence for Neptune Beach — a tight-knit coastal community between Atlantic Beach and Jacksonville Beach with a walkable town center. Market gaps, sector signals, and commercial data updated continuously.',
     biz_count: '316',
     population: '7,217',
@@ -249,7 +249,7 @@ const ZIP_CONFIGS = {
   '32233': {
     zip: '32233',
     city_name: 'Atlantic Beach',
-    region: 'Northeast Florida',
+    region: 'Florida',
     city_blurb: 'Live business intelligence for Atlantic Beach — a quiet beachside city with a growing dining scene and strong community character. Market gaps, sector signals, and commercial data updated continuously.',
     biz_count: '446',
     population: '23,980',
@@ -315,7 +315,7 @@ const ZIP_CONFIGS = {
   '32080': {
     zip: '32080',
     city_name: 'St. Augustine Beach',
-    region: 'Northeast Florida',
+    region: 'Florida',
     city_blurb: 'Live business intelligence for St. Augustine Beach — a popular coastal destination with strong seasonal tourism and a growing year-round residential base. Market gaps, sector signals, and commercial data updated continuously.',
     biz_count: '623',
     population: '21,889',
@@ -347,7 +347,7 @@ const ZIP_CONFIGS = {
   '32084': {
     zip: '32084',
     city_name: 'St. Augustine',
-    region: 'Northeast Florida',
+    region: 'Florida',
     city_blurb: "Live business intelligence for St. Augustine — the nation's oldest city and one of Florida's top tourist destinations. Dense commercial activity, strong hospitality sector, and a thriving historic district. Market gaps, sector signals, and commercial data updated continuously.",
     biz_count: '1,366',
     population: '34,526',
@@ -381,7 +381,7 @@ const ZIP_CONFIGS = {
   '32086': {
     zip: '32086',
     city_name: 'St. Augustine South',
-    region: 'Northeast Florida',
+    region: 'Florida',
     city_blurb: 'Live business intelligence for south St. Augustine — a residential and commercial corridor with steady growth and proximity to St. Augustine proper. Market gaps, sector signals, and commercial data updated continuously.',
     biz_count: '884',
     population: '31,452',
@@ -413,8 +413,8 @@ const ZIP_CONFIGS = {
   '32092': {
     zip: '32092',
     city_name: 'World Golf Village',
-    region: 'Northeast Florida',
-    city_blurb: 'Live business intelligence for World Golf Village and the fast-growing western St. Johns County corridor — one of the most active growth markets in Northeast Florida. Market gaps, sector signals, and commercial data updated continuously.',
+    region: 'Florida',
+    city_blurb: 'Live business intelligence for World Golf Village and the fast-growing western St. Johns County corridor — one of the most active growth markets in Florida. Market gaps, sector signals, and commercial data updated continuously.',
     biz_count: '701',
     population: '43,691',
     pop_fallback: 43691,
@@ -447,7 +447,7 @@ const ZIP_CONFIGS = {
   '32095': {
     zip: '32095',
     city_name: 'St. Augustine North',
-    region: 'Northeast Florida',
+    region: 'Florida',
     city_blurb: 'Live business intelligence for northern St. Johns County — a rapidly developing corridor along US-1 and I-95 with new residential and commercial activity. Market gaps, sector signals, and commercial data updated continuously.',
     biz_count: '319',
     population: '16,607',
@@ -479,7 +479,7 @@ const ZIP_CONFIGS = {
   '32259': {
     zip: '32259',
     city_name: 'St. Johns',
-    region: 'Northeast Florida',
+    region: 'Florida',
     city_blurb: 'Live business intelligence for St. Johns and Fruit Cove — the largest ZIP by population in St. Johns County and one of the fastest-growing suburban markets in Florida. Market gaps, sector signals, and commercial data updated continuously.',
     biz_count: '713',
     population: '62,169',
@@ -513,7 +513,7 @@ const ZIP_CONFIGS = {
   '32258': {
     zip: '32258',
     city_name: 'Bartram Park',
-    region: 'Northeast Florida',
+    region: 'Florida',
     city_blurb: 'Live business intelligence for Bartram Park and southeast Jacksonville — a high-growth corridor connecting St. Johns County with the broader Jacksonville metro. Market gaps, sector signals, and commercial data updated continuously.',
     biz_count: '410',
     population: '37,859',

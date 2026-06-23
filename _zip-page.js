@@ -29,7 +29,7 @@
     'Putnam':    'a river-corridor market along the St. Johns River',
     'Alachua':   'a university market anchored by the University of Florida',
   };
-  const desc = COUNTY_DESC[COUNTY] || 'Northeast Florida';
+  const desc = COUNTY_DESC[COUNTY] || 'Florida';
 
   // ── Inject styles ───────────────────────────────────────────────────────────
   const STYLES = `
@@ -219,7 +219,7 @@
 
     <section class="hero">
       <div class="hi">
-        <div class="bc"><a href="/">LocalIntel</a> › <a href="/#explore">Northeast Florida</a> › ${NAME}</div>
+        <div class="bc"><a href="/">LocalIntel</a> › <a href="/#explore">Florida</a> › ${NAME}</div>
         <div class="zbadge">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           ZIP ${ZIP} · ${COUNTY} County

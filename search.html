@@ -717,16 +717,15 @@
       const cat      = (biz.category||'').toLowerCase();
       const claimed  = !!(biz.claimed_at || biz.wallet);
 
-      // ── Blank-slate B2B: agent_routable=FALSE → email-forward only ────────
-      // These businesses haven't configured their agentic profile yet.
-      // Surface a mailto CTA so the user can reach their sales team directly.
-      if (biz.agent_routable === false && biz.contact_email) {
+      // ── Blank-slate B2B: intentionally configured with contact_email ────────
+      // Only fires when contact_email is explicitly set — these are businesses we
+      // inserted as blank slates (Syncworks, AcceleratePV, Silicon Beach AI, etc.)
+      // agent_routable defaults FALSE for ALL legacy businesses, so we MUST check
+      // contact_email to distinguish blank-slate B2B from normal unclaimed listings.
+      if (biz.contact_email) {
         const subject = encodeURIComponent('Inquiry via LocalIntel');
         const body    = encodeURIComponent('Hi, I found you on LocalIntel and wanted to get in touch.');
         return `<a href="mailto:${esc(biz.contact_email)}?subject=${subject}&body=${body}" class="result-cta result-cta-email">✉ Contact Sales</a>`;
-      }
-      if (biz.agent_routable === false && website) {
-        return `<a href="${esc(website)}" target="_blank" rel="noopener" class="result-cta result-cta-email">Visit Site →</a>`;
       }
 
       // DB flags are the source of truth — no category inference for reservations/appointments.
@@ -841,7 +840,7 @@
               ${claimed ? '✓ Claimed' : 'Unclaimed'}
             </div>
             ${renderCardCta(biz)}
-            ${biz.agent_routable === false ? `<div class="result-b2b-note">Agentic services not yet configured — contact their team directly.</div>` : ''}
+            ${biz.contact_email ? `<div class="result-b2b-note">Agentic services not yet configured — contact their team directly.</div>` : ''}
             ${!claimed && bizId ? `<a href="https://www.thelocalintel.com/claim.html?biz=${esc(bizId)}" style="display:block;margin-top:5px;font-size:10px;color:var(--text-3);text-align:center;text-decoration:none;" title="Own this business? Claim it to manage your listing.">Is this yours? <span style="color:var(--accent);">Claim &amp; correct →</span></a>` : ''}
             <a href="${mapUrl}" target="_blank" rel="noopener"
                style="display:inline-block;margin-top:6px;font-size:11px;color:var(--accent);font-weight:600;">

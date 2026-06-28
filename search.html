@@ -77,6 +77,121 @@
       padding: 0 16px;
     }
 
+
+    /* ── Customer registration panel ── */
+    .reg-panel {
+      background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 18px 22px 16px;
+      margin: 12px 0 16px;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .reg-panel.hidden { display: none; }
+    .reg-panel__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99,102,241,0.18);
+      border: 1px solid rgba(99,102,241,0.35);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #a5b4fc;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .reg-panel__title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-1, #f1f5f9);
+      margin-bottom: 4px;
+    }
+    .reg-panel__sub {
+      font-size: 12px;
+      color: var(--text-2, #94a3b8);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .reg-panel__fields {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .reg-panel__fields input {
+      flex: 1 1 140px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--text-1, #f1f5f9);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .reg-panel__fields input::placeholder { color: rgba(148,163,184,.6); }
+    .reg-panel__fields input:focus { border-color: rgba(99,102,241,0.6); }
+    .reg-panel__opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 11.5px;
+      color: var(--text-2, #94a3b8);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .reg-panel__opt input[type=checkbox] { margin-top: 2px; accent-color: #6366f1; flex-shrink: 0; }
+    .reg-panel__actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .reg-btn-primary {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, opacity .2s;
+    }
+    .reg-btn-primary:hover { background: #4f46e5; }
+    .reg-btn-primary:disabled { opacity: .5; cursor: default; }
+    .reg-btn-skip {
+      background: none;
+      border: none;
+      color: var(--text-2, #94a3b8);
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .reg-panel__wallet-cta {
+      font-size: 11.5px;
+      color: var(--text-2, #94a3b8);
+      margin-left: auto;
+    }
+    .reg-panel__wallet-cta a {
+      color: #a5b4fc;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .reg-panel__wallet-cta a:hover { text-decoration: underline; }
+    .reg-panel__success {
+      font-size: 13px;
+      color: #86efac;
+      font-weight: 500;
+      padding: 6px 0;
+    }
+
     /* IDLE: full hero */
     .search-header.idle {
       position: relative; /* not sticky in idle — scrolls away */
@@ -472,6 +587,38 @@
       <div class="hero-title">
         <h1>What do you need?</h1>
         <p><span id="search-biz-count">614,000+</span> verified listings — ask anything in plain English</p>
+      </div>
+
+
+      <!-- ── Human registration panel ── -->
+      <div class="reg-panel" id="regPanel">
+        <div class="reg-panel__badge">&#9679; Human Interface Layer</div>
+        <div class="reg-panel__title">This is a human search layer on an agent-powered local business network.</div>
+        <div class="reg-panel__sub">
+          To receive order confirmations and receipts without an agent wallet, register your info below.
+          Agents transact on your behalf — your phone is how results come back to you.
+        </div>
+        <div class="reg-panel__fields">
+          <input type="text"  id="regName"  placeholder="Your name" autocomplete="name" />
+          <input type="tel"   id="regPhone" placeholder="Phone number" autocomplete="tel" />
+          <input type="text"  id="regZip"   placeholder="Your ZIP" maxlength="5" autocomplete="postal-code" />
+        </div>
+        <div class="reg-panel__opt">
+          <input type="checkbox" id="regSmsOpt" checked />
+          <label for="regSmsOpt">
+            I agree to receive SMS order confirmations and receipts from LocalIntel / MCFL Restaurant Holdings.
+            Message &amp; data rates may apply. Reply <strong>STOP</strong> to opt out at any time.
+            See our <a href="/privacy.html" style="color:#a5b4fc">Privacy Policy</a>.
+          </label>
+        </div>
+        <div class="reg-panel__actions">
+          <button class="reg-btn-primary" id="regSubmitBtn" onclick="submitRegistration()">Register &amp; Search</button>
+          <button class="reg-btn-skip" onclick="skipRegistration()">Skip for now</button>
+          <div class="reg-panel__wallet-cta">
+            Have an agent wallet? <a href="https://mybestfriend.app" target="_blank" rel="noopener">Get Dusty &rarr;</a>
+          </div>
+        </div>
+        <div class="reg-panel__success hidden" id="regSuccess">&#10003; You're registered — orders and confirmations will be sent to your phone.</div>
       </div>
 
       <!-- Filters always visible -->
@@ -1789,6 +1936,80 @@
         alert('Something went wrong. Try again.');
       }
     }
-  </script>
+  
+  // ── Customer registration panel ────────────────────────────────────────────
+  const API_BASE = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+  const CUST_KEY = 'li_customer';
+
+  function initRegistration() {
+    const stored = localStorage.getItem(CUST_KEY);
+    if (stored) {
+      try {
+        const c = JSON.parse(stored);
+        if (c.customer_id) { hideRegPanel(); return; }
+      } catch(e) {}
+    }
+    document.getElementById('regPanel').classList.remove('hidden');
+  }
+
+  function hideRegPanel() {
+    const p = document.getElementById('regPanel');
+    if (p) p.classList.add('hidden');
+  }
+
+  async function submitRegistration() {
+    const phone = document.getElementById('regPhone').value.trim();
+    const name  = document.getElementById('regName').value.trim();
+    const zip   = document.getElementById('regZip').value.trim();
+    const opt   = document.getElementById('regSmsOpt').checked;
+    const btn   = document.getElementById('regSubmitBtn');
+
+    if (!phone) { document.getElementById('regPhone').focus(); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Registering...';
+    try {
+      const resp = await fetch(API_BASE + '/customers/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, name: name || null, zip: zip || null, sms_opt_in: opt })
+      });
+      const data = await resp.json();
+      if (data.customer_id) {
+        localStorage.setItem(CUST_KEY, JSON.stringify({ customer_id: data.customer_id, phone: data.phone, name, zip }));
+        // Pre-fill zip filter if provided
+        if (zip && document.getElementById('zipFilter')) {
+          const zf = document.getElementById('zipFilter');
+          const opt = [...zf.options].find(o => o.value === zip);
+          if (opt) { zf.value = zip; }
+        }
+        document.getElementById('regSuccess').classList.remove('hidden');
+        document.querySelector('.reg-panel__fields').style.display = 'none';
+        document.querySelector('.reg-panel__opt').style.display = 'none';
+        document.querySelector('.reg-panel__actions').style.display = 'none';
+        setTimeout(hideRegPanel, 2000);
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Register & Search';
+        alert(data.error || 'Registration failed — please try again.');
+      }
+    } catch(e) {
+      btn.disabled = false;
+      btn.textContent = 'Register & Search';
+    }
+  }
+
+  function skipRegistration() {
+    // Store a skip flag — panel won't show again this session
+    sessionStorage.setItem('li_reg_skipped', '1');
+    hideRegPanel();
+  }
+
+  // Init on load
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!sessionStorage.getItem('li_reg_skipped')) initRegistration();
+  });
+
+</script>
 </body>
 </html>

@@ -81,43 +81,36 @@
     /* ── Customer registration panel ── */
     .reg-panel {
       width: 100%;
-      max-width: 680px;
-      margin: 0 auto 24px;
-      background: rgba(15,17,25,0.72);
-      border: 1px solid rgba(99,102,241,0.28);
-      border-radius: 16px;
-      padding: 24px 28px 20px;
-      backdrop-filter: blur(14px);
-      box-shadow: 0 4px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(99,102,241,0.08);
+      max-width: var(--max);
+      margin: 0 auto 20px;
+      background: #0f111a;
+      border: 1px solid rgba(99,102,241,0.35);
+      border-radius: 14px;
+      padding: 18px 24px 16px;
+      box-shadow: 0 2px 24px rgba(0,0,0,0.5);
       position: relative;
       overflow: hidden;
-    }
-    .reg-panel::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(99,102,241,0.07) 0%, transparent 60%);
-      pointer-events: none;
+      transition: padding 0.25s ease;
     }
     .reg-panel.hidden { display: none; }
+    /* collapsed state — just the teaser row */
+    .reg-panel.collapsed { padding: 14px 24px; }
 
     .reg-panel__top {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
       gap: 12px;
     }
     .reg-panel__eyebrow {
       display: flex;
       align-items: center;
       gap: 7px;
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: .1em;
+      letter-spacing: .12em;
       text-transform: uppercase;
       color: #818cf8;
-      margin-bottom: 7px;
     }
     .reg-panel__eyebrow span {
       width: 6px; height: 6px;
@@ -126,36 +119,74 @@
       box-shadow: 0 0 8px #6366f1;
       display: inline-block;
       animation: pulse-dot 2s ease-in-out infinite;
+      flex-shrink: 0;
     }
     @keyframes pulse-dot {
       0%,100% { opacity:1; transform:scale(1); }
-      50% { opacity:.5; transform:scale(0.7); }
+      50% { opacity:.5; transform:scale(0.75); }
     }
     .reg-panel__title {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
-      color: #f1f5f9;
-      line-height: 1.35;
+      color: #ffffff;
+      line-height: 1.3;
       margin: 0;
     }
-    .reg-panel__sub {
-      font-size: 12.5px;
-      color: #64748b;
-      line-height: 1.55;
-      margin-top: 5px;
+    /* collapsed teaser — left side */
+    .reg-panel__teaser {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
     }
+    /* expand button (shown in collapsed state) */
+    .reg-panel__expand-btn {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 650;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background .18s;
+    }
+    .reg-panel__expand-btn:hover { background: #4f46e5; }
     .reg-panel__skip-top {
       background: none;
       border: none;
-      color: #475569;
-      font-size: 11px;
+      color: #64748b;
+      font-size: 18px;
+      line-height: 1;
       cursor: pointer;
-      white-space: nowrap;
-      padding: 2px 0 0;
+      padding: 0 0 0 12px;
       flex-shrink: 0;
+      transition: color .15s;
     }
-    .reg-panel__skip-top:hover { color: #94a3b8; }
+    .reg-panel__skip-top:hover { color: #cbd5e1; }
 
+    /* expanded body — hidden when collapsed */
+    .reg-panel__body {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.3s ease, opacity 0.28s ease, margin-top 0.25s ease;
+      margin-top: 0;
+    }
+    .reg-panel.expanded .reg-panel__body {
+      max-height: 200px;
+      opacity: 1;
+      margin-top: 16px;
+    }
+
+    .reg-panel__sub {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
     .reg-panel__fields {
       display: flex;
       gap: 8px;
@@ -163,20 +194,20 @@
     }
     .reg-panel__fields input {
       flex: 1 1 0;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 9px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
       padding: 9px 13px;
       font-size: 13px;
-      color: #f1f5f9;
+      color: #ffffff;
       outline: none;
       transition: border-color .18s, background .18s;
       min-width: 0;
     }
-    .reg-panel__fields input::placeholder { color: #334155; }
+    .reg-panel__fields input::placeholder { color: #64748b; }
     .reg-panel__fields input:focus {
-      border-color: rgba(99,102,241,0.55);
-      background: rgba(99,102,241,0.06);
+      border-color: rgba(99,102,241,0.7);
+      background: rgba(99,102,241,0.08);
     }
 
     .reg-panel__opt {
@@ -184,8 +215,8 @@
       align-items: flex-start;
       gap: 9px;
       font-size: 11px;
-      color: #475569;
-      margin-bottom: 16px;
+      color: #94a3b8;
+      margin-bottom: 14px;
       line-height: 1.55;
     }
     .reg-panel__opt input[type=checkbox] {
@@ -194,7 +225,7 @@
       flex-shrink: 0;
       width: 13px; height: 13px;
     }
-    .reg-panel__opt a { color: #6366f1; text-decoration: none; }
+    .reg-panel__opt a { color: #818cf8; text-decoration: none; }
     .reg-panel__opt a:hover { text-decoration: underline; }
 
     .reg-panel__bottom {
@@ -206,23 +237,23 @@
       background: #6366f1;
       color: #fff;
       border: none;
-      border-radius: 9px;
-      padding: 10px 22px;
+      border-radius: 8px;
+      padding: 9px 22px;
       font-size: 13px;
       font-weight: 650;
       cursor: pointer;
       letter-spacing: .01em;
-      transition: background .18s, transform .12s;
+      transition: background .18s, transform .1s;
       flex-shrink: 0;
     }
     .reg-btn-primary:hover:not(:disabled) { background: #4f46e5; transform: translateY(-1px); }
     .reg-btn-primary:disabled { opacity: .45; cursor: default; }
 
-    .reg-panel__divider { width: 1px; height: 20px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+    .reg-panel__divider { width: 1px; height: 18px; background: rgba(255,255,255,0.1); flex-shrink: 0; }
 
     .reg-panel__wallet-cta {
       font-size: 12px;
-      color: #475569;
+      color: #64748b;
       white-space: nowrap;
     }
     .reg-panel__wallet-cta a {
@@ -236,7 +267,7 @@
       font-size: 13px;
       color: #4ade80;
       font-weight: 600;
-      padding: 8px 0 2px;
+      padding: 6px 0 0;
       display: none;
     }
     .reg-panel__success.visible { display: block; }
@@ -244,7 +275,7 @@
 
     /* IDLE: full hero */
     .search-header.idle {
-      position: relative; /* not sticky in idle — scrolls away */
+      position: relative;
       top: 0;
       border-bottom: none;
       background: transparent;
@@ -254,22 +285,33 @@
       padding: 40px 16px 0;
     }
 
-    /* hero title */
+    /* hero title — Google style */
     .hero-title {
       text-align: center;
-      padding-bottom: 24px;
+      padding-bottom: 28px;
       overflow: hidden;
       transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
-      max-height: 120px;
+      max-height: 200px;
       opacity: 1;
     }
     .hero-title h1 {
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-size: clamp(2.4rem, 6vw, 4rem);
       font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 6px;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      margin-bottom: 10px;
+      line-height: 1.05;
     }
-    .hero-title p { font-size: 14px; color: var(--text-2); }
+    .hero-title h1 .brand-dot {
+      color: #16a34a;
+    }
+    .hero-title p {
+      font-size: 15px;
+      color: var(--text-2);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
 
     /* hide hero title when active */
     .search-header.active .hero-title {
@@ -633,50 +675,56 @@
   <div class="search-header idle" id="searchHeader">
     <div class="search-header-inner">
 
-      <!-- Hero title — hidden when active -->
+      <!-- Hero title — Google style, hidden when active -->
       <div class="hero-title">
-        <h1>What do you need?</h1>
-        <p><span id="search-biz-count">614,000+</span> verified listings — ask anything in plain English</p>
+        <h1>Local<span class="brand-dot">Intel</span></h1>
+        <p>Florida's agent-powered local business network.<br><span id="search-biz-count">507,000+</span> verified listings — ask anything in plain English.</p>
       </div>
 
 
       <!-- ── Human registration panel ── -->
-      <div class="reg-panel hidden" id="regPanel">
+      <div class="reg-panel collapsed hidden" id="regPanel">
 
+        <!-- Collapsed state: teaser + Register button + skip -->
         <div class="reg-panel__top">
-          <div>
+          <div class="reg-panel__teaser">
             <div class="reg-panel__eyebrow"><span></span>LocalIntel Network</div>
-            <div class="reg-panel__title">Florida's agent-powered local business network.</div>
-            <div class="reg-panel__sub">
-              AI agents search and transact on your behalf. Register your phone so orders,
-              confirmations, and receipts route back to you — no wallet required.
-            </div>
+            <div class="reg-panel__title">Register your phone — get orders, confirmations &amp; receipts via SMS.</div>
           </div>
-          <button class="reg-panel__skip-top" onclick="skipRegistration()">✕ Skip</button>
+          <button class="reg-panel__expand-btn" id="regExpandBtn" onclick="expandRegPanel()">Register</button>
+          <button class="reg-panel__skip-top" onclick="skipRegistration()" title="Skip">&times;</button>
         </div>
 
-        <div class="reg-panel__fields">
-          <input type="text" id="regName"  placeholder="Full name"     autocomplete="name" />
-          <input type="tel"  id="regPhone" placeholder="Mobile number"  autocomplete="tel" />
-          <input type="text" id="regZip"   placeholder="ZIP code"       maxlength="5" autocomplete="postal-code" />
-        </div>
+        <!-- Expanded body -->
+        <div class="reg-panel__body" id="regBody">
+          <div class="reg-panel__sub">
+            AI agents search and transact on your behalf. Register your phone so orders,
+            confirmations, and receipts route back to you — no wallet required.
+          </div>
 
-        <div class="reg-panel__opt">
-          <input type="checkbox" id="regSmsOpt" checked />
-          <label for="regSmsOpt">
-            By registering I agree to receive SMS order confirmations and receipts from LocalIntel / MCFL Restaurant Holdings LLC.
-            Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out.
-            <a href="/privacy.html" target="_blank">Privacy Policy</a>.
-          </label>
-        </div>
+          <div class="reg-panel__fields">
+            <input type="text" id="regName"  placeholder="Full name"     autocomplete="name" />
+            <input type="tel"  id="regPhone" placeholder="Mobile number"  autocomplete="tel" />
+            <input type="text" id="regZip"   placeholder="ZIP code"       maxlength="5" autocomplete="postal-code" />
+          </div>
 
-        <div class="reg-panel__bottom">
-          <button class="reg-btn-primary" id="regSubmitBtn" onclick="submitRegistration()">Register &amp; Search</button>
-          <div class="reg-panel__divider"></div>
-          <div class="reg-panel__wallet-cta">Have an agent wallet? <a href="https://mybestfriend.app" target="_blank" rel="noopener">Get Dusty &rarr;</a></div>
-        </div>
+          <div class="reg-panel__opt">
+            <input type="checkbox" id="regSmsOpt" checked />
+            <label for="regSmsOpt">
+              By registering I agree to receive SMS order confirmations and receipts from LocalIntel / MCFL Restaurant Holdings LLC.
+              Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out.
+              <a href="/privacy.html" target="_blank">Privacy Policy</a>.
+            </label>
+          </div>
 
-        <div class="reg-panel__success" id="regSuccess">&#10003; Registered — orders and confirmations will be sent to your phone.</div>
+          <div class="reg-panel__bottom">
+            <button class="reg-btn-primary" id="regSubmitBtn" onclick="submitRegistration()">Register &amp; Search</button>
+            <div class="reg-panel__divider"></div>
+            <div class="reg-panel__wallet-cta">Have an agent wallet? <a href="https://mybestfriend.app" target="_blank" rel="noopener">Get Dusty &rarr;</a></div>
+          </div>
+
+          <div class="reg-panel__success" id="regSuccess">&#10003; Registered — orders and confirmations will be sent to your phone.</div>
+        </div>
       </div>
 
 
@@ -2010,6 +2058,17 @@
     document.getElementById('regPanel').classList.remove('hidden');
   }
 
+  function expandRegPanel() {
+    const p = document.getElementById('regPanel');
+    if (!p) return;
+    p.classList.remove('collapsed');
+    p.classList.add('expanded');
+    // hide the expand button, focus first field
+    const btn = document.getElementById('regExpandBtn');
+    if (btn) btn.style.display = 'none';
+    setTimeout(() => { const f = document.getElementById('regName'); if (f) f.focus(); }, 310);
+  }
+
   function hideRegPanel() {
     const p = document.getElementById('regPanel');
     if (p) p.classList.add('hidden');
@@ -2044,7 +2103,7 @@
         document.getElementById('regSuccess').classList.add('visible');
         document.querySelector('.reg-panel__fields').style.display = 'none';
         document.querySelector('.reg-panel__opt').style.display = 'none';
-        document.querySelector('.reg-panel__actions').style.display = 'none';
+        document.querySelector('.reg-panel__bottom').style.display = 'none';
         setTimeout(hideRegPanel, 2000);
       } else {
         btn.disabled = false;

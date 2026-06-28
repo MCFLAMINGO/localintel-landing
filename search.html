@@ -80,117 +80,167 @@
 
     /* ── Customer registration panel ── */
     .reg-panel {
-      background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      padding: 18px 22px 16px;
-      margin: 12px 0 16px;
-      max-width: 640px;
-      margin-left: auto;
-      margin-right: auto;
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto 24px;
+      background: rgba(15,17,25,0.72);
+      border: 1px solid rgba(99,102,241,0.28);
+      border-radius: 16px;
+      padding: 24px 28px 20px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(99,102,241,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .reg-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(99,102,241,0.07) 0%, transparent 60%);
+      pointer-events: none;
     }
     .reg-panel.hidden { display: none; }
-    .reg-panel__badge {
-      display: inline-flex;
+
+    .reg-panel__top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      gap: 12px;
+    }
+    .reg-panel__eyebrow {
+      display: flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(99,102,241,0.18);
-      border: 1px solid rgba(99,102,241,0.35);
-      border-radius: 20px;
-      padding: 3px 10px;
-      font-size: 11px;
-      font-weight: 600;
-      color: #a5b4fc;
-      letter-spacing: .04em;
+      gap: 7px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .1em;
       text-transform: uppercase;
-      margin-bottom: 10px;
+      color: #818cf8;
+      margin-bottom: 7px;
+    }
+    .reg-panel__eyebrow span {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #6366f1;
+      box-shadow: 0 0 8px #6366f1;
+      display: inline-block;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:.5; transform:scale(0.7); }
     }
     .reg-panel__title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-1, #f1f5f9);
-      margin-bottom: 4px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #f1f5f9;
+      line-height: 1.35;
+      margin: 0;
     }
     .reg-panel__sub {
-      font-size: 12px;
-      color: var(--text-2, #94a3b8);
-      margin-bottom: 14px;
-      line-height: 1.5;
+      font-size: 12.5px;
+      color: #64748b;
+      line-height: 1.55;
+      margin-top: 5px;
     }
+    .reg-panel__skip-top {
+      background: none;
+      border: none;
+      color: #475569;
+      font-size: 11px;
+      cursor: pointer;
+      white-space: nowrap;
+      padding: 2px 0 0;
+      flex-shrink: 0;
+    }
+    .reg-panel__skip-top:hover { color: #94a3b8; }
+
     .reg-panel__fields {
       display: flex;
       gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .reg-panel__fields input {
-      flex: 1 1 140px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 8px;
-      padding: 8px 12px;
+      flex: 1 1 0;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 9px;
+      padding: 9px 13px;
       font-size: 13px;
-      color: var(--text-1, #f1f5f9);
+      color: #f1f5f9;
       outline: none;
-      transition: border-color .2s;
+      transition: border-color .18s, background .18s;
+      min-width: 0;
     }
-    .reg-panel__fields input::placeholder { color: rgba(148,163,184,.6); }
-    .reg-panel__fields input:focus { border-color: rgba(99,102,241,0.6); }
+    .reg-panel__fields input::placeholder { color: #334155; }
+    .reg-panel__fields input:focus {
+      border-color: rgba(99,102,241,0.55);
+      background: rgba(99,102,241,0.06);
+    }
+
     .reg-panel__opt {
       display: flex;
       align-items: flex-start;
-      gap: 8px;
-      font-size: 11.5px;
-      color: var(--text-2, #94a3b8);
-      margin-bottom: 12px;
-      line-height: 1.5;
+      gap: 9px;
+      font-size: 11px;
+      color: #475569;
+      margin-bottom: 16px;
+      line-height: 1.55;
     }
-    .reg-panel__opt input[type=checkbox] { margin-top: 2px; accent-color: #6366f1; flex-shrink: 0; }
-    .reg-panel__actions {
+    .reg-panel__opt input[type=checkbox] {
+      margin-top: 2px;
+      accent-color: #6366f1;
+      flex-shrink: 0;
+      width: 13px; height: 13px;
+    }
+    .reg-panel__opt a { color: #6366f1; text-decoration: none; }
+    .reg-panel__opt a:hover { text-decoration: underline; }
+
+    .reg-panel__bottom {
       display: flex;
       align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      gap: 14px;
     }
     .reg-btn-primary {
       background: #6366f1;
       color: #fff;
       border: none;
-      border-radius: 8px;
-      padding: 9px 20px;
+      border-radius: 9px;
+      padding: 10px 22px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 650;
       cursor: pointer;
-      transition: background .2s, opacity .2s;
+      letter-spacing: .01em;
+      transition: background .18s, transform .12s;
+      flex-shrink: 0;
     }
-    .reg-btn-primary:hover { background: #4f46e5; }
-    .reg-btn-primary:disabled { opacity: .5; cursor: default; }
-    .reg-btn-skip {
-      background: none;
-      border: none;
-      color: var(--text-2, #94a3b8);
-      font-size: 12px;
-      cursor: pointer;
-      text-decoration: underline;
-      padding: 0;
-    }
+    .reg-btn-primary:hover:not(:disabled) { background: #4f46e5; transform: translateY(-1px); }
+    .reg-btn-primary:disabled { opacity: .45; cursor: default; }
+
+    .reg-panel__divider { width: 1px; height: 20px; background: rgba(255,255,255,0.08); flex-shrink: 0; }
+
     .reg-panel__wallet-cta {
-      font-size: 11.5px;
-      color: var(--text-2, #94a3b8);
-      margin-left: auto;
+      font-size: 12px;
+      color: #475569;
+      white-space: nowrap;
     }
     .reg-panel__wallet-cta a {
-      color: #a5b4fc;
+      color: #818cf8;
       text-decoration: none;
       font-weight: 600;
     }
     .reg-panel__wallet-cta a:hover { text-decoration: underline; }
+
     .reg-panel__success {
       font-size: 13px;
-      color: #86efac;
-      font-weight: 500;
-      padding: 6px 0;
+      color: #4ade80;
+      font-weight: 600;
+      padding: 8px 0 2px;
+      display: none;
     }
+    .reg-panel__success.visible { display: block; }
+
 
     /* IDLE: full hero */
     .search-header.idle {
@@ -591,35 +641,44 @@
 
 
       <!-- ── Human registration panel ── -->
-      <div class="reg-panel" id="regPanel">
-        <div class="reg-panel__badge">&#9679; Human Interface Layer</div>
-        <div class="reg-panel__title">This is a human search layer on an agent-powered local business network.</div>
-        <div class="reg-panel__sub">
-          To receive order confirmations and receipts without an agent wallet, register your info below.
-          Agents transact on your behalf — your phone is how results come back to you.
+      <div class="reg-panel hidden" id="regPanel">
+
+        <div class="reg-panel__top">
+          <div>
+            <div class="reg-panel__eyebrow"><span></span>LocalIntel Network</div>
+            <div class="reg-panel__title">Florida's agent-powered local business network.</div>
+            <div class="reg-panel__sub">
+              AI agents search and transact on your behalf. Register your phone so orders,
+              confirmations, and receipts route back to you — no wallet required.
+            </div>
+          </div>
+          <button class="reg-panel__skip-top" onclick="skipRegistration()">✕ Skip</button>
         </div>
+
         <div class="reg-panel__fields">
-          <input type="text"  id="regName"  placeholder="Your name" autocomplete="name" />
-          <input type="tel"   id="regPhone" placeholder="Phone number" autocomplete="tel" />
-          <input type="text"  id="regZip"   placeholder="Your ZIP" maxlength="5" autocomplete="postal-code" />
+          <input type="text" id="regName"  placeholder="Full name"     autocomplete="name" />
+          <input type="tel"  id="regPhone" placeholder="Mobile number"  autocomplete="tel" />
+          <input type="text" id="regZip"   placeholder="ZIP code"       maxlength="5" autocomplete="postal-code" />
         </div>
+
         <div class="reg-panel__opt">
           <input type="checkbox" id="regSmsOpt" checked />
           <label for="regSmsOpt">
-            I agree to receive SMS order confirmations and receipts from LocalIntel / MCFL Restaurant Holdings.
-            Message &amp; data rates may apply. Reply <strong>STOP</strong> to opt out at any time.
-            See our <a href="/privacy.html" style="color:#a5b4fc">Privacy Policy</a>.
+            By registering I agree to receive SMS order confirmations and receipts from LocalIntel / MCFL Restaurant Holdings LLC.
+            Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out.
+            <a href="/privacy.html" target="_blank">Privacy Policy</a>.
           </label>
         </div>
-        <div class="reg-panel__actions">
+
+        <div class="reg-panel__bottom">
           <button class="reg-btn-primary" id="regSubmitBtn" onclick="submitRegistration()">Register &amp; Search</button>
-          <button class="reg-btn-skip" onclick="skipRegistration()">Skip for now</button>
-          <div class="reg-panel__wallet-cta">
-            Have an agent wallet? <a href="https://mybestfriend.app" target="_blank" rel="noopener">Get Dusty &rarr;</a>
-          </div>
+          <div class="reg-panel__divider"></div>
+          <div class="reg-panel__wallet-cta">Have an agent wallet? <a href="https://mybestfriend.app" target="_blank" rel="noopener">Get Dusty &rarr;</a></div>
         </div>
-        <div class="reg-panel__success hidden" id="regSuccess">&#10003; You're registered — orders and confirmations will be sent to your phone.</div>
+
+        <div class="reg-panel__success" id="regSuccess">&#10003; Registered — orders and confirmations will be sent to your phone.</div>
       </div>
+
 
       <!-- Filters always visible -->
       <div class="filters-row">
@@ -1983,7 +2042,7 @@
           const opt = [...zf.options].find(o => o.value === zip);
           if (opt) { zf.value = zip; }
         }
-        document.getElementById('regSuccess').classList.remove('hidden');
+        document.getElementById('regSuccess').classList.add('visible');
         document.querySelector('.reg-panel__fields').style.display = 'none';
         document.querySelector('.reg-panel__opt').style.display = 'none';
         document.querySelector('.reg-panel__actions').style.display = 'none';

@@ -263,14 +263,66 @@
     }
     .reg-panel__wallet-cta a:hover { text-decoration: underline; }
 
-    .reg-panel__success {
+    /* post-registration upsell */
+    .reg-panel__upsell {
+      padding-top: 4px;
+    }
+    .reg-upsell__confirm {
       font-size: 13px;
       color: #4ade80;
       font-weight: 600;
-      padding: 6px 0 0;
-      display: none;
+      margin-bottom: 16px;
     }
-    .reg-panel__success.visible { display: block; }
+    .reg-upsell__pitch {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+    }
+    .reg-upsell__pitch-icon {
+      font-size: 28px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .reg-upsell__pitch-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+    .reg-upsell__pitch-sub {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+    .reg-upsell__pitch-cta {
+      display: inline-block;
+      background: #6366f1;
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 650;
+      padding: 8px 20px;
+      border-radius: 8px;
+      transition: background .18s;
+    }
+    .reg-upsell__pitch-cta:hover { background: #4f46e5; }
+    .reg-upsell__dismiss {
+      background: none;
+      border: none;
+      color: #475569;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0;
+      transition: color .15s;
+    }
+    .reg-upsell__dismiss:hover { color: #94a3b8; }
 
 
     /* IDLE: full hero */
@@ -723,7 +775,19 @@
             <div class="reg-panel__wallet-cta">Have an agent wallet? <a href="https://mybestfriend.app" target="_blank" rel="noopener">Get Dusty &rarr;</a></div>
           </div>
 
-          <div class="reg-panel__success" id="regSuccess">&#10003; Registered — orders and confirmations will be sent to your phone.</div>
+          <!-- Post-registration upsell state -->
+          <div class="reg-panel__upsell" id="regUpsell" style="display:none">
+            <div class="reg-upsell__confirm">&#10003; You're registered &mdash; SMS receipts &amp; confirmations are on.</div>
+            <div class="reg-upsell__pitch">
+              <div class="reg-upsell__pitch-icon">&#127803;</div>
+              <div class="reg-upsell__pitch-body">
+                <div class="reg-upsell__pitch-title">Want agents to order for you automatically?</div>
+                <div class="reg-upsell__pitch-sub">Dusty is your AI agent wallet on My Best Friend. It watches your habits, places orders, and pays &mdash; hands-free. No app download required.</div>
+                <a class="reg-upsell__pitch-cta" href="https://mybestfriend.app" target="_blank" rel="noopener">Get Dusty &rarr;</a>
+              </div>
+            </div>
+            <button class="reg-upsell__dismiss" onclick="hideRegPanel()">&times; Close</button>
+          </div>
         </div>
       </div>
 
@@ -2100,11 +2164,12 @@
           const opt = [...zf.options].find(o => o.value === zip);
           if (opt) { zf.value = zip; }
         }
-        document.getElementById('regSuccess').classList.add('visible');
+        // Swap to upsell state
+        document.querySelector('.reg-panel__sub').style.display = 'none';
         document.querySelector('.reg-panel__fields').style.display = 'none';
         document.querySelector('.reg-panel__opt').style.display = 'none';
         document.querySelector('.reg-panel__bottom').style.display = 'none';
-        setTimeout(hideRegPanel, 2000);
+        document.getElementById('regUpsell').style.display = 'block';
       } else {
         btn.disabled = false;
         btn.textContent = 'Register & Search';

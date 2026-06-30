@@ -397,6 +397,21 @@
       min-width: 110px;
     }
     .filter-select:focus { border-color: var(--accent); }
+    .zip-detect-wrap { display: flex; align-items: center; gap: 4px; }
+    .zip-detect-wrap .filter-select { flex: 1; }
+    .locate-btn {
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 8px;
+      cursor: pointer;
+      font-size: 15px;
+      line-height: 1;
+      transition: border-color 0.15s, opacity 0.15s;
+      color: var(--accent);
+    }
+    .locate-btn:hover { border-color: var(--accent); }
+    .locate-btn.loading { opacity: 0.5; pointer-events: none; }
 
     /* INPUT ROW */
     .input-row {
@@ -794,6 +809,7 @@
 
       <!-- Filters always visible -->
       <div class="filters-row">
+        <div class="zip-detect-wrap">
         <select id="zipFilter" class="filter-select">
           <option value="">All ZIPs</option>
           <option value="32082">32082 — Ponte Vedra Beach</option>
@@ -806,6 +822,8 @@
           <option value="32092">32092 — World Golf Village</option>
           <option value="32084">32084 — St. Augustine</option>
         </select>
+        <button id="locateBtn" class="locate-btn" title="Detect my ZIP" onclick="detectZip(true)">📍</button>
+        </div>
         <select id="categoryFilter" class="filter-select">
           <option value="">All Categories</option>
           <option value="restaurant">Restaurant</option>
@@ -1861,10 +1879,64 @@
     document.getElementById('statusFilter').addEventListener('change', () => { if (thread.length) renderThread(); });
     document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 
+    // ── ZIP auto-detection ────────────────────────────────────────────────────
+    // Coverage ZIPs we support — only set the filter if the detected ZIP is in here
+    const COVERAGE_ZIPS = new Set(['32082','32081','32250','32266','32233','32259','32034','32092','32084','32095','32086','32080','32058','32043','32068','32065','32244','32210','32256','32258','32225','32211','32218','32277','32099']);
+
+    async function detectZip(userInitiated = false) {
+      const btn = document.getElementById('locateBtn');
+      if (btn) btn.classList.add('loading');
+      // 1. Try GPS if user explicitly clicked the button
+      if (userInitiated && navigator.geolocation) {
+        try {
+          const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { timeout: 6000 }));
+          const { latitude, longitude } = pos.coords;
+          // Reverse geocode via nominatim (free, no key)
+          const geo = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`).then(r => r.json());
+          const zip = geo?.address?.postcode?.slice(0,5);
+          if (zip && COVERAGE_ZIPS.has(zip)) { setZipFilter(zip, btn); return; }
+          // ZIP not in coverage — still show it as an option
+          if (zip) { addZipOption(zip, btn); return; }
+        } catch(e) { /* permission denied or timeout — fall through to IP */ }
+      }
+      // 2. Silent IP fallback (on page load or GPS fail)
+      try {
+        const ip = await fetch('https://ipapi.co/json/').then(r => r.json());
+        const zip = ip?.postal?.slice(0,5);
+        if (zip && COVERAGE_ZIPS.has(zip)) { setZipFilter(zip, btn); return; }
+      } catch(e) { /* IP lookup failed — keep default */ }
+      if (btn) btn.classList.remove('loading');
+    }
+
+    function setZipFilter(zip, btn) {
+      const sel = document.getElementById('zipFilter');
+      if (!sel) return;
+      // Make sure the option exists
+      if (![...sel.options].some(o => o.value === zip)) addZipOption(zip, btn);
+      sel.value = zip;
+      if (btn) btn.classList.remove('loading');
+      // If a search is already showing, rerun with the new ZIP
+      if (thread.length) rerunLastQuery();
+    }
+
+    function addZipOption(zip, btn) {
+      const sel = document.getElementById('zipFilter');
+      if (!sel || [...sel.options].some(o => o.value === zip)) return;
+      const opt = document.createElement('option');
+      opt.value = zip; opt.textContent = zip + ' — Near You';
+      // Insert after "All ZIPs" option
+      sel.insertBefore(opt, sel.options[1]);
+      sel.value = zip;
+      if (btn) btn.classList.remove('loading');
+      if (thread.length) rerunLastQuery();
+    }
+
     // ── Auto-open with seed query ──────────────────────────────────────────────
     window.addEventListener('DOMContentLoaded', () => {
       const zipEl = document.getElementById('zipFilter');
       if (zipEl && !zipEl.value) zipEl.value = '32082';
+      // Try silent IP detection after a short delay (don't block first render)
+      setTimeout(() => detectZip(false), 800);
       document.getElementById('searchInput').value = 'Where should I eat in Ponte Vedra?';
       sendMessage();
       // Pull live business count from platform-stats

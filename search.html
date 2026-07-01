@@ -776,7 +776,7 @@
           </div>
 
           <div class="reg-panel__opt">
-            <input type="checkbox" id="regSmsOpt" checked />
+            <input type="checkbox" id="regSmsOpt" />
             <label for="regSmsOpt">
               By registering I agree to receive SMS order confirmations and receipts from LocalIntel / MCFL Restaurant Holdings LLC.
               Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out.
@@ -2223,6 +2223,7 @@
     const btn   = document.getElementById('regSubmitBtn');
 
     if (!phone) { document.getElementById('regPhone').focus(); return; }
+    if (!opt) { document.getElementById('regSmsOpt').focus(); alert('Please agree to receive SMS messages to continue.'); return; }
 
     btn.disabled = true;
     btn.textContent = 'Registering...';

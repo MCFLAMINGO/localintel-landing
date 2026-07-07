@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet">
+  <script src="/i18n.js"></script>
 
   <style>
     /* ── TOKENS ── */
@@ -1050,8 +1051,8 @@
 
       <!-- Tab bar -->
       <div class="tab-bar">
-        <button class="tab-btn active" id="tab-jobs-btn" onclick="switchTab('jobs')">Open Jobs</button>
-        <button class="tab-btn" id="tab-overview-btn" onclick="switchTab('overview')">My Listing</button>
+        <button class="tab-btn active" id="tab-jobs-btn" onclick="switchTab('jobs')" data-i18n="inbox_nav_requests">Open Jobs</button>
+        <button class="tab-btn" id="tab-overview-btn" onclick="switchTab('overview')" data-i18n="inbox_nav_profile">My Listing</button>
         <button class="tab-btn" id="tab-requests-btn" onclick="switchTab('requests')">Requests <span id="req-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;margin-left:4px;vertical-align:middle">0</span></button>
         <button class="tab-btn" id="tab-notifications-btn" onclick="switchTab('notifications')">Alerts <span id="notif-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;margin-left:4px;vertical-align:middle">0</span></button>
       </div>
@@ -1068,7 +1069,8 @@
           <span class="meta-pill" id="meta-category"></span>
           <span class="meta-pill" id="meta-zip"></span>
           <button class="btn-secondary" id="btn-edit-profile" onclick="toggleProfile()" style="margin-right:8px;">Edit Profile</button>
-          <button class="btn-secondary" onclick="handleLogout()">Sign out</button>
+    <button class="btn-secondary" onclick="handleLogout()" data-i18n="inbox_sign_out">Sign out</button>
+      <div id="nav-lang-toggle" style="margin-left:4px;"></div>
         </div>
       </div>
 
@@ -1375,7 +1377,7 @@
           </div>
 
           <div class="ov-save-row" style="margin-top:14px;">
-            <button class="ov-btn ov-btn-green" id="ov-saveSkillsBtn" onclick="ovSaveSkills()">Save profile</button>
+            <button class="ov-btn ov-btn-green" id="ov-saveSkillsBtn" onclick="ovSaveSkills()" data-i18n="profile_save_btn">Save profile</button>
             <span id="ov-skillsMsg"></span>
           </div>
         </div>
@@ -1816,6 +1818,13 @@ async function handleLogin() {
     _token = token;
     _bizId = data.business_id;
 
+
+    // ── i18n SETUP ──
+    window.LI_API = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+    document.addEventListener('DOMContentLoaded', () => {
+      const navToggleEl = document.getElementById('nav-lang-toggle');
+      if (navToggleEl) navToggleEl.innerHTML = renderLangToggle();
+    });
     // Save token to sessionStorage for refresh persistence
     sessionStorage.setItem('dispatch_token', token);
 

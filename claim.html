@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="light" id="html-root">
 <head>
   <meta charset="UTF-8">
   <link rel="canonical" href="https://www.thelocalintel.com/claim">
@@ -829,6 +829,7 @@
   <meta property="og:image:height" content="512">
   <meta property="twitter:card" content="summary">
   <meta property="twitter:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
+  <script src="/i18n.js"></script>
 </head>
 <body>
 
@@ -846,8 +847,9 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
-        Back to home
+        <span data-i18n="back_home">Back to home</span>
       </a>
+      <div id="nav-lang-toggle"></div>
     </div>
   </nav>
 
@@ -859,7 +861,7 @@
       <div id="merchantPortalCard"
         style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 24px;margin-bottom:28px;box-shadow:var(--shadow-sm);">
         <h2 style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:-0.3px;">
-          Merchant dashboard
+          <span data-i18n="merchant_card_heading">Merchant dashboard</span>
         </h2>
         <p style="font-size:14px;color:var(--text-2);margin-bottom:18px;">
           Enter your email — we'll send you a private link to your dashboard, or claim a new listing.
@@ -951,28 +953,44 @@
       <div class="claim-card" role="main">
 
         <!-- STEP 1 — Find Business -->
+        <!-- STEP 0 — Language selector -->
+        <div class="step-panel" id="step0" aria-labelledby="s0-heading">
+          <div class="lang-select-step">
+            <h2 id="s0-heading" data-i18n="lang_step_heading">Choose your language</h2>
+            <p data-i18n="lang_step_sub">You can change this any time from your dashboard.</p>
+            <div class="lang-choice-btns">
+              <button class="lang-choice-btn en" onclick="chooseLang('en')">
+                🇺🇸 <span data-i18n="lang_btn_english">Continue in English</span>
+              </button>
+              <button class="lang-choice-btn es" onclick="chooseLang('es')">
+                🇲🇽 <span data-i18n="lang_btn_spanish">Continuar en Español</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="step-panel active" id="step1" aria-labelledby="s1-heading">
-          <div class="progress-label">Step 1 of 5</div>
-          <h1 class="step-heading" id="s1-heading">Find your business listing</h1>
-          <p class="step-sub">Enter your business name or Florida Sunbiz document number. We'll find your listing in the state database.</p>
+          <div class="progress-label" data-i18n="step1_progress">Step 1 of 5</div>
+          <h1 class="step-heading" id="s1-heading" data-i18n="step1_heading">Find your business listing</h1>
+          <p class="step-sub" data-i18n="step1_sub">Enter your business name or Florida Sunbiz document number. We'll find your listing in the state database.</p>
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label" for="bizName">Business name</label>
+              <label class="form-label" for="bizName" data-i18n="biz_name_label">Business name</label>
               <input class="form-input" type="text" id="bizName" placeholder="e.g. McFlamingo" autocomplete="organization">
             </div>
             <div class="form-group">
-              <label class="form-label" for="bizZip">ZIP code</label>
+              <label class="form-label" for="bizZip" data-i18n="zip_label">ZIP code</label>
               <input class="form-input" type="text" id="bizZip" placeholder="e.g. 32082" inputmode="numeric" maxlength="5">
             </div>
           </div>
 
-          <div class="form-separator">or</div>
+          <div class="form-separator" data-i18n="or_divider">or</div>
 
           <div class="form-group">
-            <label class="form-label" for="sunbizId">Sunbiz document number</label>
+            <label class="form-label" for="sunbizId" data-i18n="sunbiz_label">Sunbiz document number</label>
             <input class="form-input" type="text" id="sunbizId" placeholder="e.g. L21000012345" autocapitalize="characters">
-            <span class="form-hint">Found on your Florida state business registration.</span>
+            <span class="form-hint" data-i18n="sunbiz_hint">Found on your Florida state business registration.</span>
           </div>
 
           <!-- Loading skeleton (hidden by default) -->
@@ -1001,11 +1019,11 @@
                 📍 Verify pin on OpenStreetMap →
               </a>
             </div>
-            <button class="btn-confirm" onclick="confirmBusiness()">This is my business →</button>
-            <button onclick="resetSearch()" style="background:none;border:none;color:var(--text-2);font-size:13px;cursor:pointer;margin-top:6px;text-decoration:underline;width:100%;text-align:center;">Not my business — search again</button>
+            <button class="btn-confirm" onclick="confirmBusiness()" data-i18n="confirm_btn">This is my business →</button>
+            <button onclick="resetSearch()" style="background:none;border:none;color:var(--text-2);font-size:13px;cursor:pointer;margin-top:6px;text-decoration:underline;width:100%;text-align:center;" data-i18n="not_my_biz">Not my business — search again</button>
           </div>
 
-          <button class="btn-next" id="btn-search" onclick="searchBusiness()">
+          <button class="btn-next" id="btn-search" onclick="searchBusiness()" data-i18n="find_btn">
             Find My Business →
           </button>
 
@@ -1014,22 +1032,22 @@
 
         <!-- STEP 2 — Verify Ownership -->
         <div class="step-panel" id="step2" aria-labelledby="s2-heading">
-          <div class="progress-label">Step 2 of 5</div>
-          <h2 class="step-heading" id="s2-heading">Confirm you own this business</h2>
-          <p class="step-sub">Enter your Florida Sunbiz document number to verify ownership. This is the unique number on your state registration.</p>
+          <div class="progress-label" data-i18n="step2_progress">Step 2 of 5</div>
+          <h2 class="step-heading" id="s2-heading" data-i18n="step2_heading">Confirm you own this business</h2>
+          <p class="step-sub" data-i18n="step2_sub">Enter your Florida Sunbiz document number to verify ownership. This is the unique number on your state registration.</p>
 
           <div class="verify-helper">
             Find your number at <a href="https://search.sunbiz.org" target="_blank" rel="noopener">search.sunbiz.org</a> under your business registration — it starts with a letter followed by numbers (e.g. L21000012345). <a href="https://search.sunbiz.org" target="_blank" rel="noopener">Look up my Sunbiz number →</a>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="verifyDoc">Sunbiz document number</label>
+            <label class="form-label" for="verifyDoc" data-i18n="sunbiz_label">Sunbiz document number</label>
             <div class="input-wrap">
               <input class="form-input" type="text" id="verifyDoc" placeholder="e.g. L21000012345" autocapitalize="characters" oninput="validateSunbiz(this)">
               <span class="input-icon" id="sunbizIcon"></span>
             </div>
-            <div class="form-error" id="sunbizError">Enter a valid Sunbiz number (e.g. L21000012345)</div>
-            <span class="form-hint">Format: one letter + 11 digits (e.g. L21000012345)</span>
+            <div class="form-error" id="sunbizError" data-i18n="sunbiz_error">Enter a valid Sunbiz number (e.g. L21000012345)</div>
+            <span class="form-hint" data-i18n="sunbiz_format_hint">Format: one letter + 11 digits (e.g. L21000012345)</span>
           </div>
 
           <div class="privacy-note">
@@ -1037,16 +1055,16 @@
             We only use this to confirm you're the registered agent or owner. We never share it.
           </div>
 
-          <button class="btn-next" id="btn-verify" onclick="verifyOwnership()" style="margin-top: 24px;">
+          <button class="btn-next" id="btn-verify" onclick="verifyOwnership()" style="margin-top: 24px;" data-i18n="verify_btn">
             Verify Ownership →
           </button>
         </div>
 
         <!-- STEP 3 — Payment Method -->
         <div class="step-panel" id="step3" aria-labelledby="s3-heading">
-          <div class="progress-label">Step 3 of 5</div>
-          <h2 class="step-heading" id="s3-heading">How do you want to get paid?</h2>
-          <p class="step-sub">Choose one or more. You can add others later from your account settings.</p>
+          <div class="progress-label" data-i18n="step3_progress">Step 3 of 5</div>
+          <h2 class="step-heading" id="s3-heading" data-i18n="step3_heading">How do you want to get paid?</h2>
+          <p class="step-sub" data-i18n="step3_sub">Choose one or more. You can add others later from your account settings.</p>
 
           <div class="payment-options">
 
@@ -1056,8 +1074,8 @@
               <div class="payment-card-header">
                 <div class="payment-icon">⚡</div>
                 <div>
-                  <div class="payment-card-title">Surge Wallet <span style="font-size:10px;font-weight:700;background:#16a34a;color:#fff;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;">RECOMMENDED</span></div>
-                  <div class="payment-card-desc">Receive agent payments in USDC on Base — instantly, on-chain.</div>
+                  <div class="payment-card-title"><span data-i18n="surge_title">Surge Wallet</span> <span style="font-size:10px;font-weight:700;background:#16a34a;color:#fff;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;" data-i18n="surge_rec">RECOMMENDED</span></div>
+                  <div class="payment-card-desc" data-i18n="surge_desc">Receive agent payments in USDC on Base — instantly, on-chain.</div>
                 </div>
               </div>
               <div class="payment-fields" onclick="event.stopPropagation()">
@@ -1077,8 +1095,8 @@
               <div class="payment-card-header">
                 <div class="payment-icon">🏦</div>
                 <div>
-                  <div class="payment-card-title">Bank Account (ACH)</div>
-                  <div class="payment-card-desc">Direct deposit to your checking account. 1–2 business days.</div>
+                  <div class="payment-card-title" data-i18n="bank_title">Bank Account (ACH)</div>
+                  <div class="payment-card-desc" data-i18n="bank_desc">Direct deposit to your checking account. 1–2 business days.</div>
                 </div>
               </div>
               <div class="payment-fields" onclick="event.stopPropagation()">
@@ -1113,8 +1131,8 @@
               <div class="payment-card-header">
                 <div class="payment-icon">⚡</div>
                 <div>
-                  <div class="payment-card-title">Use Both</div>
-                  <div class="payment-card-desc">Crypto for instant payouts, bank for amounts over $100. Best of both.</div>
+                  <div class="payment-card-title" data-i18n="both_title">Use Both</div>
+                  <div class="payment-card-desc" data-i18n="both_desc">Crypto for instant payouts, bank for amounts over $100. Best of both.</div>
                 </div>
               </div>
               <div class="payment-fields" onclick="event.stopPropagation()">
@@ -1151,16 +1169,16 @@
 
           </div>
 
-          <button class="btn-next" id="btn-payment" onclick="nextFromPayment()" disabled>
+          <button class="btn-next" id="btn-payment" onclick="nextFromPayment()" disabled data-i18n="continue_btn">
             Continue →
           </button>
         </div>
 
         <!-- STEP 4 — Notifications -->
         <div class="step-panel" id="step4" aria-labelledby="s4-heading">
-          <div class="progress-label">Step 4 of 5</div>
-          <h2 class="step-heading" id="s4-heading">How should we reach you when a job comes in?</h2>
-          <p class="step-sub">Jobs post fast. The faster we reach you, the better your chances of claiming it.</p>
+          <div class="progress-label" data-i18n="step4_progress">Step 4 of 5</div>
+          <h2 class="step-heading" id="s4-heading" data-i18n="step4_heading">How should we reach you when a job comes in?</h2>
+          <p class="step-sub" data-i18n="step4_sub">Jobs post fast. The faster we reach you, the better your chances of claiming it.</p>
 
           <div class="notif-options">
             <!-- SMS -->
@@ -1181,7 +1199,7 @@
                   <label class="form-label" for="smsPhone">Phone number</label>
                   <input class="form-input" type="tel" id="smsPhone" placeholder="+1 (904) 555-0100" autocomplete="tel" style="font-size:14px;">
                 </div>
-                <span class="form-hint" style="margin-top:6px;display:block;">Fastest. We text you when a matching job posts.</span>
+                <span class="form-hint" style="margin-top:6px;display:block;" data-i18n="sms_hint">Fastest. We text you when a matching job posts.</span>
               </div>
             </div>
 
@@ -1203,7 +1221,7 @@
                   <label class="form-label" for="emailAddr">Email address</label>
                   <input class="form-input" type="email" id="emailAddr" placeholder="you@example.com" autocomplete="email" style="font-size:14px;">
                 </div>
-                <span class="form-hint" style="margin-top:6px;display:block;">Good for daily job digests and weekly summaries.</span>
+                <span class="form-hint" style="margin-top:6px;display:block;" data-i18n="email_hint">Good for daily job digests and weekly summaries.</span>
               </div>
             </div>
 
@@ -1221,23 +1239,23 @@
                 </label>
               </div>
               <div class="notif-sub">
-                <span>Browser and app notifications when you're online. Instant, no number needed.</span>
+                <span data-i18n="push_sub">Browser and app notifications when you're online. Instant, no number needed.</span>
               </div>
             </div>
           </div>
 
-          <button class="btn-next" onclick="nextFromNotif()">
+          <button class="btn-next" onclick="nextFromNotif()" data-i18n="almost_done_btn">
             Almost done →
           </button>
         </div>
 
         <!-- STEP 5 — Verify Code -->
         <div class="step-panel" id="step5" aria-labelledby="s5-heading">
-          <h2 class="step-title" id="s5-heading">Enter your verification code</h2>
-          <p class="step-sub" id="verifyCodeHint">We sent a 6-digit code to your contact. Enter it below.</p>
+          <h2 class="step-title" id="s5-heading" data-i18n="step5_heading">Enter your verification code</h2>
+          <p class="step-sub" id="verifyCodeHint" data-i18n="step5_sub">We sent a 6-digit code to your contact. Enter it below.</p>
 
           <div class="field-group" style="max-width:240px;margin:32px auto 0">
-            <label class="form-label" for="verifyCodeInput">6-digit code</label>
+            <label class="form-label" for="verifyCodeInput" data-i18n="code_label">6-digit code</label>
             <input class="form-input" type="text" id="verifyCodeInput"
               placeholder="123456" maxlength="6" inputmode="numeric"
               autocomplete="one-time-code"
@@ -1247,7 +1265,7 @@
           </div>
 
           <div style="text-align:center;margin-top:32px">
-            <button class="btn-next" id="btn-verify-code" onclick="submitVerifyCode()">
+            <button class="btn-next" id="btn-verify-code" onclick="submitVerifyCode()" data-i18n="verify_claim_btn">
               Verify &amp; Claim →
             </button>
           </div>
@@ -1258,8 +1276,8 @@
 
         <!-- STEP WALLET — Fund Wallet (between verify and success) -->
         <div class="step-panel" id="step-wallet" aria-labelledby="sw-heading">
-          <div class="progress-label">Almost there</div>
-          <h2 class="step-heading" id="sw-heading">Add job credits</h2>
+          <div class="progress-label" data-i18n="wallet_progress">Almost there</div>
+          <h2 class="step-heading" id="sw-heading" data-i18n="wallet_heading">Add job credits</h2>
           <p class="step-sub">LocalIntel uses a small digital balance to route jobs to your business — like a prepaid account. $50 covers hundreds of job requests. No crypto knowledge needed: send from Coinbase, a crypto exchange, or ask us and we'll help.</p>
 
           <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text-2);line-height:1.6;">
@@ -1295,11 +1313,11 @@
           <!-- Polling status -->
           <div class="wallet-poll-status" id="wallet-poll-status">
             <div class="btn-spinner" id="wallet-poll-spinner" style="width:16px;height:16px;border:2px solid #D1D5DB;border-top-color:#6B7280;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0;"></div>
-            <span id="wallet-poll-label">Checking for deposit…</span>
+            <span id="wallet-poll-label" data-i18n="wallet_checking">Checking for deposit…</span>
           </div>
 
           <!-- Skip link -->
-          <a class="wallet-skip-link" id="wallet-skip-link" onclick="skipWallet()">Skip for now &rarr;</a>
+          <a class="wallet-skip-link" id="wallet-skip-link" onclick="skipWallet()" data-i18n="wallet_skip">Skip for now →</a>
         </div>
 
         <!-- STEP 6 — Success -->
@@ -1310,8 +1328,8 @@
                 <path d="M8 18l7 7 13-14"/>
               </svg>
             </div>
-            <h2 class="success-title" id="s6-heading">You're in the network.</h2>
-            <p class="success-sub">Your listing is claimed and live in LocalIntel. Here's what happens next:</p>
+            <h2 class="success-title" id="s6-heading" data-i18n="success_title">You're in the network.</h2>
+            <p class="success-sub" data-i18n="success_sub">Your listing is claimed and live in LocalIntel. Here's what happens next:</p>
 
             <div class="success-items">
               <div class="success-item">
@@ -1329,7 +1347,7 @@
             </div>
 
             <div class="success-actions">
-              <a href="index.html" class="btn-home">Back to home</a>
+              <a href="index.html" class="btn-home" data-i18n="back_to_home_btn">Back to home</a>
               <a href="#" id="inbox-link" class="btn-home" style="background:#16A34A;color:#fff;display:none;margin-top:12px;">Open your job inbox &rarr;</a>
             </div>
           </div>
@@ -1341,6 +1359,30 @@
   </div><!-- end .page-wrap -->
 
   <script>
+    // ── LANGUAGE SETUP ──
+    const LI_API = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
+    window.LI_API = LI_API;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const navToggleEl = document.getElementById('nav-lang-toggle');
+      if (navToggleEl) navToggleEl.innerHTML = renderLangToggle();
+      // Show step 0 (lang selector) if language not yet chosen
+      if (!localStorage.getItem('owner_language')) {
+        const step1 = document.getElementById('step1');
+        const step0 = document.getElementById('step0');
+        if (step1) step1.classList.remove('active');
+        if (step0) step0.classList.add('active');
+      }
+    });
+
+    function chooseLang(lang) {
+      setLang(lang);
+      const step0 = document.getElementById('step0');
+      const step1 = document.getElementById('step1');
+      if (step0) step0.classList.remove('active');
+      if (step1) step1.classList.add('active');
+    }
+
     // ── STATE ──
     const API = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
 
@@ -1749,6 +1791,7 @@
           notify_email: state.notifications.email,
           notify_push:  state.notifications.push,
           notify_web:   true,  // always on
+          owner_language: getLang(),
         }),
       })
         .then(r => r.json())

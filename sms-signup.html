@@ -128,13 +128,13 @@
     <div class="card-title">Register your phone — get orders, confirmations &amp; receipts via SMS.</div>
     <div class="card-desc">AI agents search and transact on your behalf. Register your phone so orders, confirmations, and receipts route back to you — no wallet required.</div>
 
-    <div class="form-row">
+    <div class="form-row" id="form-inputs">
       <input type="text"  id="regName"  placeholder="Full name"     autocomplete="name" />
       <input type="tel"   id="regPhone" placeholder="Mobile number" autocomplete="tel" />
       <input type="text"  id="regZip"   placeholder="ZIP code"      maxlength="5" autocomplete="postal-code" />
     </div>
 
-    <div class="opt-row">
+    <div class="opt-row" id="opt-row">
       <input type="checkbox" id="regSmsOpt" />
       <label for="regSmsOpt">
         By registering I agree to receive SMS order confirmations and receipts from
@@ -146,7 +146,20 @@
       </label>
     </div>
 
-    <button class="submit-btn" onclick="handleSubmit()">Register &amp; Search</button>
+    <div id="opt-error" style="display:none;font-size:0.75rem;color:#f87171;margin-bottom:10px;">
+      Please check the box above to agree to receive SMS messages.
+    </div>
+    <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">Register &amp; Search</button>
+
+    <!-- Success banner — shown in place of the form after submission -->
+    <div id="success-banner" style="display:none;margin-top:20px;padding:18px 20px;background:#0d1f12;border:1.5px solid #16a34a;border-radius:12px;">
+      <div style="font-size:1.1rem;font-weight:700;color:#16a34a;margin-bottom:6px;">&#10003; You're registered.</div>
+      <div style="font-size:0.85rem;color:#a0aec0;line-height:1.6;">
+        Hi <strong id="success-name" style="color:#fff;">there</strong> — a confirmation SMS has been sent to <strong id="success-phone" style="color:#fff;"></strong>.<br>
+        Orders, confirmations, and receipts will route to your phone.<br>
+        <span style="font-size:0.75rem;color:#6b7280;margin-top:6px;display:block;">Reply <strong style="color:#a0aec0;">STOP</strong> at any time to cancel.</span>
+      </div>
+    </div>
   </div>
 
   <div class="legal-note">

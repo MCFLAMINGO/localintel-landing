@@ -5,10 +5,12 @@
   <link rel="canonical" href="https://www.thelocalintel.com/merchant">
   <title>Redirecting — LocalIntel</title>
   <script>
-    // merchant.html is now merged into inbox.html
-    // Preserve the token param if present
-    const token = new URLSearchParams(window.location.search).get('token');
-    const dest  = token
+    // merchant.html → Business Home (inbox.html)
+    // Swarm POST /merchant/request-link emails a permanent dispatch_token
+    // (never the legacy 24h dashboard_token). Preserve ?token= here.
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const dest = token
       ? '/inbox.html?token=' + encodeURIComponent(token)
       : '/inbox.html';
     window.location.replace(dest);
@@ -19,5 +21,9 @@
   <meta property="twitter:card" content="summary">
   <meta property="twitter:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
 </head>
-<body></body>
+<body>
+  <p style="font-family:system-ui,sans-serif;padding:2rem;text-align:center;">
+    Opening your Business Home…
+  </p>
+</body>
 </html>

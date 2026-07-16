@@ -1,0 +1,16 @@
+{
+  "name": "localintel-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LocalIntel static marketing/directory site (deployed on Vercel). Frontend HTML/CSS/JS that talks to the gsb-swarm Railway backend, plus Node generator scripts for ZIP/biz/neighborhood pages.",
+  "scripts": {
+    "dev": "serve -l 3000 .",
+    "start": "serve -l 3000 .",
+    "generate:zip": "node generate-zip-pages.js",
+    "generate:neighborhood": "node generate-neighborhood-pages.js",
+    "generate:biz": "node generate-biz-pages.js"
+  },
+  "devDependencies": {
+    "serve": "^14.2.5"
+  }
+}

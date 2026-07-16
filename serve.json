@@ -1,0 +1,9 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/zip/:code", "destination": "/zip/:code.html" },
+    { "source": "/biz/:slug", "destination": "/biz/:slug.html" },
+    { "source": "/neighborhood/:slug", "destination": "/neighborhood/:slug.html" },
+    { "source": "/rfq/:token", "destination": "/rfq.html" }
+  ]
+}

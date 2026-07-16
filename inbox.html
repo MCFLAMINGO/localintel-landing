@@ -103,13 +103,29 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; animation: rise 320ms ease both; }
     label { display: block; font-size: 0.82rem; font-weight: 700; margin: 0 0 6px; }
-    input, textarea, select {
+    input:not([type="checkbox"]):not([type="radio"]), textarea, select {
       width: 100%; border: 1px solid var(--line); border-radius: 10px;
       padding: 12px 14px; font: inherit; background: #fff; color: var(--ink);
+    }
+    input[type="checkbox"], input[type="radio"] {
+      width: auto; margin: 0; accent-color: var(--pine);
     }
     textarea { min-height: 88px; resize: vertical; }
     .field { margin-bottom: 14px; }
     .hint { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px 14px;
+      margin-top: 6px;
+    }
+    .how-grid label {
+      font-weight: 600;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin: 0;
+    }
     .btn {
       appearance: none; border: 0; border-radius: 10px;
       background: var(--pine); color: #fff; font: inherit; font-weight: 700;
@@ -282,12 +298,12 @@
           </div>
           <div class="field">
             <label>HOW — How should work arrive?</label>
-            <div style="display:flex;flex-wrap:wrap;gap:12px 18px;margin-top:6px;">
-              <label style="font-weight:600;display:flex;gap:8px;align-items:center;"><input type="checkbox" id="howRfq"> RFQ / quote</label>
-              <label style="font-weight:600;display:flex;gap:8px;align-items:center;"><input type="checkbox" id="howAppt"> Appointment</label>
-              <label style="font-weight:600;display:flex;gap:8px;align-items:center;"><input type="checkbox" id="howReserve"> Reservation</label>
-              <label style="font-weight:600;display:flex;gap:8px;align-items:center;"><input type="checkbox" id="howWalkin"> Walk-in</label>
-              <label style="font-weight:600;display:flex;gap:8px;align-items:center;"><input type="checkbox" id="howSameDay"> Same-day when open</label>
+            <div class="how-grid">
+              <label><input type="checkbox" id="howRfq"> RFQ / quote</label>
+              <label><input type="checkbox" id="howAppt"> Appointment</label>
+              <label><input type="checkbox" id="howReserve"> Reservation</label>
+              <label><input type="checkbox" id="howWalkin"> Walk-in</label>
+              <label><input type="checkbox" id="howSameDay"> Same-day when open</label>
             </div>
           </div>
           <div class="field">

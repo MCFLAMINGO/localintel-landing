@@ -268,19 +268,54 @@
       padding-top: 4px;
     }
     .reg-upsell__confirm {
-      font-size: 13px;
-      color: #4ade80;
-      font-weight: 600;
-      margin-bottom: 16px;
+      font-size: 15px;
+      color: #166534;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.4;
     }
+    .reg-upsell__confirm-box {
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+    }
+    .reg-upsell__confirm-detail {
+      font-size: 13px;
+      color: #166534;
+      line-height: 1.55;
+      font-weight: 500;
+    }
+    .reg-upsell__confirm-detail strong { color: #14532d; }
+    .reg-upsell__confirm-hint {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #15803d;
+      line-height: 1.5;
+    }
+    .reg-upsell__continue {
+      display: block;
+      width: 100%;
+      margin-bottom: 14px;
+      padding: 12px 16px;
+      background: #16a34a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .reg-upsell__continue:hover { background: #15803d; }
     .reg-upsell__pitch {
       display: flex;
       gap: 16px;
       align-items: flex-start;
-      background: rgba(99,102,241,0.1);
-      border: 1px solid rgba(99,102,241,0.25);
+      background: rgba(99,102,241,0.08);
+      border: 1px solid rgba(99,102,241,0.2);
       border-radius: 10px;
-      padding: 16px 18px;
+      padding: 14px 16px;
       margin-bottom: 14px;
     }
     .reg-upsell__pitch-icon {
@@ -765,8 +800,8 @@
         <!-- Expanded body -->
         <div class="reg-panel__body" id="regBody">
           <div class="reg-panel__sub">
-            AI agents search and transact on your behalf. Register your phone so orders,
-            confirmations, and receipts route back to you — no wallet required.
+            Create an account so LocalIntel can save your preferences.
+            SMS is optional — leave the checkbox unchecked if you do not want texts.
           </div>
 
           <div class="reg-panel__fields">
@@ -778,30 +813,48 @@
           <div class="reg-panel__opt">
             <input type="checkbox" id="regSmsOpt" />
             <label for="regSmsOpt">
-              By registering I agree to receive SMS order confirmations and receipts from LocalIntel / MCFL Restaurant Holdings LLC.
-              Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out.
-              <a href="/privacy.html" target="_blank">Privacy Policy</a>.
+              <strong>Optional:</strong> I agree to receive recurring transactional SMS messages from LocalIntel
+              (MCFL Restaurant Holdings LLC) at the number provided, including order
+              confirmations, receipts, and service-request updates. Message frequency varies.
+              Message and data rates may apply. Reply <strong>STOP</strong> to cancel.
+              Reply <strong>HELP</strong> for help. Mobile numbers are not shared with third
+              parties or affiliates for marketing or promotional purposes.
+              <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a> ·
+              <a href="/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a>
             </label>
           </div>
+          <p style="font-size:12px;color:#94a3b8;margin:0 0 14px;line-height:1.45">
+            SMS consent is unchecked by default and not required to register. You can create an account without receiving texts.
+          </p>
 
           <div class="reg-panel__bottom">
-            <button class="reg-btn-primary" id="regSubmitBtn" onclick="submitRegistration()">Register &amp; Search</button>
+            <button class="reg-btn-primary" id="regSubmitBtn" onclick="submitRegistration()">Create account</button>
+            <button type="button" id="regNoSmsBtn" onclick="submitRegistration(true)" style="margin-top:8px;width:100%;padding:10px;background:transparent;border:1px solid #334155;color:#94a3b8;border-radius:8px;font-weight:600;cursor:pointer">Create account without SMS</button>
             <div class="reg-panel__divider"></div>
             <div class="reg-panel__wallet-cta">Have an agent wallet? <a href="https://mybestfriend-production-fa71.up.railway.app/#/market" target="_blank" rel="noopener">Get Dusty &rarr;</a></div>
           </div>
 
-          <!-- Post-registration upsell state -->
-          <div class="reg-panel__upsell" id="regUpsell" style="display:none">
-            <div class="reg-upsell__confirm">&#10003; You're registered &mdash; SMS receipts &amp; confirmations are on.</div>
+          <!-- Post-registration success state -->
+          <div class="reg-panel__upsell" id="regUpsell" style="display:none" aria-live="polite">
+            <div class="reg-upsell__confirm-box">
+              <div class="reg-upsell__confirm">&#10003; You're registered</div>
+              <div class="reg-upsell__confirm-detail">
+                SMS is on for <strong id="regSuccessPhone">your number</strong>.
+                You'll get LocalIntel confirmations, receipts, and service updates.
+              </div>
+              <div class="reg-upsell__confirm-hint">
+                Reply <strong>STOP</strong> anytime to cancel · <strong>HELP</strong> for help · Msg&amp;data rates may apply
+              </div>
+            </div>
+            <button type="button" class="reg-upsell__continue" onclick="hideRegPanel()">Continue searching</button>
             <div class="reg-upsell__pitch">
-              <div class="reg-upsell__pitch-icon">&#127803;</div>
               <div class="reg-upsell__pitch-body">
-                <div class="reg-upsell__pitch-title">Want agents to order for you automatically?</div>
-                <div class="reg-upsell__pitch-sub">Dusty is your AI agent wallet on My Best Friend. It watches your habits, places orders, and pays &mdash; hands-free. No app download required.</div>
+                <div class="reg-upsell__pitch-title">Optional: agent wallet</div>
+                <div class="reg-upsell__pitch-sub">Want agents to order for you automatically? Dusty can place orders and pay — hands-free.</div>
                 <a class="reg-upsell__pitch-cta" href="https://mybestfriend-production-fa71.up.railway.app/#/market" target="_blank" rel="noopener">Get Dusty &rarr;</a>
               </div>
             </div>
-            <button class="reg-upsell__dismiss" onclick="hideRegPanel()">&times; Close</button>
+            <button class="reg-upsell__dismiss" onclick="hideRegPanel()">Close</button>
           </div>
         </div>
       </div>
@@ -2215,47 +2268,85 @@
     if (p) p.classList.add('hidden');
   }
 
-  async function submitRegistration() {
+  async function submitRegistration(forceNoSms) {
     const phone = document.getElementById('regPhone').value.trim();
     const name  = document.getElementById('regName').value.trim();
     const zip   = document.getElementById('regZip').value.trim();
-    const opt   = document.getElementById('regSmsOpt').checked;
+    const optBox = document.getElementById('regSmsOpt');
+    const opt   = forceNoSms ? false : !!(optBox && optBox.checked);
     const btn   = document.getElementById('regSubmitBtn');
+    const noSmsBtn = document.getElementById('regNoSmsBtn');
 
     if (!phone) { document.getElementById('regPhone').focus(); return; }
-    if (!opt) { document.getElementById('regSmsOpt').focus(); alert('Please agree to receive SMS messages to continue.'); return; }
+    // SMS checkbox is optional — never block registration for unchecked consent
 
     btn.disabled = true;
-    btn.textContent = 'Registering...';
+    if (noSmsBtn) noSmsBtn.disabled = true;
+    btn.textContent = 'Creating account...';
     try {
       const resp = await fetch(API_BASE + '/customers/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, name: name || null, zip: zip || null, sms_opt_in: opt })
       });
-      const data = await resp.json();
-      if (data.customer_id) {
-        localStorage.setItem(CUST_KEY, JSON.stringify({ customer_id: data.customer_id, phone: data.phone, name, zip }));
-        // Pre-fill zip filter if provided
+      const data = await resp.json().catch(() => ({}));
+      if (resp.ok && data.customer_id) {
+        const savedPhone = data.phone || phone;
+        localStorage.setItem(CUST_KEY, JSON.stringify({ customer_id: data.customer_id, phone: savedPhone, name, zip, sms_opt_in: opt }));
         if (zip && document.getElementById('zipFilter')) {
           const zf = document.getElementById('zipFilter');
-          const opt = [...zf.options].find(o => o.value === zip);
-          if (opt) { zf.value = zip; }
+          if ([...zf.options].some(o => o.value === zip)) zf.value = zip;
         }
-        // Swap to upsell state
-        document.querySelector('.reg-panel__sub').style.display = 'none';
-        document.querySelector('.reg-panel__fields').style.display = 'none';
-        document.querySelector('.reg-panel__opt').style.display = 'none';
-        document.querySelector('.reg-panel__bottom').style.display = 'none';
+        const title = document.querySelector('.reg-panel__title');
+        if (title) title.textContent = opt ? "You're registered — SMS is on" : "You're registered — no SMS";
+        const eyebrow = document.querySelector('.reg-panel__eyebrow');
+        if (eyebrow) eyebrow.innerHTML = '<span></span>Registered';
+        const expandBtn = document.getElementById('regExpandBtn');
+        if (expandBtn) expandBtn.style.display = 'none';
+        const skipBtn = document.querySelector('.reg-panel__skip-top');
+        if (skipBtn) skipBtn.style.display = 'none';
+
+        const phoneEl = document.getElementById('regSuccessPhone');
+        if (phoneEl) phoneEl.textContent = savedPhone;
+        const detail = document.querySelector('.reg-upsell__confirm-detail');
+        if (detail) {
+          detail.innerHTML = opt
+            ? ('SMS is on for <strong id="regSuccessPhone">' + savedPhone + '</strong>. You\'ll get LocalIntel confirmations, receipts, and service updates.')
+            : ('Account created for <strong id="regSuccessPhone">' + savedPhone + '</strong>. You did <strong>not</strong> opt in to SMS — no texts will be sent unless you opt in later.');
+        }
+        const hint = document.querySelector('.reg-upsell__confirm-hint');
+        if (hint) {
+          hint.style.display = opt ? '' : 'none';
+        }
+
+        const sub = document.querySelector('.reg-panel__sub');
+        const fields = document.querySelector('.reg-panel__fields');
+        const optRow = document.querySelector('.reg-panel__opt');
+        const bottom = document.querySelector('.reg-panel__bottom');
+        if (sub) sub.style.display = 'none';
+        if (fields) fields.style.display = 'none';
+        if (optRow) optRow.style.display = 'none';
+        if (bottom) bottom.style.display = 'none';
+        const optionalNote = optRow && optRow.nextElementSibling;
+        if (optionalNote && optionalNote.tagName === 'P') optionalNote.style.display = 'none';
         document.getElementById('regUpsell').style.display = 'block';
+
+        const panel = document.getElementById('regPanel');
+        if (panel) {
+          panel.classList.remove('collapsed', 'hidden');
+          panel.classList.add('expanded');
+        }
       } else {
         btn.disabled = false;
-        btn.textContent = 'Register & Search';
+        if (noSmsBtn) noSmsBtn.disabled = false;
+        btn.textContent = 'Create account';
         alert(data.error || 'Registration failed — please try again.');
       }
-    } catch(e) {
+    } catch (e) {
       btn.disabled = false;
-      btn.textContent = 'Register & Search';
+      if (noSmsBtn) noSmsBtn.disabled = false;
+      btn.textContent = 'Create account';
+      alert('Could not reach LocalIntel. Check your connection and try again.');
     }
   }
 

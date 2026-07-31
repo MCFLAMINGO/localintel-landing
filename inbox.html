@@ -694,16 +694,37 @@
           const pending = r.status === 'open' && !r.bid_id;
           const declined = r.bid_status === 'declined';
           const bid = r.bid_id && !declined;
+          const details = r.order_details && typeof r.order_details === 'object' ? r.order_details : null;
+          const bizName = r.target_business_name || details?.business_name || '';
+          const title = bizName
+            ? (r.job_type === 'delivery' ? `Order · ${bizName}` : `Request · ${bizName}`)
+            : (r.job_type === 'delivery' ? 'Delivery order' : (r.category || r.job_type || 'Job request'));
+          const items = Array.isArray(details?.items)
+            ? details.items.map((it) => {
+                if (typeof it === 'string') return it;
+                const qty = it.qty ?? it.quantity ?? 1;
+                const name = it.name || it.item || it.title || '';
+                return name ? `${qty}× ${name}` : '';
+              }).filter(Boolean)
+            : [];
+          const body = (r.description || details?.composed_description || '').trim();
+          const contact = [r.customer_phone, r.customer_email].filter(Boolean).join(' · ');
           parts.push(`
             <div class="job" id="rfq-${esc(r.rfq_id)}">
               <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">
                 <div>
-                  <h3>${esc(r.category || r.job_type || 'Job request')}</h3>
-                  <div class="meta">${esc(timeAgo(r.created_at))} · ${r.budget_usd != null ? 'Budget $' + Number(r.budget_usd).toLocaleString() : 'Budget open'}</div>
+                  <h3>${esc(title)}</h3>
+                  <div class="meta">${esc(timeAgo(r.created_at))} · ${r.budget_usd != null ? 'Budget $' + Number(r.budget_usd).toLocaleString() : 'Budget open'}${r.category ? ' · ' + esc(r.category) : ''}</div>
                 </div>
                 <span class="pill ${pending ? '' : 'ok'}">${pending ? 'New' : (declined ? 'Declined' : (bid ? 'Quoted' : esc(r.status || '')))}</span>
               </div>
-              <p style="margin:10px 0;font-size:0.95rem;">${esc((r.description || '').slice(0, 280))}</p>
+              ${bizName ? `<div class="meta" style="margin-top:8px;"><strong>For:</strong> ${esc(bizName)}</div>` : ''}
+              <p style="margin:10px 0;font-size:0.95rem;white-space:pre-wrap;">${esc(body || 'No order details provided')}</p>
+              ${items.length ? `<ul style="margin:0 0 10px 18px;font-size:0.95rem;">${items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : ''}
+              ${details?.customer_note ? `<div class="meta"><strong>Note:</strong> ${esc(details.customer_note)}</div>` : ''}
+              ${r.pickup_address ? `<div class="meta">Pickup: ${esc(r.pickup_address)}</div>` : ''}
+              ${r.dropoff_address ? `<div class="meta">Drop-off: ${esc(r.dropoff_address)}</div>` : ''}
+              ${contact ? `<div class="meta">Customer: ${esc(contact)}</div>` : ''}
               ${pending ? `
                 <div class="field"><input id="rfq-price-${esc(r.rfq_id)}" type="number" min="0" step="0.01" placeholder="Your quote ($)"></div>
                 <div class="field"><input id="rfq-note-${esc(r.rfq_id)}" type="text" placeholder="Note / ETA for the customer"></div>

@@ -94,15 +94,64 @@ function stubHTML(z, seo) {
     desc  = `Looking for a restaurant, plumber, doctor, landscaper, or any local service in ${city}, FL ${zip}? LocalIntel routes your request to verified local businesses in ${county} County.`;
   }
 
-  const schema = JSON.stringify({
+  const bizPhrase = businessCount !== null
+    ? `${fmtNum(businessCount)} verified businesses`
+    : 'verified local businesses';
+
+  const datasetSchema = {
     "@context": "https://schema.org",
     "@type": "Dataset",
     "name": `${city} (${zip}) Business Intelligence`,
     "description": desc,
     "url": url,
-    "provider": { "@type": "Organization", "name": "LocalIntel" },
-    "spatialCoverage": { "@type": "Place", "name": `${city}, ${county} County, FL ${zip}` }
-  });
+    "provider": { "@type": "Organization", "name": "LocalIntel", "url": "https://www.thelocalintel.com" },
+    "spatialCoverage": { "@type": "Place", "name": `${city}, ${county} County, FL ${zip}` },
+    "keywords": [`${city} businesses`, `${zip} local services`, `${county} County FL`, 'LocalIntel', 'Florida']
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "LocalIntel", "item": "https://www.thelocalintel.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Florida markets", "item": "https://www.thelocalintel.com/#explore" },
+      { "@type": "ListItem", "position": 3, "name": `${city} ${zip}`, "item": url }
+    ]
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": `How do I find local services in ${city}, FL ${zip}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Use LocalIntel to find restaurants, plumbers, doctors, and other local services in ${city}, Florida ZIP ${zip}. LocalIntel indexes ${bizPhrase} in this market and routes requests to verified businesses.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `What is LocalIntel’s coverage for ${city} (${zip})?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `${city} is in ${county} County, Florida. LocalIntel tracks ${bizPhrase} in ZIP ${zip}` +
+            (topCatsStr ? `, with activity across ${topCatHuman}` : '') +
+            (population !== null ? `. Population is about ${fmtNum(population)}` : '') +
+            `. Browse this market at ${url}.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `How can a ${city} business get listed on LocalIntel?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Claim your free listing at https://www.thelocalintel.com/claim.html. Verified ${city} businesses receive priority routing when AI agents and customers need local services in ZIP ${zip}.`
+        }
+      }
+    ]
+  };
 
   // Build <noscript> body: structured static HTML when we have SEO data,
   // else fall back to the prior evergreen paragraph.
@@ -124,13 +173,19 @@ function stubHTML(z, seo) {
       lines.push(`<p>Neighborhoods served: ${esc(neighborhoods.join(', '))}.</p>`);
     }
     lines.push(`<p>LocalIntel routes live service requests, RFQ jobs, and agentic task queries to verified businesses in ${esc(city)}. Join the network to connect to the agentic economy.</p>`);
-    lines.push(`<p><a href="https://www.thelocalintel.com">← Back to LocalIntel</a></p>`);
+    lines.push(`<h2>FAQ</h2>`);
+    lines.push(`<p><strong>How do I find local services in ${esc(city)}?</strong> Search LocalIntel or open this ZIP page to connect with verified businesses in ${esc(zip)}.</p>`);
+    lines.push(`<p><strong>How do I claim my ${esc(city)} listing?</strong> Visit <a href="https://www.thelocalintel.com/claim.html">Claim Your Listing</a> — free, no subscription.</p>`);
+    lines.push(`<p><a href="https://www.thelocalintel.com">← Back to LocalIntel</a> · <a href="https://www.thelocalintel.com/llms.txt">llms.txt</a></p>`);
     noscriptBody = lines.join('\n      ');
   } else {
     const evergreen = `${city} (${zip}) is a market in ${county} County, Florida. LocalIntel routes live service requests, RFQ jobs, and agentic task queries to verified businesses operating in this ZIP code. Businesses with an active profile and digital wallet receive priority routing — from food and beverage orders to contractor jobs to professional services. Join the LocalIntel network to connect your business to the agentic economy and start receiving routed work from AI agents, voice assistants, and real customers searching in ${city}.`;
     noscriptBody = `<h1>${esc(city)} (${esc(zip)}) — Local Business Intelligence</h1>
       <p>${esc(evergreen)}</p>
-      <p><a href="https://www.thelocalintel.com">← Back to LocalIntel</a></p>`;
+      <h2>FAQ</h2>
+      <p><strong>How do I find local services in ${esc(city)}?</strong> Use LocalIntel search or this ZIP page to reach verified businesses in ${esc(zip)}.</p>
+      <p><strong>How do I claim my listing?</strong> Visit <a href="https://www.thelocalintel.com/claim.html">Claim Your Listing</a>.</p>
+      <p><a href="https://www.thelocalintel.com">← Back to LocalIntel</a> · <a href="https://www.thelocalintel.com/llms.txt">llms.txt</a></p>`;
   }
 
   return `<!DOCTYPE html>
@@ -140,17 +195,24 @@ function stubHTML(z, seo) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(desc)}">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="geo.region" content="US-FL">
+  <meta name="geo.placename" content="${esc(city)}, Florida">
   <meta property="og:title" content="Find Local Services in ${esc(city)}, FL ${esc(zip)} — LocalIntel">
   <meta property="og:description" content="${esc(desc)}">
   <meta property="og:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
   <meta property="og:image:width" content="512">
   <meta property="og:image:height" content="512">
+  <meta property="og:site_name" content="LocalIntel">
   <meta property="twitter:card" content="summary">
   <meta property="twitter:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
   <meta property="og:url" content="${url}">
   <link rel="canonical" href="${url}">
+  <link rel="alternate" type="text/plain" title="LLM guidance" href="https://www.thelocalintel.com/llms.txt">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
-  <script type="application/ld+json">${schema}</script>
+  <script type="application/ld+json">${JSON.stringify(datasetSchema)}</script>
+  <script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>
+  <script type="application/ld+json">${JSON.stringify(faqSchema)}</script>
 </head>
 <body>
   <noscript>

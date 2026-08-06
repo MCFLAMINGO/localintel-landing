@@ -696,24 +696,65 @@
 
       // ── Schema.org structured data injection ────────────────────────────
       // Injected after live data loads so values are accurate, not static.
-      // 1. FAQPage — from oracle top_questions (high Google rich-result value)
-      // 2. LocalBusiness — represents LocalIntel as the data provider for this ZIP
-      // 3. Dataset — replaces the static stub in the HTML head
+      // 1. FAQPage — oracle top_questions when available, else static fallback
+      // 2. BreadcrumbList — LocalIntel › Florida › ZIP
+      // 3. LocalBusiness — LocalIntel as the data provider for this ZIP
+      // 4. Dataset — replaces the static stub in the HTML head
       try {
         const schemas = [];
+        const pageUrl = `https://www.thelocalintel.com/zip/${ZIP}`;
+        const bizLabel = biz ? biz.toLocaleString() + ' verified businesses' : 'verified local businesses';
 
-        // FAQPage from oracle top_questions
-        if (tqs.length >= 2) {
-          schemas.push({
-            '@context': 'https://schema.org',
-            '@type': 'FAQPage',
-            mainEntity: tqs.map(q => ({
-              '@type':          'Question',
-              name:             q.question,
-              acceptedAnswer:   { '@type': 'Answer', text: q.answer },
-            })),
-          });
-        }
+        // FAQPage — prefer live oracle Q&A; always include a fallback set
+        const faqEntities = tqs.length >= 2
+          ? tqs.map(q => ({
+              '@type': 'Question',
+              name: q.question,
+              acceptedAnswer: { '@type': 'Answer', text: q.answer },
+            }))
+          : [
+              {
+                '@type': 'Question',
+                name: `How do I find local services in ${NAME}, FL ${ZIP}?`,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: `Use LocalIntel to find restaurants, plumbers, doctors, and other local services in ${NAME}, Florida ZIP ${ZIP}. LocalIntel indexes ${bizLabel} in this market and routes requests to verified businesses.`,
+                },
+              },
+              {
+                '@type': 'Question',
+                name: `What is LocalIntel’s coverage for ${NAME} (${ZIP})?`,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: `${NAME} is in ${COUNTY} County, Florida. LocalIntel tracks ${bizLabel} in ZIP ${ZIP}` +
+                    `${pop ? ` with a population of about ${pop.toLocaleString()}` : ''}` +
+                    `${hhi ? ` and median household income around $${hhi.toLocaleString()}` : ''}.`,
+                },
+              },
+              {
+                '@type': 'Question',
+                name: `How can a ${NAME} business get listed on LocalIntel?`,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: `Claim your free listing at https://www.thelocalintel.com/claim.html. Verified ${NAME} businesses receive priority routing when AI agents and customers need local services in ZIP ${ZIP}.`,
+                },
+              },
+            ];
+        schemas.push({
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqEntities,
+        });
+
+        schemas.push({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'LocalIntel', item: 'https://www.thelocalintel.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Florida markets', item: 'https://www.thelocalintel.com/#explore' },
+            { '@type': 'ListItem', position: 3, name: `${NAME} ${ZIP}`, item: pageUrl },
+          ],
+        });
 
         // LocalBusiness — LocalIntel as the intelligence hub for this ZIP
         schemas.push({
@@ -724,7 +765,12 @@
             `${biz ? biz + ' verified businesses' : 'Hundreds of businesses'} indexed. ` +
             `${pop ? 'Population ' + pop.toLocaleString() + '.' : ''} ` +
             `${hhi ? 'Median income $' + hhi.toLocaleString() + '.' : ''}`,
-          url:        `https://www.thelocalintel.com/zip/${ZIP}`,
+          url:        pageUrl,
+          parentOrganization: {
+            '@type': 'Organization',
+            name: 'LocalIntel',
+            url: 'https://www.thelocalintel.com',
+          },
           areaServed: {
             '@type': 'PostalAddress',
             postalCode:      ZIP,
@@ -745,8 +791,8 @@
           description:      `${biz || '?'} verified businesses in ${NAME}, FL ${ZIP}. ` +
             `Top sectors: ${mi.dominant_sector || 'various'}. ` +
             `Population ${pop ? pop.toLocaleString() : '—'}, median income ${hhi ? '$' + hhi.toLocaleString() : '—'}.`,
-          url:              `https://www.thelocalintel.com/zip/${ZIP}`,
-          provider:         { '@type': 'Organization', name: 'LocalIntel' },
+          url:              pageUrl,
+          provider:         { '@type': 'Organization', name: 'LocalIntel', url: 'https://www.thelocalintel.com' },
           spatialCoverage:  { '@type': 'Place', name: `${NAME}, ${COUNTY} County, FL ${ZIP}` },
           temporalCoverage: new Date().toISOString().slice(0, 10),
           keywords:         [

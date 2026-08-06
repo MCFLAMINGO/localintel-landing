@@ -1,6 +1,7 @@
 {
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/.well-known/llms.txt", "destination": "/llms.txt" },
     { "source": "/zip/:code", "destination": "/zip/:code.html" },
     { "source": "/biz/:slug", "destination": "/biz/:slug.html" },
     { "source": "/neighborhood/:slug", "destination": "/neighborhood/:slug.html" },

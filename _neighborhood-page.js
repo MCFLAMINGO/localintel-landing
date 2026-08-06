@@ -160,6 +160,71 @@
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) metaDesc.content = intel_paragraph.slice(0, 160);
 
+    // ── Schema.org (FAQ + breadcrumbs + dataset) ───────────────────────────
+    try {
+      const pageUrl = `https://www.thelocalintel.com/neighborhood/${hood.slug || slug}`;
+      const schemas = [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'LocalIntel', item: 'https://www.thelocalintel.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Neighborhoods', item: 'https://www.thelocalintel.com/#explore' },
+            { '@type': 'ListItem', position: 3, name: `${hood.name}, ${hood.city}`, item: pageUrl },
+          ],
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: `What local business intelligence does LocalIntel have for ${hood.name}?`,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: intel_paragraph || `${hood.name} is a neighborhood in ${hood.city}, ${hood.county} County, Florida. LocalIntel provides market signals and routes job requests to verified businesses serving ${hood.name}.`,
+              },
+            },
+            {
+              '@type': 'Question',
+              name: `How do I find services in ${hood.name}, ${hood.city}?`,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: `Open ${pageUrl} or search at https://www.thelocalintel.com/search.html. LocalIntel matches requests to verified local businesses in ${hood.name}.`,
+              },
+            },
+            {
+              '@type': 'Question',
+              name: `How can a business in ${hood.name} get listed?`,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: `Claim a free listing at https://www.thelocalintel.com/claim.html to receive priority routing from AI agents and customers searching in ${hood.city}.`,
+              },
+            },
+          ],
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Dataset',
+          name: `${hood.name} Business Intelligence`,
+          description: intel_paragraph || `Local business intelligence for ${hood.name}, ${hood.city}, FL.`,
+          url: pageUrl,
+          provider: { '@type': 'Organization', name: 'LocalIntel', url: 'https://www.thelocalintel.com' },
+          spatialCoverage: {
+            '@type': 'Place',
+            name: `${hood.name}, ${hood.city}, ${hood.county} County, FL`,
+          },
+        },
+      ];
+      document.querySelectorAll('script[type="application/ld+json"]').forEach(el => el.remove());
+      schemas.forEach(schema => {
+        const s = document.createElement('script');
+        s.type = 'application/ld+json';
+        s.textContent = JSON.stringify(schema);
+        document.head.appendChild(s);
+      });
+    } catch (_) { /* best-effort */ }
+
     // ── Build page HTML ────────────────────────────────────────────────────
     app.innerHTML = `
       <div class="hood-header">

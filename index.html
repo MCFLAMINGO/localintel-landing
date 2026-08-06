@@ -3,11 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <link rel="canonical" href="https://www.thelocalintel.com/">
+  <link rel="alternate" type="text/plain" title="LLM guidance" href="https://www.thelocalintel.com/llms.txt">
   <meta name="google-site-verification" content="s-7OmQ_HG5LpEKXYAtyu9fIZQbol8hnROqaIoNHnjxlw">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LocalIntel — Find Local Services in Florida | Restaurants, Plumbers, Doctors &amp; More</title>
   <meta name="description" content="Tell LocalIntel what you need — restaurants, plumbers, landscapers, doctors, and more — and we’ll connect you with verified local businesses across Florida. Powered by live data across 2,383 ZIP codes.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="author" content="LocalIntel">
+  <meta name="geo.region" content="US-FL">
+  <meta name="geo.placename" content="Florida">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="LocalIntel">
+  <meta property="og:locale" content="en_US">
   <meta property="og:title" content="LocalIntel — Find Local Services in Florida">
   <meta property="og:description" content="Tell us what you need — we’ll connect you with verified local businesses in Florida. Restaurants, home services, healthcare, and more across 2,383 ZIP codes.">
   <meta property="og:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
@@ -823,6 +830,94 @@
     }
     .footer-bottom a:hover { color: #9CA3AF; }
 
+    /* ── FAQ ── */
+    .faq-list {
+      max-width: 760px;
+      margin: 40px auto 0;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      padding: 0;
+      overflow: hidden;
+    }
+    .faq-item summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 18px 22px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after {
+      content: '+';
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .faq-item[open] summary::after { content: '−'; }
+    .faq-item summary:hover { background: var(--bg-card); }
+    .faq-item p {
+      padding: 0 22px 20px;
+      margin: 0;
+      color: var(--text-2);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+    .faq-item a { color: var(--accent); text-decoration: underline; }
+
+    .popular-markets {
+      margin-top: 28px;
+      padding: 20px 22px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+    }
+    .popular-markets h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .popular-markets-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .popular-markets-links a {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-text);
+      background: var(--accent-light);
+      border: 1px solid #BBF7D0;
+      border-radius: 8px;
+      padding: 6px 12px;
+    }
+    .popular-markets-links a:hover {
+      background: #BBF7D0;
+    }
+    .crawl-facts {
+      margin-top: 28px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+      color: var(--text-2);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
     /* ── DIVIDER ── */
     .divider {
       height: 1px;
@@ -893,27 +988,55 @@
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "LocalIntel",
-    "alternateName": "The Local Intel",
+    "alternateName": ["The Local Intel", "Local Intel"],
     "url": "https://www.thelocalintel.com",
+    "logo": "https://www.thelocalintel.com/images/localintel-logo-512.jpg",
+    "image": "https://www.thelocalintel.com/images/localintel-logo-512.jpg",
     "description": "Local business intelligence and AI agent routing platform for Florida. Connects AI assistants with local businesses across restaurants, home services, healthcare, and more.",
+    "email": "erik@mcflamingo.com",
+    "foundingLocation": {
+      "@type": "Place",
+      "name": "Ponte Vedra Beach, Florida"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Ponte Vedra Beach",
+      "addressRegion": "FL",
+      "addressCountry": "US"
+    },
     "areaServed": {
       "@type": "State",
       "name": "Florida",
       "containsPlace": [
         { "@type": "City", "name": "Ponte Vedra Beach" },
+        { "@type": "City", "name": "Jacksonville" },
         { "@type": "City", "name": "Jacksonville Beach" },
         { "@type": "City", "name": "Atlantic Beach" },
         { "@type": "City", "name": "Neptune Beach" },
         { "@type": "City", "name": "St. Augustine" },
         { "@type": "City", "name": "Nocatee" },
-        { "@type": "City", "name": "Mandarin" }
+        { "@type": "City", "name": "Orlando" },
+        { "@type": "City", "name": "Tampa" },
+        { "@type": "City", "name": "Miami" }
       ]
     },
-    "serviceType": [
-      "Local Business Discovery",
-      "AI Agent Routing",
-      "Business Intelligence",
-      "Request for Quote Matching"
+    "sameAs": [
+      "https://smithery.ai/servers/erik-7clt/local-intel",
+      "https://x.com/cheferikosol"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "erik@mcflamingo.com",
+      "contactType": "customer support",
+      "areaServed": "US-FL",
+      "availableLanguage": "English"
+    },
+    "knowsAbout": [
+      "Florida local businesses",
+      "ZIP code market intelligence",
+      "AI agent routing",
+      "MCP server",
+      "Sunbiz business records"
     ]
   }
   </script>
@@ -926,6 +1049,12 @@
     "name": "LocalIntel",
     "url": "https://www.thelocalintel.com",
     "description": "Find local businesses in Florida — AI-powered search for restaurants, contractors, healthcare, and more.",
+    "inLanguage": "en-US",
+    "publisher": {
+      "@type": "Organization",
+      "name": "LocalIntel",
+      "url": "https://www.thelocalintel.com"
+    },
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
@@ -936,8 +1065,148 @@
     }
   }
   </script>
+
+  <!-- Structured data: WebApplication / SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "LocalIntel",
+    "url": "https://www.thelocalintel.com",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "browserRequirements": "Requires JavaScript for live search; ZIP pages include crawlable summaries.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "description": "Business listings are free to claim. Agent MCP queries are usage-based."
+    },
+    "areaServed": {
+      "@type": "State",
+      "name": "Florida"
+    },
+    "featureList": [
+      "Florida ZIP business intelligence",
+      "Verified local business search",
+      "MCP server for AI agents",
+      "RFQ job routing",
+      "Free business listing claims"
+    ]
+  }
+  </script>
+
+  <!-- Structured data: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is LocalIntel?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "LocalIntel is a Florida local business intelligence and AI agent routing platform. It helps people and AI assistants find verified local businesses — restaurants, plumbers, doctors, landscapers, and more — across all Florida ZIP codes, using live public records, permits, and market data."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How many Florida ZIP codes does LocalIntel cover?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "LocalIntel covers Florida statewide — 2,383 ZIP codes across all 67 counties. Each ZIP has a market page with business counts, sector signals, and local service discovery."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is LocalIntel free for businesses?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Claiming a business listing on LocalIntel is free. There are no subscriptions or minimums to list. Verified businesses with an active profile and wallet receive priority routing when AI agents and customers need a local service in their ZIP."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do AI agents connect to LocalIntel?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "LocalIntel is available as an MCP server. Install via Smithery with `npx -y @smithery/cli@latest install erik-7clt/local-intel`, or use the direct endpoint https://gsb-swarm-production.up.railway.app/api/local-intel/mcp with Perplexity, Claude, Cursor, Grok, or any MCP-compatible agent."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I find a local business in Florida with LocalIntel?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Go to https://www.thelocalintel.com/search.html and describe what you need, or open a ZIP market page such as https://www.thelocalintel.com/zip/32082 for Ponte Vedra Beach. LocalIntel matches your request to verified businesses in that area."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I claim my LocalIntel business listing?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Visit https://www.thelocalintel.com/claim.html and claim your listing with your Florida Sunbiz identity. The process takes about two minutes and does not require a paid subscription."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is LocalIntel the same as localintel.com?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. LocalIntel at https://www.thelocalintel.com is a Florida business discovery and AI routing product operated by MCFL Restaurant Holdings LLC. It is not affiliated with localintel.com, a separate Canadian economic-development software company."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What data does LocalIntel use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "LocalIntel indexes Florida businesses from public state records (including Sunbiz), permits, and field data. Coverage includes 240,000+ businesses and counting, with daily updates to market and routing signals."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Structured data: Speakable (AI answer excerpts) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "LocalIntel — Find Local Services in Florida",
+    "url": "https://www.thelocalintel.com/",
+    "description": "Tell LocalIntel what you need and connect with verified local businesses across Florida.",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "LocalIntel",
+      "url": "https://www.thelocalintel.com"
+    },
+    "about": {
+      "@type": "Thing",
+      "name": "Florida local business intelligence"
+    },
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [".hero h1", ".hero-sub", "#faq .faq-item"]
+    },
+    "inLanguage": "en-US"
+  }
+  </script>
 </head>
 <body>
+  <noscript>
+    <div style="font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 20px; line-height: 1.6;">
+      <h1>LocalIntel — Find local services in Florida</h1>
+      <p>LocalIntel connects people and AI agents with verified Florida businesses across restaurants, home services, healthcare, and more. Coverage spans 2,383 ZIP codes and 240,000+ businesses sourced from Florida public records and permits.</p>
+      <p><a href="/search.html">Search businesses</a> · <a href="/claim.html">Claim your listing</a> · <a href="/llms.txt">AI / LLM summary</a> · <a href="/zip/32082">Example ZIP: Ponte Vedra Beach 32082</a></p>
+      <h2>FAQ</h2>
+      <p><strong>What is LocalIntel?</strong> A Florida local business intelligence and AI agent routing platform.</p>
+      <p><strong>Is it free for businesses?</strong> Yes — listing claims are free with no subscription required.</p>
+      <p><strong>How do AI agents connect?</strong> Via MCP: <code>npx -y @smithery/cli@latest install erik-7clt/local-intel</code> or https://gsb-swarm-production.up.railway.app/api/local-intel/mcp</p>
+    </div>
+  </noscript>
 
   <!-- NAV -->
   <nav>
@@ -948,6 +1217,7 @@
       </a>
       <ul class="nav-links">
         <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#faq">FAQ</a></li>
         <li><a href="/start">Start a Business</a></li>
         <li><a href="search.html" style="color: var(--accent); font-weight: 600;">Search &#x2192;</a></li>
       </ul>
@@ -961,6 +1231,7 @@
   <!-- MOBILE MENU -->
   <div class="mobile-menu" id="mobileMenu">
     <a href="#how-it-works" onclick="toggleMenu()">How it works</a>
+    <a href="#faq" onclick="toggleMenu()">FAQ</a>
     <a href="/start" onclick="toggleMenu()">Start a Business</a>
     <a href="search.html" style="color: var(--accent); font-weight: 600;">Search →</a>
     <a href="claim.html" class="btn btn-primary">Claim Your Listing</a>
@@ -1200,6 +1471,24 @@
         <div class="section-label">Explore Markets</div>
         <h2 class="section-heading">Building an ocean of data, one ZIP code at a time.</h2>
         <p class="section-sub"><span id="stat-zips-explore">2,383</span> Florida ZIP codes. 67 counties. Select any region to see live business data, sector gaps, permits, and income signals.</p>
+
+        <div class="popular-markets" aria-label="Popular Florida markets">
+          <h3>Popular Florida markets</h3>
+          <div class="popular-markets-links">
+            <a href="/zip/32082">Ponte Vedra Beach 32082</a>
+            <a href="/zip/32081">Nocatee 32081</a>
+            <a href="/zip/32250">Jacksonville Beach 32250</a>
+            <a href="/zip/32202">Jacksonville 32202</a>
+            <a href="/zip/32256">Jacksonville 32256</a>
+            <a href="/zip/32084">St. Augustine 32084</a>
+            <a href="/zip/32801">Orlando 32801</a>
+            <a href="/zip/33602">Tampa 33602</a>
+            <a href="/zip/33701">St. Petersburg 33701</a>
+            <a href="/zip/33131">Miami 33131</a>
+            <a href="/zip/33301">Fort Lauderdale 33301</a>
+            <a href="/search.html">Search all Florida</a>
+          </div>
+        </div>
 
         <style>
           .fl-regions { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 32px; }
@@ -1698,6 +1987,55 @@
       </div>
     </section>
 
+    <!-- FAQ — crawlable answers for Google AI / Perplexity / classic SEO -->
+    <section class="section" id="faq" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <div class="container" style="text-align: center;">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-heading">Questions people and AI agents ask</h2>
+        <p class="section-sub">Straight answers about LocalIntel coverage, pricing, and how Florida businesses get discovered.</p>
+        <p class="crawl-facts">
+          LocalIntel is Florida-only local business intelligence at <strong>thelocalintel.com</strong>.
+          It indexes <strong>240,000+</strong> businesses across <strong>2,383 ZIP codes</strong> and
+          <strong>67 counties</strong>, routes requests to verified merchants, and exposes the same data to AI agents over MCP.
+          Business listing claims are free. Not affiliated with localintel.com.
+        </p>
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>What is LocalIntel?</summary>
+            <p>LocalIntel is a Florida local business intelligence and AI agent routing platform. It helps people and AI assistants find verified local businesses — restaurants, plumbers, doctors, landscapers, and more — using live public records, permits, and market data across every Florida ZIP code.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How many Florida ZIP codes does LocalIntel cover?</summary>
+            <p>LocalIntel covers Florida statewide — 2,383 ZIP codes across all 67 counties. Open any market page under <a href="/#explore">Explore Markets</a> or go directly to <a href="/zip/32082">/zip/32082</a> style URLs.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is LocalIntel free for businesses?</summary>
+            <p>Yes. <a href="/claim.html">Claiming a listing</a> is free — no subscriptions or minimums to list. Verified businesses with an active profile and wallet get priority when agents and customers need a service in their ZIP.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How do AI agents connect to LocalIntel?</summary>
+            <p>LocalIntel is an MCP server. Install with <code>npx -y @smithery/cli@latest install erik-7clt/local-intel</code>, or use the direct endpoint <a href="https://gsb-swarm-production.up.railway.app/api/local-intel/mcp">https://gsb-swarm-production.up.railway.app/api/local-intel/mcp</a> from Perplexity, Claude, Cursor, Grok, or any MCP-compatible client. See <a href="#for-agents">For AI Agents</a> and <a href="/llms.txt">llms.txt</a>.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How do I find a local business in Florida?</summary>
+            <p>Use <a href="/search.html">Search</a> and describe what you need, or open a ZIP page for your city. LocalIntel matches the request to verified businesses nearby.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How do I claim my business listing?</summary>
+            <p>Go to <a href="/claim.html">Claim Your Listing</a> and verify with your Florida Sunbiz identity. It takes about two minutes.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Is LocalIntel the same as localintel.com?</summary>
+            <p>No. LocalIntel at <strong>thelocalintel.com</strong> is a Florida business discovery and AI routing product operated by MCFL Restaurant Holdings LLC. It is not affiliated with localintel.com, a separate Canadian economic-development software company.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What data does LocalIntel use?</summary>
+            <p>Florida public business records (including Sunbiz), permits, and field data — updated continuously so agents, voice assistants, and customers reach the right local business.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
     <!-- FINAL CTA -->
     <section class="section" style="text-align: center;">
       <div class="container">
@@ -1733,8 +2071,10 @@
             <ul>
               <li><a href="claim.html">Claim Your Listing</a></li>
               <li><a href="#how-it-works">How it Works</a></li>
+              <li><a href="#faq">FAQ</a></li>
               <li><a href="#examples">Live Examples</a></li>
               <li><a href="#pricing">Pricing</a></li>
+              <li><a href="#for-agents">For AI Agents</a></li>
             </ul>
           </div>
           <div class="footer-col">
@@ -1742,13 +2082,17 @@
             <ul>
               <li><a href="mailto:erik@mcflamingo.com">Contact Us</a></li>
               <li><a href="https://search.sunbiz.org" target="_blank" rel="noopener">Sunbiz Lookup</a></li>
+              <li><a href="/llms.txt">llms.txt</a></li>
+              <li><a href="/sitemap.xml">Sitemap</a></li>
+              <li><a href="privacy.html">Privacy</a></li>
+              <li><a href="terms.html">Terms</a></li>
             </ul>
           </div>
         </div>
       </div>
       <div class="footer-bottom">
         <p>© 2026 LocalIntel · MCFL Restaurant Holdings LLC · Ponte Vedra Beach, FL</p>
-        <p><a href="mailto:erik@mcflamingo.com">erik@mcflamingo.com</a></p>
+        <p><a href="mailto:erik@mcflamingo.com">erik@mcflamingo.com</a> · <a href="/llms.txt">AI crawlers: llms.txt</a></p>
       </div>
     </div>
   </footer>

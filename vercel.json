@@ -2,6 +2,10 @@
   "framework": null,
   "rewrites": [
     {
+      "source": "/.well-known/llms.txt",
+      "destination": "/llms.txt"
+    },
+    {
       "source": "/zip/:code",
       "destination": "/zip/:code.html"
     },

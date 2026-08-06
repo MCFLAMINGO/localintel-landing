@@ -1,3 +1,6 @@
+# LocalIntel — https://www.thelocalintel.com
+# AI / answer-engine guidance: https://www.thelocalintel.com/llms.txt
+
 User-agent: *
 Allow: /
 Disallow: /admin
@@ -9,4 +12,43 @@ Disallow: /inbox.html
 Disallow: /login
 Disallow: /login.html
 
+# Explicit allow for major AI / answer-engine crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
 Sitemap: https://www.thelocalintel.com/sitemap.xml
+# LLM-oriented site summary
+# https://www.thelocalintel.com/llms.txt

@@ -1,0 +1,47 @@
+# LocalIntel
+> LocalIntel (thelocalintel.com) is Florida local business intelligence and AI agent routing. It connects people, voice assistants, and AI agents to verified Florida businesses across restaurants, home services, healthcare, and more — covering every Florida ZIP code.
+
+LocalIntel is operated by MCFL Restaurant Holdings LLC (Ponte Vedra Beach, FL). Contact: erik@mcflamingo.com
+
+## Product
+- [Home](https://www.thelocalintel.com/): Find local Florida businesses and explore statewide market coverage
+- [Search](https://www.thelocalintel.com/search.html): Search verified Florida businesses by need, category, or ZIP
+- [Claim your listing](https://www.thelocalintel.com/claim.html): Free business claim — verified wallets get priority AI/agent routing
+- [Start a business](https://www.thelocalintel.com/start): Guidance for launching a Florida business with local market context
+- [MCP / AI agents](https://www.thelocalintel.com/#for-agents): Connect LocalIntel as an MCP server for Perplexity, Claude, Cursor, Grok, and custom agents
+
+## Coverage
+Florida only — all 67 counties and 2,383 ZIP codes. Business records are sourced from Florida public filings (including Sunbiz), permits, and field data. Live stats update continuously via the LocalIntel platform.
+
+## Example ZIP market pages
+- [Ponte Vedra Beach 32082](https://www.thelocalintel.com/zip/32082): St. Johns County business intelligence
+- [Nocatee 32081](https://www.thelocalintel.com/zip/32081): Fast-growing St. Johns market
+- [Jacksonville Beach 32250](https://www.thelocalintel.com/zip/32250): Duval coastal market
+- [Downtown Jacksonville 32202](https://www.thelocalintel.com/zip/32202): Jacksonville core
+- [Downtown Orlando 32801](https://www.thelocalintel.com/zip/32801): Orange County market
+- [Downtown Tampa 33602](https://www.thelocalintel.com/zip/33602): Hillsborough market
+- [St. Petersburg 33701](https://www.thelocalintel.com/zip/33701): Pinellas market
+- [Miami 33131](https://www.thelocalintel.com/zip/33131): Miami-Dade market
+
+Browse any Florida ZIP at `https://www.thelocalintel.com/zip/{ZIP}`.
+
+## For AI agents (MCP)
+- Smithery package: `npx -y @smithery/cli@latest install erik-7clt/local-intel`
+- Direct MCP endpoint: https://gsb-swarm-production.up.railway.app/api/local-intel/mcp
+- Free sector gap feed: https://gsb-swarm-production.up.railway.app/api/sector-gap/feed
+- Smithery listing: https://smithery.ai/servers/erik-7clt/local-intel
+
+Agents can search businesses, inspect ZIP/market stats, surface sector gaps, and dispatch RFQ-style job requests to verified Florida merchants. Query pricing is usage-based (pathUSD on Tempo); browsing public pages is free.
+
+## Key facts for citations
+- Product name: LocalIntel (also “The Local Intel”)
+- Canonical site: https://www.thelocalintel.com
+- Geography: Florida, United States
+- Primary use cases: local service discovery, business claim/listing, ZIP-level market intelligence, AI agent routing via MCP
+- Business listing claim: free; no subscription required to list
+- Not affiliated with localintel.com (a separate Canadian economic-development software company)
+
+## Optional
+- [Privacy](https://www.thelocalintel.com/privacy.html)
+- [Terms](https://www.thelocalintel.com/terms.html)
+- [Sitemap](https://www.thelocalintel.com/sitemap.xml)

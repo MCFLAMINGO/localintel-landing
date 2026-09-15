@@ -488,11 +488,18 @@
 
     /* CALL CTA — only shown in idle below the input */
     .call-cta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
       text-align: center;
       padding-bottom: 16px;
     }
+    .search-header.active .hero-title,
     .search-header.active .call-cta,
-    .search-header.active .search-extras {
+    .search-header.active .search-extras,
+    .search-header.active .reg-panel {
       display: none;
     }
     .call-link {
@@ -955,7 +962,7 @@
         <button class="example-chip" onclick="runExampleQuery('best coffee shop nearby')">best coffee nearby</button>
       </div>
 
-      <div class="call-cta" style="display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:12px;">
+      <div class="call-cta">
         <a href="tel:+19045067476" class="call-link">
           <span class="call-pulse"></span>
           Skip the search — just call (904) 506-7476

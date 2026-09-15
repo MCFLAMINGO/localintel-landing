@@ -1219,6 +1219,7 @@
         : `https://www.openstreetmap.org/search?query=${encodeURIComponent(full)}`;
       const blurb   = biz.description || biz.services_text || '';
       const hoursStr = biz.hours || '';
+      const website = publicWebsite(biz);
       const tier    = biz.price_tier ? ({ casual:'$–$$', upscale:'$$$', fine_dining:'$$$$' }[biz.price_tier] || biz.price_tier) : '';
 
       return `

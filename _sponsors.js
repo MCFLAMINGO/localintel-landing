@@ -34,9 +34,9 @@
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent = [
-      'footer{width:100%;margin-top:auto;box-sizing:border-box;align-self:stretch;}',
+      'footer{width:100%;box-sizing:border-box;}',
       'footer[data-li-sponsors-footer="1"]{',
-      'display:block;padding:0;background:#fff;flex-shrink:0;',
+      'display:block;padding:0;background:#fff;',
       '}',
       '.li-sponsors{',
       'display:flex;align-items:center;justify-content:center;gap:14px 28px;flex-wrap:wrap;',

@@ -349,15 +349,21 @@
             </div>
           </div>
           <div class="pay-card" id="paySurge">
-            <strong>Surge / Basalt catalog</strong>
-            <div class="meta">Menu, receipt, embedded pay. Secrets stay on Swarm.</div>
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+              <div>
+                <strong>Surge / Basalt catalog</strong>
+                <div class="meta">Menu, receipt, embedded pay. Secrets stay on Swarm.</div>
+              </div>
+              <span class="pill" id="paySurgePill">Not saved</span>
+            </div>
             <div class="field" style="margin-top:12px;">
-              <label for="surgeSlug">Surge merchant slug (optional)</label>
-              <input id="surgeSlug" type="text" placeholder="your-surge-slug">
+              <label for="surgeSlug">Surge merchant slug</label>
+              <input id="surgeSlug" type="text" placeholder="mcflamingo or https://surge.basalthq.com/shop/mcflamingo">
+              <div class="hint" id="surgeSavedHint" style="margin-top:6px;">Paste your shop URL or slug. LocalIntel stores it and uses it for catalog pay links.</div>
             </div>
             <div class="btn-row">
               <a class="btn secondary" href="https://surge.basalthq.com" target="_blank" rel="noopener">Open Surge</a>
-              <button class="btn" id="saveSurgeBtn" type="button">Connect Surge later</button>
+              <button class="btn" id="saveSurgeBtn" type="button">Save Surge catalog</button>
             </div>
           </div>
           <div class="pay-card locked" id="payWallet">
@@ -492,6 +498,8 @@
         pay_status: inbox.pos_type === 'surge' ? 'surge' : (inbox.wallet ? 'wallet' : 'none'),
         pay_rails: {
           surge: inbox.pos_type === 'surge',
+          surge_slug: inbox.surge_slug || null,
+          surge_shop_url: inbox.surge_shop_url || null,
           wallet: !!inbox.wallet,
           methods: inbox.payment_methods || [],
           agent_prepaid: true,
@@ -826,13 +834,52 @@
       }
     };
 
+    function normalizeSurgeSlug(raw) {
+      if (raw == null) return '';
+      let s = String(raw).trim();
+      if (!s) return '';
+      try {
+        if (/^https?:\/\//i.test(s)) {
+          const u = new URL(s);
+          const shop = u.pathname.match(/\/(?:shop|pay)\/([^/?#]+)/i);
+          if (shop) s = decodeURIComponent(shop[1]);
+          else {
+            const parts = u.pathname.split('/').filter(Boolean);
+            s = parts.length ? decodeURIComponent(parts[parts.length - 1]) : '';
+          }
+        }
+      } catch (_) {
+        return '';
+      }
+      s = s.replace(/^\/+/, '').replace(/\/+$/, '');
+      if (/\/shop\//i.test(s)) s = s.split(/\/shop\//i).pop();
+      s = s.split(/[?#]/)[0].trim();
+      if (!s) return '';
+      if (!/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,80}$/.test(s)) return '';
+      return s;
+    }
+
     function renderPay() {
       const pay = _home?.pay_status || 'none';
       const rails = _home?.pay_rails || {};
       document.getElementById('payInvoicePill').textContent =
         pay === 'none' || pay === 'methods' ? 'Default' : 'Available';
-      if (rails.surge || pay === 'surge') {
+      const savedSlug = rails.surge_slug || _biz?.surge_slug || '';
+      const shopUrl = rails.surge_shop_url || (savedSlug ? `https://surge.basalthq.com/shop/${encodeURIComponent(savedSlug)}` : '');
+      if (savedSlug) document.getElementById('surgeSlug').value = savedSlug;
+      const surgePill = document.getElementById('paySurgePill');
+      const hint = document.getElementById('surgeSavedHint');
+      if (rails.surge || pay === 'surge' || savedSlug) {
         document.getElementById('paySurge').style.borderStyle = 'solid';
+        surgePill.textContent = savedSlug ? 'Saved' : 'Connected';
+        surgePill.classList.add('ok');
+        hint.innerHTML = savedSlug
+          ? `Saved as <a href="${esc(shopUrl)}" target="_blank" rel="noopener">${esc(shopUrl)}</a>`
+          : 'Surge is the pay rail. Add a shop slug to finish the catalog link.';
+      } else {
+        surgePill.textContent = 'Not saved';
+        surgePill.classList.remove('ok');
+        hint.textContent = 'Paste your shop URL or slug. LocalIntel stores it and uses it for catalog pay links.';
       }
       if (rails.wallet || _biz?.wallet) {
         document.getElementById('payWallet').classList.remove('locked');
@@ -856,9 +903,18 @@
     }
 
     async function saveSurge() {
-      const slug = document.getElementById('surgeSlug').value.trim();
+      const raw = document.getElementById('surgeSlug').value.trim();
+      const slug = normalizeSurgeSlug(raw);
+      if (raw && !slug) {
+        toast('Use a shop slug or URL like https://surge.basalthq.com/shop/mcflamingo');
+        return;
+      }
+      if (slug) document.getElementById('surgeSlug').value = slug;
+      const btn = document.getElementById('saveSurgeBtn');
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
       try {
-        await apiFetch('/inbox/pos', {
+        const data = await apiFetch('/inbox/pos', {
           method: 'POST',
           body: JSON.stringify({
             token: _token,
@@ -866,10 +922,14 @@
             credentials: slug ? { slug } : {},
           }),
         });
-        toast('Surge connected — secrets stay on Swarm');
+        const saved = data.surge_slug || slug;
+        toast(saved ? `Saved Surge catalog: ${saved}` : 'Surge marked as the pay rail');
         await refreshAll();
       } catch (err) {
-        toast(err.message || 'Could not connect Surge yet');
+        toast(err.message || 'Could not save Surge catalog');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Surge catalog';
       }
     }
 
@@ -1016,6 +1076,9 @@
     document.getElementById('refreshJobsBtn').addEventListener('click', loadJobs);
     document.getElementById('keepCashBtn').addEventListener('click', keepCash);
     document.getElementById('saveSurgeBtn').addEventListener('click', saveSurge);
+    document.getElementById('surgeSlug').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); saveSurge(); }
+    });
     document.getElementById('saveWalletBtn').addEventListener('click', saveWallet);
     document.getElementById('emailPackBtn').addEventListener('click', emailPack);
 

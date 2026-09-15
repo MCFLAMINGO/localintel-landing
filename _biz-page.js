@@ -54,6 +54,11 @@
           <a href="${SITE}/claim" style="color:#16a34a;margin-left:4px;">Is this your business?</a>
         </div>
       </div>
+      <a id="poolpilot-sponsor" class="poolpilot-sponsor" href="https://poolpilot.xyz" target="_blank" rel="noopener noreferrer" aria-label="Sponsored by Pool Pilot — opens poolpilot.xyz">
+        <span class="poolpilot-sponsor-label">Sponsored by</span>
+        <img src="/images/poolpilot-logo.png" alt="Pool Pilot" width="52" height="52">
+        <span class="poolpilot-sponsor-brand">poolpilot.xyz</span>
+      </a>
     `;
   }
 

@@ -111,6 +111,12 @@
       .hood-cta{background:#111;border:1px solid #1f2937;border-radius:12px;padding:28px 24px;text-align:center}
       .hood-cta-text{font-size:16px;color:#d1d5db;margin-bottom:14px}
       .hood-cta-btn{display:inline-block;background:#00e676;color:#000;padding:10px 24px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none}
+      .poolpilot-sponsor{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:18px 20px;background:#071627;color:#fff;text-decoration:none;border-top:1px solid rgba(255,255,255,.08)}
+      .poolpilot-sponsor:hover,.poolpilot-sponsor:focus-visible{background:#0b2438;outline:none}
+      .poolpilot-sponsor-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#94A3B8}
+      .poolpilot-sponsor img{width:52px;height:52px;object-fit:contain;display:block;flex-shrink:0}
+      .poolpilot-sponsor-brand{font-size:16px;font-weight:700;letter-spacing:.01em;color:#7EB6E8}
+      .poolpilot-sponsor:hover .poolpilot-sponsor-brand,.poolpilot-sponsor:focus-visible .poolpilot-sponsor-brand{color:#fff;text-decoration:underline;text-underline-offset:3px}
 
       @media(max-width:600px){
         #hood-map{height:260px}
@@ -309,6 +315,18 @@
         <a href="/claim" class="hood-cta-btn">Claim Your Listing →</a>
       </div>
     `;
+
+    if (!document.getElementById('poolpilot-sponsor')) {
+      const sponsor = document.createElement('a');
+      sponsor.id = 'poolpilot-sponsor';
+      sponsor.className = 'poolpilot-sponsor';
+      sponsor.href = 'https://poolpilot.xyz';
+      sponsor.target = '_blank';
+      sponsor.rel = 'noopener noreferrer';
+      sponsor.setAttribute('aria-label', 'Sponsored by Pool Pilot — opens poolpilot.xyz');
+      sponsor.innerHTML = '<span class="poolpilot-sponsor-label">Sponsored by</span><img src="/images/poolpilot-logo.png" alt="Pool Pilot" width="52" height="52"><span class="poolpilot-sponsor-brand">poolpilot.xyz</span>';
+      document.body.appendChild(sponsor);
+    }
 
     // Enrich ZIP card names from zip_boundaries data
     for (const zb of zip_boundaries) {

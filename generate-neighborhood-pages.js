@@ -109,6 +109,7 @@ function stubHTML(n) {
   <script type="application/ld+json">${JSON.stringify(datasetSchema)}</script>
   <script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>
   <script type="application/ld+json">${JSON.stringify(faqSchema)}</script>
+  <script src="/_sponsor.js" defer></script>
 </head>
 <body>
   <noscript>
@@ -119,6 +120,7 @@ function stubHTML(n) {
       <p><strong>What coverage does LocalIntel have for ${n.name}?</strong> Market signals and verified business routing for ${n.name} in ${n.city}, FL.</p>
       <p><strong>How do I claim my listing?</strong> Visit <a href="https://www.thelocalintel.com/claim.html">Claim Your Listing</a>.</p>
       <p><a href="https://www.thelocalintel.com">← Back to LocalIntel</a> · <a href="https://www.thelocalintel.com/llms.txt">llms.txt</a></p>
+      <p>Sponsored by <a href="https://poolpilot.xyz">poolpilot.xyz</a></p>
     </div>
   </noscript>
   <script>

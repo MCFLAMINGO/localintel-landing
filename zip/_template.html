@@ -127,6 +127,12 @@
     .fl{display:flex;gap:20px}
     .fl a{font-size:13px;color:var(--text-3)}
     .fl a:hover{color:var(--green)}
+    .poolpilot-sponsor{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:18px 20px;background:#071627;color:#fff;text-decoration:none;border-top:1px solid rgba(255,255,255,.08)}
+    .poolpilot-sponsor:hover,.poolpilot-sponsor:focus-visible{background:#0b2438;outline:none}
+    .poolpilot-sponsor-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#94A3B8}
+    .poolpilot-sponsor img{width:52px;height:52px;object-fit:contain;display:block;flex-shrink:0}
+    .poolpilot-sponsor-brand{font-size:16px;font-weight:700;letter-spacing:.01em;color:#7EB6E8}
+    .poolpilot-sponsor:hover .poolpilot-sponsor-brand,.poolpilot-sponsor:focus-visible .poolpilot-sponsor-brand{color:#fff;text-decoration:underline;text-underline-offset:3px}
     .loading-msg{color:var(--text-3);font-size:14px;padding:12px 0}
     @media(max-width:640px){.hero{padding:44px 18px 40px}.main{padding:36px 18px}.nav-links a:not(.cta){display:none}}
 
@@ -142,6 +148,7 @@
     .pb-item{font-size:13px;color:var(--text)}
     .industry-loading{font-size:14px;color:var(--text-3);padding:12px 0}
   </style>
+  <script src="/_sponsor.js" defer></script>
 </head>
 <body>
 
@@ -253,6 +260,11 @@
     </div>
   </div>
 </footer>
+<a id="poolpilot-sponsor" class="poolpilot-sponsor" href="https://poolpilot.xyz" target="_blank" rel="noopener noreferrer" aria-label="Sponsored by Pool Pilot — opens poolpilot.xyz">
+  <span class="poolpilot-sponsor-label">Sponsored by</span>
+  <img src="/images/poolpilot-logo.png" alt="Pool Pilot" width="52" height="52">
+  <span class="poolpilot-sponsor-brand">poolpilot.xyz</span>
+</a>
 
 <script>
 const RAILWAY = 'https://gsb-swarm-production.up.railway.app';

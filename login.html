@@ -213,6 +213,7 @@
   <meta property="og:image:height" content="512">
   <meta property="twitter:card" content="summary">
   <meta property="twitter:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
+  <script src="/_sponsors.js" defer></script>
 </head>
 <body>
 
@@ -267,6 +268,8 @@
     const sentEmail = document.getElementById('sentEmail');
     const retryBtn  = document.getElementById('retryBtn');
 
+    const loginQs = new URLSearchParams(location.search);
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = emailInput.value.trim();
@@ -284,11 +287,17 @@
       submitBtn.textContent = 'Sending…';
       submitBtn.disabled = true;
 
+      const body = { email };
+      if (loginQs.get('biz')) body.business_id = loginQs.get('biz');
+      if (loginQs.get('name')) body.name = loginQs.get('name');
+      if (loginQs.get('zip')) body.zip = loginQs.get('zip');
+      if (loginQs.get('website')) body.website = loginQs.get('website');
+
       try {
         await fetch(`${API}/auth/magic`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify(body),
         });
       } catch (_) {
         // Silently continue — always show sent state

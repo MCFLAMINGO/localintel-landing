@@ -109,6 +109,7 @@ function stubHTML(n) {
   <script type="application/ld+json">${JSON.stringify(datasetSchema)}</script>
   <script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>
   <script type="application/ld+json">${JSON.stringify(faqSchema)}</script>
+  <script src="/_sponsors.js" defer></script>
 </head>
 <body>
   <noscript>

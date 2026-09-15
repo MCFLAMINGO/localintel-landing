@@ -150,12 +150,13 @@
       font-weight: 700;
     }
   </style>
+  <script src="/_sponsors.js" defer></script>
 </head>
 <body>
   <div class="shell">
     <div class="topbar">
       <a class="brand" href="/">Local<span>Intel</span></a>
-      <a class="top-link" href="/inbox.html">Already claimed? Open home →</a>
+      <a class="top-link" href="/login.html">Already claimed? Open home →</a>
     </div>
 
     <div class="steps" id="stepPills" aria-label="Claim progress">
@@ -565,6 +566,9 @@
         if (!email) { showMsg('Email is required.', 'error'); return; }
 
         const payload = { email };
+        if (state.business?.business_id) payload.business_id = state.business.business_id;
+        if (state.business?.name) payload.name = state.business.name;
+        if (state.business?.zip) payload.zip = state.business.zip;
         if (!fresh.classList.contains('hidden')) {
           const name = document.getElementById('merchantName').value.trim();
           const zip = document.getElementById('merchantZip').value.trim();

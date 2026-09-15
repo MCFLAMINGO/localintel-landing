@@ -318,6 +318,13 @@
 
     // ── Render Leaflet map ─────────────────────────────────────────────────
     loadLeaflet(() => initMap(zip_boundaries, hood));
+    if (typeof window.__liSponsorsInject === 'function') {
+      window.__liSponsorsInject();
+    } else if (!document.querySelector('script[src="/_sponsors.js"]')) {
+      const s = document.createElement('script');
+      s.src = '/_sponsors.js';
+      document.head.appendChild(s);
+    }
   }
 
   function initMap(zipBoundaries, hood) {

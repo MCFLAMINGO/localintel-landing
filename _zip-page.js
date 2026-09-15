@@ -360,6 +360,16 @@
       </div>
     </footer>
   `;
+  (function loadSponsors() {
+    if (typeof window.__liSponsorsInject === 'function') {
+      window.__liSponsorsInject();
+      return;
+    }
+    if (document.querySelector('script[src="/_sponsors.js"]')) return;
+    const s = document.createElement('script');
+    s.src = '/_sponsors.js';
+    document.head.appendChild(s);
+  })();
 
   // ── Quick search chips ──────────────────────────────────────────────────────
   const CHIPS = ['Restaurants','Healthcare','Contractors','Retail','Fitness','Wine & Spirits'];

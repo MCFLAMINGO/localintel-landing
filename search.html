@@ -33,9 +33,9 @@
       --nav-h: 64px;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    .page-wrap { flex: 1; }
     html { -webkit-font-smoothing: antialiased; }
-    body { font-family: var(--font); font-size: 16px; line-height: 1.65; color: var(--text); background: var(--bg); }
+    body { font-family: var(--font); font-size: 16px; line-height: 1.65; color: var(--text); background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; }
     a { color: inherit; text-decoration: none; }
     button { cursor: pointer; border: none; background: none; font: inherit; }
 

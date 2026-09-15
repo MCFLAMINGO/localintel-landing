@@ -323,6 +323,9 @@
     } else if (!document.querySelector('script[src="/_sponsors.js"]')) {
       const s = document.createElement('script');
       s.src = '/_sponsors.js';
+      s.onload = function () {
+        if (typeof window.__liSponsorsInject === 'function') window.__liSponsorsInject();
+      };
       document.head.appendChild(s);
     }
   }

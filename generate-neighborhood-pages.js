@@ -120,6 +120,7 @@ function stubHTML(n) {
       <p><strong>What coverage does LocalIntel have for ${n.name}?</strong> Market signals and verified business routing for ${n.name} in ${n.city}, FL.</p>
       <p><strong>How do I claim my listing?</strong> Visit <a href="https://www.thelocalintel.com/claim.html">Claim Your Listing</a>.</p>
       <p><a href="https://www.thelocalintel.com">← Back to LocalIntel</a> · <a href="https://www.thelocalintel.com/llms.txt">llms.txt</a></p>
+      <p>Sponsored by <a href="https://poolpilot.xyz">poolpilot.xyz</a> · <a href="https://passithere.com/landing">Passithere.com</a></p>
     </div>
   </noscript>
   <script>

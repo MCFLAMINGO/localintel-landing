@@ -361,13 +361,14 @@
     </footer>
   `;
   (function loadSponsors() {
-    if (typeof window.__liSponsorsInject === 'function') {
-      window.__liSponsorsInject();
-      return;
+    function go() {
+      if (typeof window.__liSponsorsInject === 'function') window.__liSponsorsInject();
     }
+    if (typeof window.__liSponsorsInject === 'function') { go(); return; }
     if (document.querySelector('script[src="/_sponsors.js"]')) return;
     const s = document.createElement('script');
     s.src = '/_sponsors.js';
+    s.onload = go;
     document.head.appendChild(s);
   })();
 

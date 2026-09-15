@@ -177,6 +177,7 @@ function bizPageHtml(biz, slug) {
     biz.service_area && biz.service_area.length > 1
       ? `<p>Service area: ${biz.service_area.join(', ')}</p>` : '',
     `<p><a href="${SITE_URL}">← LocalIntel home</a></p>`,
+    `<p>Sponsored by <a href="https://poolpilot.xyz">poolpilot.xyz</a> · <a href="https://passithere.com/landing">Passithere.com</a></p>`,
   ].filter(Boolean).join('\n      ');
 
   return `<!DOCTYPE html>

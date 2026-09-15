@@ -99,6 +99,7 @@
           !existing.querySelector('[data-brand="passithere"]')) {
         existing.innerHTML = markup();
       }
+      document.body.appendChild(existing);
       return;
     }
     var wrap = document.createElement('div');

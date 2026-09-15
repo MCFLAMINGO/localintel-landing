@@ -763,6 +763,7 @@
   <meta property="og:image:height" content="512">
   <meta property="twitter:card" content="summary">
   <meta property="twitter:image" content="https://www.thelocalintel.com/images/localintel-logo-512.jpg">
+  <script src="/_sponsors.js" defer></script>
 </head>
 <body>
 
@@ -970,6 +971,22 @@
 
   </div>
 
+  <footer>
+    <div id="li-sponsors" class="li-sponsors">
+      <p class="li-sponsors-label">Sponsored by</p>
+      <div class="li-sponsors-row">
+        <a class="li-sponsors-link" data-brand="poolpilot" href="https://poolpilot.xyz" target="_blank" rel="noopener noreferrer" aria-label="Sponsored by Pool Pilot — opens poolpilot.xyz">
+          <img src="/images/poolpilot-logo.png" alt="Pool Pilot" width="48" height="48">
+          <span class="li-sponsors-brand">poolpilot.xyz</span>
+        </a>
+        <a class="li-sponsors-link" data-brand="passithere" href="https://passithere.com/landing" target="_blank" rel="noopener noreferrer" aria-label="Sponsored by PassItHere — opens passithere.com/landing">
+          <img src="/images/passithere-logo.png" alt="PassItHere" width="180" height="36">
+          <span class="li-sponsors-brand">Passithere.com</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
   <script>
     const SEARCH_URL = 'https://gsb-swarm-production.up.railway.app/api/local-intel/search';
     const API_BASE   = 'https://gsb-swarm-production.up.railway.app/api/local-intel';
@@ -1019,6 +1036,13 @@
     // ── Utilities ──────────────────────────────────────────────────────────────
     function esc(str) {
       return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function publicWebsite(biz) {
+      const w = String(biz && biz.website || '').trim();
+      if (!w) return '';
+      if (/thelocalintel\.com\/(inbox|login|claim|merchant)/i.test(w)) return '';
+      return w;
     }
 
     const CAT_ICONS = {
@@ -1105,7 +1129,7 @@
     function renderCardCta(biz) {
       const wallet   = biz.wallet;
       const bookUrl  = biz.booking_url;
-      const website  = biz.website;
+      const website  = publicWebsite(biz);
       const phone    = (biz.phone||'').replace(/\D/g,'');
       const bizId    = biz.business_id || biz.id;
       const cat      = (biz.category||'').toLowerCase();
@@ -1202,8 +1226,8 @@
           <div class="result-icon">${icon}</div>
           <div class="result-body">
             <div class="result-name">
-              ${biz.website
-                ? `<a href="${esc(biz.website)}" target="_blank" rel="noopener" style="border-bottom:1px dotted var(--border);">${esc(biz.name||'Unnamed')}</a>`
+              ${website
+                ? `<a href="${esc(website)}" target="_blank" rel="noopener" style="border-bottom:1px dotted var(--border);">${esc(biz.name||'Unnamed')}</a>`
                 : esc(biz.name||'Unnamed')}
             </div>
             ${biz.matchReason ? `<div class="match-reason">${esc(biz.matchReason)}</div>` : ''}
@@ -1220,9 +1244,9 @@
               ${biz.phone ? `<a href="tel:${biz.phone.replace(/\D/g,'')}" class="result-detail-link">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.6 4.38 2 2 0 0 1 3.57 2.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.91-.91a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21.73 17z"/></svg>
                 ${esc(biz.phone)}</a>` : ''}
-              ${biz.website ? `<a href="${esc(biz.website)}" target="_blank" rel="noopener" class="result-detail-link" style="color:#3b82f6;">
+              ${website ? `<a href="${esc(website)}" target="_blank" rel="noopener" class="result-detail-link" style="color:#3b82f6;">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                <span style="display:inline-block;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;">${esc(biz.website.replace(/^https?:\/\//,''))}</span> ↗</a>`
+                <span style="display:inline-block;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;">${esc(website.replace(/^https?:\/\//,''))}</span> ↗</a>`
               : `<span class="result-detail-link" style="color:var(--text-3);font-style:italic;cursor:default;">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 No website listed</span>`}

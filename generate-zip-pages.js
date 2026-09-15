@@ -177,6 +177,7 @@ function stubHTML(z, seo) {
     lines.push(`<p><strong>How do I find local services in ${esc(city)}?</strong> Search LocalIntel or open this ZIP page to connect with verified businesses in ${esc(zip)}.</p>`);
     lines.push(`<p><strong>How do I claim my ${esc(city)} listing?</strong> Visit <a href="https://www.thelocalintel.com/claim.html">Claim Your Listing</a> — free, no subscription.</p>`);
     lines.push(`<p><a href="https://www.thelocalintel.com">← Back to LocalIntel</a> · <a href="https://www.thelocalintel.com/llms.txt">llms.txt</a></p>`);
+    lines.push(`<p>Sponsored by <a href="https://poolpilot.xyz">poolpilot.xyz</a> · <a href="https://passithere.com/landing">Passithere.com</a></p>`);
     noscriptBody = lines.join('\n      ');
   } else {
     const evergreen = `${city} (${zip}) is a market in ${county} County, Florida. LocalIntel routes live service requests, RFQ jobs, and agentic task queries to verified businesses operating in this ZIP code. Businesses with an active profile and digital wallet receive priority routing — from food and beverage orders to contractor jobs to professional services. Join the LocalIntel network to connect your business to the agentic economy and start receiving routed work from AI agents, voice assistants, and real customers searching in ${city}.`;
@@ -185,7 +186,8 @@ function stubHTML(z, seo) {
       <h2>FAQ</h2>
       <p><strong>How do I find local services in ${esc(city)}?</strong> Use LocalIntel search or this ZIP page to reach verified businesses in ${esc(zip)}.</p>
       <p><strong>How do I claim my listing?</strong> Visit <a href="https://www.thelocalintel.com/claim.html">Claim Your Listing</a>.</p>
-      <p><a href="https://www.thelocalintel.com">← Back to LocalIntel</a> · <a href="https://www.thelocalintel.com/llms.txt">llms.txt</a></p>`;
+      <p><a href="https://www.thelocalintel.com">← Back to LocalIntel</a> · <a href="https://www.thelocalintel.com/llms.txt">llms.txt</a></p>
+      <p>Sponsored by <a href="https://poolpilot.xyz">poolpilot.xyz</a> · <a href="https://passithere.com/landing">Passithere.com</a></p>`;
   }
 
   return `<!DOCTYPE html>
@@ -213,6 +215,7 @@ function stubHTML(z, seo) {
   <script type="application/ld+json">${JSON.stringify(datasetSchema)}</script>
   <script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>
   <script type="application/ld+json">${JSON.stringify(faqSchema)}</script>
+  <script src="/_sponsors.js" defer></script>
 </head>
 <body>
   <noscript>

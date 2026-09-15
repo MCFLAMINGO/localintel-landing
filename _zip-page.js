@@ -146,8 +146,8 @@
     .zl{padding:10px 18px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--r);font-size:14px;font-weight:600;color:var(--text-2);transition:all .15s}
     .zl:hover{border-color:var(--green);color:var(--green);background:var(--green-l)}
     /* Footer */
-    footer{border-top:1px solid var(--border);padding:32px 24px}
-    .fi{max-width:var(--max);margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+    footer{border-top:1px solid var(--border);padding:0}
+    .fi{max-width:var(--max);margin:0 auto;padding:32px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
     .fc{font-size:13px;color:var(--text-3)}
     .fl{display:flex;gap:20px}
     .fl a{font-size:13px;color:var(--text-3)}
@@ -358,8 +358,32 @@
           <a href="tel:+19045067476">(904) 506-7476</a>
         </div>
       </div>
+      <div id="li-sponsors" class="li-sponsors">
+        <p class="li-sponsors-label">Sponsored by</p>
+        <div class="li-sponsors-row">
+          <a class="li-sponsors-link" data-brand="poolpilot" href="https://poolpilot.xyz" target="_blank" rel="noopener noreferrer" aria-label="Sponsored by Pool Pilot — opens poolpilot.xyz">
+            <img src="/images/poolpilot-logo.png" alt="Pool Pilot" width="48" height="48">
+            <span class="li-sponsors-brand">poolpilot.xyz</span>
+          </a>
+          <a class="li-sponsors-link" data-brand="passithere" href="https://passithere.com/landing" target="_blank" rel="noopener noreferrer" aria-label="Sponsored by PassItHere — opens passithere.com/landing">
+            <img src="/images/passithere-logo.png" alt="PassItHere" width="180" height="36">
+            <span class="li-sponsors-brand">Passithere.com</span>
+          </a>
+        </div>
+      </div>
     </footer>
   `;
+  (function loadSponsors() {
+    function go() {
+      if (typeof window.__liSponsorsInject === 'function') window.__liSponsorsInject();
+    }
+    if (typeof window.__liSponsorsInject === 'function') { go(); return; }
+    if (document.querySelector('script[src="/_sponsors.js"]')) return;
+    const s = document.createElement('script');
+    s.src = '/_sponsors.js';
+    s.onload = go;
+    document.head.appendChild(s);
+  })();
 
   // ── Quick search chips ──────────────────────────────────────────────────────
   const CHIPS = ['Restaurants','Healthcare','Contractors','Retail','Fitness','Wine & Spirits'];

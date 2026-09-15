@@ -171,12 +171,13 @@ function bizPageHtml(biz, slug) {
     `<p><strong>${catLabel}</strong> · ${city}, FL ${biz.zip}</p>`,
     biz.phone    ? `<p>Phone: <a href="tel:${biz.phone}">${biz.phone}</a></p>` : '',
     biz.address  ? `<p>Address: ${biz.address}, ${city}, FL ${biz.zip}</p>` : '',
-    biz.website  ? `<p>Website: <a href="${biz.website}" rel="noopener">${biz.website}</a></p>` : '',
+    biz.website  ? `<p>Website: <a href="${biz.website}" target="_blank" rel="noopener">${biz.website}</a></p>` : '',
     biz.profile_summary ? `<p>${biz.profile_summary}</p>` : '',
     `<p><a href="${orderUrl}">Request a quote or place an order via LocalIntel →</a></p>`,
     biz.service_area && biz.service_area.length > 1
       ? `<p>Service area: ${biz.service_area.join(', ')}</p>` : '',
     `<p><a href="${SITE_URL}">← LocalIntel home</a></p>`,
+    `<p>Sponsored by <a href="https://poolpilot.xyz">poolpilot.xyz</a> · <a href="https://passithere.com/landing">Passithere.com</a></p>`,
   ].filter(Boolean).join('\n      ');
 
   return `<!DOCTYPE html>
@@ -206,6 +207,7 @@ function bizPageHtml(biz, slug) {
 
   <link rel="canonical" href="${pageUrl}">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%2316A34A'/><circle cx='16' cy='16' r='6' fill='white'/></svg>">
+  <script src="/_sponsors.js" defer></script>
 
   <!-- JSON-LD structured data — OrderAction for Google/Gemini/Siri -->
   <script type="application/ld+json">

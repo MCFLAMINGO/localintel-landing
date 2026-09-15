@@ -112,6 +112,8 @@
       .hood-cta-text{font-size:16px;color:#d1d5db;margin-bottom:14px}
       .hood-cta-btn{display:inline-block;background:#00e676;color:#000;padding:10px 24px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none}
 
+      footer{margin-top:24px}
+
       @media(max-width:600px){
         #hood-map{height:260px}
         .hood-stats-grid{grid-template-columns:repeat(2,1fr)}
@@ -308,6 +310,21 @@
         <div class="hood-cta-text">Is your business in ${hood.name}?</div>
         <a href="/claim" class="hood-cta-btn">Claim Your Listing →</a>
       </div>
+      <footer>
+        <div id="li-sponsors" class="li-sponsors">
+          <p class="li-sponsors-label">Sponsored by</p>
+          <div class="li-sponsors-row">
+            <a class="li-sponsors-link" data-brand="poolpilot" href="https://poolpilot.xyz" target="_blank" rel="noopener noreferrer" aria-label="Sponsored by Pool Pilot — opens poolpilot.xyz">
+              <img src="/images/poolpilot-logo.png" alt="Pool Pilot" width="48" height="48">
+              <span class="li-sponsors-brand">poolpilot.xyz</span>
+            </a>
+            <a class="li-sponsors-link" data-brand="passithere" href="https://passithere.com/landing" target="_blank" rel="noopener noreferrer" aria-label="Sponsored by PassItHere — opens passithere.com/landing">
+              <img src="/images/passithere-logo.png" alt="PassItHere" width="180" height="36">
+              <span class="li-sponsors-brand">Passithere.com</span>
+            </a>
+          </div>
+        </div>
+      </footer>
     `;
 
     // Enrich ZIP card names from zip_boundaries data
@@ -318,6 +335,16 @@
 
     // ── Render Leaflet map ─────────────────────────────────────────────────
     loadLeaflet(() => initMap(zip_boundaries, hood));
+    if (typeof window.__liSponsorsInject === 'function') {
+      window.__liSponsorsInject();
+    } else if (!document.querySelector('script[src="/_sponsors.js"]')) {
+      const s = document.createElement('script');
+      s.src = '/_sponsors.js';
+      s.onload = function () {
+        if (typeof window.__liSponsorsInject === 'function') window.__liSponsorsInject();
+      };
+      document.head.appendChild(s);
+    }
   }
 
   function initMap(zipBoundaries, hood) {

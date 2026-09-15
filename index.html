@@ -768,8 +768,51 @@
     footer {
       background: var(--bg-dark);
       color: #9CA3AF;
-      padding: 48px 0 32px;
+      padding: 48px 0 0;
     }
+    .li-sponsors {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px 28px;
+      flex-wrap: wrap;
+      padding: 16px 20px 20px;
+      background: #F8FAFC;
+      color: #111827;
+      border-top: 1px solid #E5E7EB;
+    }
+    .li-sponsors-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #64748B;
+      width: 100%;
+      text-align: center;
+      margin: 0;
+    }
+    .li-sponsors-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+    .li-sponsors-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #111827;
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+    .li-sponsors-link img { object-fit: contain; display: block; flex-shrink: 0; }
+    .li-sponsors-link[data-brand="poolpilot"] img { width: 48px; height: 48px; }
+    .li-sponsors-link[data-brand="passithere"] img { height: 36px; width: auto; max-width: 200px; }
+    .li-sponsors-brand { font-size: 15px; font-weight: 700; }
+    .li-sponsors-link[data-brand="poolpilot"] .li-sponsors-brand { color: #0369A1; }
+    .li-sponsors-link[data-brand="passithere"] .li-sponsors-brand { color: #DC2626; }
     .footer-inner {
       display: flex;
       align-items: flex-start;
@@ -1194,6 +1237,7 @@
     "inLanguage": "en-US"
   }
   </script>
+  <script src="/_sponsors.js" defer></script>
 </head>
 <body>
   <noscript>
@@ -2093,6 +2137,19 @@
       <div class="footer-bottom">
         <p>© 2026 LocalIntel · MCFL Restaurant Holdings LLC · Ponte Vedra Beach, FL</p>
         <p><a href="mailto:erik@mcflamingo.com">erik@mcflamingo.com</a> · <a href="/llms.txt">AI crawlers: llms.txt</a></p>
+      </div>
+    </div>
+    <div id="li-sponsors" class="li-sponsors">
+      <p class="li-sponsors-label">Sponsored by</p>
+      <div class="li-sponsors-row">
+        <a class="li-sponsors-link" data-brand="poolpilot" href="https://poolpilot.xyz" target="_blank" rel="noopener noreferrer" aria-label="Sponsored by Pool Pilot — opens poolpilot.xyz">
+          <img src="/images/poolpilot-logo.png" alt="Pool Pilot" width="48" height="48">
+          <span class="li-sponsors-brand">poolpilot.xyz</span>
+        </a>
+        <a class="li-sponsors-link" data-brand="passithere" href="https://passithere.com/landing" target="_blank" rel="noopener noreferrer" aria-label="Sponsored by PassItHere — opens passithere.com/landing">
+          <img src="/images/passithere-logo.png" alt="PassItHere" width="180" height="36">
+          <span class="li-sponsors-brand">Passithere.com</span>
+        </a>
       </div>
     </div>
   </footer>

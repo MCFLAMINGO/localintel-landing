@@ -41,7 +41,7 @@
     if (biz.name) qs.set('name', biz.name);
     if (biz.zip) qs.set('zip', biz.zip);
     if (biz.website) qs.set('website', biz.website);
-    return `/login.html?${qs.toString()}`;
+    return `/login?${qs.toString()}`;
   }
 
   function label(cat) {

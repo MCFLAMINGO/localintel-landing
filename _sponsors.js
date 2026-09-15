@@ -1,7 +1,7 @@
 /**
- * _sponsors.js — LocalIntel sponsor strip (Pool Pilot + PassItHere)
- * Injects at the bottom of every page. Re-attaches after engines replace
- * document.body.innerHTML.
+ * _sponsors.js — LocalIntel footer sponsor strip (Pool Pilot + PassItHere)
+ * Mounts inside <footer> on every page. Creates a footer when the page has none.
+ * Re-attaches after engines replace document.body.innerHTML.
  */
 (function () {
   'use strict';
@@ -34,24 +34,29 @@
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent = [
+      'footer{width:100%;margin-top:auto;box-sizing:border-box;align-self:stretch;}',
+      'footer[data-li-sponsors-footer="1"]{',
+      'display:block;padding:0;background:#fff;flex-shrink:0;',
+      '}',
       '.li-sponsors{',
-      'display:flex;align-items:center;justify-content:center;gap:18px 28px;flex-wrap:wrap;',
-      'padding:18px 20px;background:#071627;color:#fff;',
-      'border-top:1px solid rgba(255,255,255,.08);font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;',
+      'display:flex;align-items:center;justify-content:center;gap:14px 28px;flex-wrap:wrap;',
+      'padding:16px 20px 20px;background:#F8FAFC;color:#111827;',
+      'border-top:1px solid #E5E7EB;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;',
+      'box-sizing:border-box;width:100%;',
       '}',
       '.li-sponsors-label{',
-      'font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#94A3B8;',
+      'font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#64748B;',
       'width:100%;text-align:center;margin:0;',
       '}',
       '.li-sponsors-row{',
       'display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;',
       '}',
       '.li-sponsors-link{',
-      'display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;',
-      'padding:6px 8px;border-radius:10px;transition:background .18s ease;',
+      'display:flex;align-items:center;gap:10px;text-decoration:none;color:#111827;',
+      'padding:8px 10px;border-radius:10px;transition:background .18s ease;',
       '}',
       '.li-sponsors-link:hover,.li-sponsors-link:focus-visible{',
-      'background:rgba(255,255,255,.06);outline:none;',
+      'background:rgba(15,23,42,.06);outline:none;',
       '}',
       '.li-sponsors-link img{',
       'object-fit:contain;display:block;flex-shrink:0;',
@@ -61,10 +66,10 @@
       '.li-sponsors-brand{',
       'font-size:15px;font-weight:700;letter-spacing:.01em;',
       '}',
-      '.li-sponsors-link[data-brand="poolpilot"] .li-sponsors-brand{color:#7EB6E8;}',
-      '.li-sponsors-link[data-brand="passithere"] .li-sponsors-brand{color:#F87171;}',
+      '.li-sponsors-link[data-brand="poolpilot"] .li-sponsors-brand{color:#0369A1;}',
+      '.li-sponsors-link[data-brand="passithere"] .li-sponsors-brand{color:#DC2626;}',
       '.li-sponsors-link:hover .li-sponsors-brand,.li-sponsors-link:focus-visible .li-sponsors-brand{',
-      'color:#fff;text-decoration:underline;text-underline-offset:3px;',
+      'color:#111827;text-decoration:underline;text-underline-offset:3px;',
       '}'
     ].join('');
     document.head.appendChild(style);
@@ -90,24 +95,45 @@
     );
   }
 
+  function hasBothBrands(node) {
+    return node.querySelector('[data-brand="poolpilot"]') &&
+      node.querySelector('[data-brand="passithere"]');
+  }
+
+  function ensureFooter() {
+    var real = document.querySelector('footer:not([data-li-sponsors-footer])');
+    if (real) {
+      var placeholder = document.querySelector('footer[data-li-sponsors-footer]');
+      if (placeholder && placeholder !== real) placeholder.remove();
+      return real;
+    }
+    var existing = document.querySelector('footer');
+    if (existing) return existing;
+    var footer = document.createElement('footer');
+    footer.setAttribute('data-li-sponsors-footer', '1');
+    document.body.appendChild(footer);
+    return footer;
+  }
+
+  function fillStrip(wrap) {
+    wrap.id = ID;
+    wrap.className = 'li-sponsors';
+    wrap.removeAttribute('role');
+    wrap.innerHTML = markup();
+  }
+
   function inject() {
     if (!document.body) return;
     addStyles();
+    var footer = ensureFooter();
     var existing = document.getElementById(ID);
-    if (existing) {
-      if (!existing.querySelector('[data-brand="poolpilot"]') ||
-          !existing.querySelector('[data-brand="passithere"]')) {
-        existing.innerHTML = markup();
-      }
-      document.body.appendChild(existing);
-      return;
+    if (!existing) {
+      existing = document.createElement('div');
+      fillStrip(existing);
+    } else if (!hasBothBrands(existing)) {
+      fillStrip(existing);
     }
-    var wrap = document.createElement('div');
-    wrap.id = ID;
-    wrap.className = 'li-sponsors';
-    wrap.setAttribute('role', 'contentinfo');
-    wrap.innerHTML = markup();
-    document.body.appendChild(wrap);
+    if (existing.parentNode !== footer) footer.appendChild(existing);
   }
 
   window.__liSponsorsInject = inject;
@@ -116,9 +142,11 @@
     inject();
     if (window._liSponsorsObs || !document.body) return;
     window._liSponsorsObs = new MutationObserver(function () {
-      if (!document.getElementById(ID)) inject();
+      var node = document.getElementById(ID);
+      var footer = document.querySelector('footer');
+      if (!node || !footer || node.parentNode !== footer) inject();
     });
-    window._liSponsorsObs.observe(document.body, { childList: true });
+    window._liSponsorsObs.observe(document.body, { childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading') {

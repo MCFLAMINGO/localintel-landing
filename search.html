@@ -400,11 +400,11 @@
       line-height: 1.5;
     }
 
-    /* hero stays visible always */
     .search-header.active .hero-title {
-      max-height: 200px;
-      opacity: 1;
-      padding-bottom: 28px;
+      max-height: 0;
+      opacity: 0;
+      padding-bottom: 0;
+      pointer-events: none;
     }
 
     /* FILTERS ROW */
@@ -491,8 +491,9 @@
       text-align: center;
       padding-bottom: 16px;
     }
-    .search-header.active .call-cta {
-      padding-bottom: 8px;
+    .search-header.active .call-cta,
+    .search-header.active .search-extras {
+      display: none;
     }
     .call-link {
       display: inline-flex; align-items: center; gap: 8px;
@@ -509,11 +510,17 @@
     .page-wrap {
       max-width: var(--max);
       margin: 0 auto;
-      padding: calc(var(--nav-h) + 16px) 16px 80px;
+      padding: calc(var(--nav-h) + 16px) 16px 24px;
     }
     /* when header is active (sticky), page-wrap needs no extra top offset — header is in flow */
     body.search-active .page-wrap {
       padding-top: 16px;
+    }
+
+    footer {
+      position: static;
+      width: 100%;
+      margin-top: 24px;
     }
 
     /* CONVERSATION THREAD */
@@ -957,7 +964,7 @@
       </div>
 
       <!-- Dusty persistent CTA — always visible -->
-      <div style="text-align:center; margin-top:10px; margin-bottom:2px;">
+      <div class="search-extras" style="text-align:center; margin-top:10px; margin-bottom:2px;">
         <a href="https://mybestfriend-production-fa71.up.railway.app/#/market" target="_blank" rel="noopener" style="font-size:13px; color:#818cf8; font-weight:600; text-decoration:none; letter-spacing:.01em;">✨ Get an agent wallet — <span style="text-decoration:underline;">Get Dusty on My Best Friend</span> →</a>
       </div>
 

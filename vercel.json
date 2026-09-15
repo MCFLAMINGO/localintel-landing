@@ -20,6 +20,10 @@
     {
       "source": "/rfq/:token",
       "destination": "/rfq.html"
+    },
+    {
+      "source": "/search",
+      "destination": "/search.html"
     }
   ],
   "redirects": [

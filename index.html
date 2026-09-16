@@ -766,6 +766,7 @@
 
     /* ── FOOTER ── */
     footer {
+      position: static;
       background: var(--bg-dark);
       color: #9CA3AF;
       padding: 48px 0 0;
@@ -776,10 +777,11 @@
       justify-content: center;
       gap: 14px 28px;
       flex-wrap: wrap;
-      padding: 16px 20px 20px;
+      padding: 22px 20px 28px;
       background: #F8FAFC;
       color: #111827;
       border-top: 1px solid #E5E7EB;
+      position: static;
     }
     .li-sponsors-label {
       font-size: 11px;
@@ -806,11 +808,12 @@
       color: #111827;
       padding: 8px 10px;
       border-radius: 10px;
+      flex-shrink: 0;
     }
-    .li-sponsors-link img { object-fit: contain; display: block; flex-shrink: 0; }
+    .li-sponsors-link img { object-fit: contain; display: block; flex-shrink: 0; max-width: none; }
     .li-sponsors-link[data-brand="poolpilot"] img { width: 48px; height: 48px; }
     .li-sponsors-link[data-brand="passithere"] img { height: 36px; width: auto; max-width: 200px; }
-    .li-sponsors-brand { font-size: 15px; font-weight: 700; }
+    .li-sponsors-brand { font-size: 15px; font-weight: 700; white-space: nowrap; }
     .li-sponsors-link[data-brand="poolpilot"] .li-sponsors-brand { color: #0369A1; }
     .li-sponsors-link[data-brand="passithere"] .li-sponsors-brand { color: #DC2626; }
     .footer-inner {

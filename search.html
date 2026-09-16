@@ -400,11 +400,11 @@
       line-height: 1.5;
     }
 
-    /* hero stays visible always */
     .search-header.active .hero-title {
-      max-height: 200px;
-      opacity: 1;
-      padding-bottom: 28px;
+      max-height: 0;
+      opacity: 0;
+      padding-bottom: 0;
+      pointer-events: none;
     }
 
     /* FILTERS ROW */
@@ -488,11 +488,19 @@
 
     /* CALL CTA — only shown in idle below the input */
     .call-cta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
       text-align: center;
       padding-bottom: 16px;
     }
-    .search-header.active .call-cta {
-      padding-bottom: 8px;
+    .search-header.active .hero-title,
+    .search-header.active .call-cta,
+    .search-header.active .search-extras,
+    .search-header.active .reg-panel {
+      display: none;
     }
     .call-link {
       display: inline-flex; align-items: center; gap: 8px;
@@ -509,11 +517,17 @@
     .page-wrap {
       max-width: var(--max);
       margin: 0 auto;
-      padding: calc(var(--nav-h) + 16px) 16px 80px;
+      padding: calc(var(--nav-h) + 16px) 16px 24px;
     }
     /* when header is active (sticky), page-wrap needs no extra top offset — header is in flow */
     body.search-active .page-wrap {
       padding-top: 16px;
+    }
+
+    footer {
+      position: static;
+      width: 100%;
+      margin-top: 24px;
     }
 
     /* CONVERSATION THREAD */
@@ -948,7 +962,7 @@
         <button class="example-chip" onclick="runExampleQuery('best coffee shop nearby')">best coffee nearby</button>
       </div>
 
-      <div class="call-cta" style="display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:12px;">
+      <div class="call-cta">
         <a href="tel:+19045067476" class="call-link">
           <span class="call-pulse"></span>
           Skip the search — just call (904) 506-7476
@@ -957,7 +971,7 @@
       </div>
 
       <!-- Dusty persistent CTA — always visible -->
-      <div style="text-align:center; margin-top:10px; margin-bottom:2px;">
+      <div class="search-extras" style="text-align:center; margin-top:10px; margin-bottom:2px;">
         <a href="https://mybestfriend-production-fa71.up.railway.app/#/market" target="_blank" rel="noopener" style="font-size:13px; color:#818cf8; font-weight:600; text-decoration:none; letter-spacing:.01em;">✨ Get an agent wallet — <span style="text-decoration:underline;">Get Dusty on My Best Friend</span> →</a>
       </div>
 
@@ -1219,6 +1233,7 @@
         : `https://www.openstreetmap.org/search?query=${encodeURIComponent(full)}`;
       const blurb   = biz.description || biz.services_text || '';
       const hoursStr = biz.hours || '';
+      const website = publicWebsite(biz);
       const tier    = biz.price_tier ? ({ casual:'$–$$', upscale:'$$$', fine_dining:'$$$$' }[biz.price_tier] || biz.price_tier) : '';
 
       return `
